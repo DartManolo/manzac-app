@@ -1,0 +1,93 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:uuid/uuid.dart';
+import 'package:image/image.dart' as img;
+
+import 'package:get/get.dart';
+
+class ToolService extends GetxController {
+  String guid() {
+    const uuid = Uuid();
+    var newGuid = uuid.v4();
+    return newGuid;
+  }
+
+  bool isObject(dynamic data) {
+    return isJson(data) || isArray(data) || isJsonArray(data);
+  }
+
+  bool isJson(dynamic elemento) {
+    try {
+      var jsonCadena = jsonEncode(elemento);
+      return jsonCadena[jsonCadena.length - 1] == "}";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool isArray(dynamic elemento) {
+    try {
+      var jsonCadena = jsonEncode(elemento);
+      return jsonCadena[jsonCadena.length - 1] == "]";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool isJsonArray(dynamic data) {
+    try {
+      var cadAux = jsonEncode(data);
+      var cadJson = cadAux[cadAux.length - 2] + cadAux[cadAux.length - 1];
+      return cadJson == "}]";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool isNumeric(String? s) {
+    if (s == null) {
+      return false;
+    }
+    return double.tryParse(s) != null;
+  }
+
+  bool str2bool(String cadena) {
+    return cadena.toLowerCase() == 'true';
+  }
+
+  double str2double(String cadena) {
+    return double.tryParse(cadena) ?? 0.0;
+  }
+
+  int str2int(String cadena) {
+    return int.tryParse(cadena) ?? 0;
+  }
+
+  DateTime str2date(String cadena) {
+    var dateArr = cadena.split("-");
+    return DateTime.utc(
+        int.parse(dateArr[2]), int.parse(dateArr[1]), int.parse(dateArr[0]));
+  }
+
+  Future<String> imagen2base64(File? imgArchivo) async {
+    var fotoBytes = await imgArchivo!.readAsBytes();
+    var base64Foto = base64Encode(fotoBytes);
+    return base64Foto;
+  }
+
+  Future<File> imagenResize(File imageFile, {int maxWidth = 1024, int quality = 65}) async {
+    var imageBytes = await imageFile.readAsBytes();
+    img.Image? original = img.decodeImage(imageBytes);
+
+    if (original == null) return imageFile; 
+    img.Image resized = img.copyResize(original, width: maxWidth);
+    File compressedFile = File(imageFile.path)
+      ..writeAsBytesSync(img.encodeJpg(resized, quality: quality));
+    return compressedFile;
+  }
+
+  void debug(dynamic e) {
+    // ignore: avoid_print
+    print(e);
+  }
+}

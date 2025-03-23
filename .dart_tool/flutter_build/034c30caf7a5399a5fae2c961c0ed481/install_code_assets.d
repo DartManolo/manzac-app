@@ -1,0 +1,1 @@
+ C:\\dev\\manzac-app\\.dart_tool\\flutter_build\\034c30caf7a5399a5fae2c961c0ed481\\native_assets.json: 
