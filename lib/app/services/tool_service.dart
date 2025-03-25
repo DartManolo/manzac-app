@@ -1,15 +1,46 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 
 import 'package:get/get.dart';
+
+import '../utils/literals.dart';
 
 class ToolService extends GetxController {
   String guid() {
     const uuid = Uuid();
     var newGuid = uuid.v4();
     return newGuid;
+  }
+
+  Future<void> wait([int segundos = 2]) async {
+    await Future.delayed(Duration(seconds: segundos));
+    return;
+  }
+
+  void toast([String msg = ""]) {
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      textColor: Color(0xFFFFFFFF),
+      fontSize: 16.0,
+      webShowClose: true,
+    );
+  }
+
+  bool isNullOrEmpty(TextEditingController? input) {
+    return input?.text == "" || input == null;
+  }
+
+  bool isEmail(String cadena) {
+    var esEmail = RegExp(Literals.regexEmail).hasMatch(cadena);
+    return esEmail;
   }
 
   bool isObject(dynamic data) {

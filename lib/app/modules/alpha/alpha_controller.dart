@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +6,11 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../data/models/local_storage/local_storage.dart';
 import '../../utils/get_injection.dart';
+import '../../utils/literals.dart';
+import '../home/home_binding.dart';
+import '../home/home_page.dart';
+import '../login/login_binding.dart';
+import '../login/login_page.dart';
 
 class AlphaController extends GetInjection {
   late StatelessWidget _page;
@@ -24,26 +28,23 @@ class AlphaController extends GetInjection {
   Future<void> _init() async {
     try {
       await storage.init();
-      //await tool.wait();
       var localStorage = await storage.get<LocalStorage>(LocalStorage());
-      tool.debug(jsonEncode(localStorage));
-      /*_page = localStorage.login! ? const HomePage() : const LoginPage();
+      await tool.wait();
+      _page = localStorage!.login! ? const HomePage() : const LoginPage();
       _binding = localStorage.login! ? HomeBinding() : LoginBinding();
       GetInjection.administrador = localStorage.perfil! == Literals.perfilAdministrador;
       GetInjection.perfil = localStorage.perfil!;
-      await localStorageClassInit();*/
-      //await firebase.init();
       return;
     } catch(e) {
       return;
     } finally {
       _verificarPermisos();
-      /*Get.offAll(
+      Get.offAll(
         _page,
         binding: _binding,
-        transition: Transition.circularReveal,
+        transition: Transition.cupertino,
         duration: 1.5.seconds,
-      );*/
+      );
     }
   }
 
@@ -66,6 +67,7 @@ class AlphaController extends GetInjection {
       var fotoCamara = await seleccionarFoto.pickImage(
         source: ImageSource.camera,
       );
+      tool.debug(fotoCamara);
       if (fotoCamara != null) {
         var fotoTemp = File(fotoCamara.path);
         fotografia = await tool.imagenResize(fotoTemp);

@@ -17,6 +17,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   material_color_gen: ^2.0.0
   flutter_vector_icons: ^2.0.0
+  fluttertoast: ^8.2.12
   image: ^4.5.3
   image_picker: ^1.1.2
   uuid: ^4.5.1
@@ -30,6 +31,11 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^5.0.0
+#  change_app_package_name: ^1.4.0
+#  dart run change_app_package_name:main com.mtgdevs.manzaclogistic
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/logo-manzac.png
