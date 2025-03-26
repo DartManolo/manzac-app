@@ -29,7 +29,7 @@ class AlphaPage extends StatelessWidget with WidgetsBindingObserver {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SpinKitSpinningLines(
+                SpinKitThreeInOut(
                   color: Color(ColorList.sys[2]),
                 ),
               ],

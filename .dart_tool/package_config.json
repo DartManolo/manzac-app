@@ -2,6 +2,12 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "adaptive_action_sheet",
+      "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/adaptive_action_sheet-2.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/archive-4.0.4",
       "packageUri": "lib/",
@@ -12,6 +18,12 @@
       "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.12.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "auto_size_text_plus",
+      "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/auto_size_text_plus-3.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "boolean_selector",
@@ -338,6 +350,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "modal_bottom_sheet",
+      "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/modal_bottom_sheet-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "path",
       "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/path-1.9.1",
       "packageUri": "lib/",
@@ -542,7 +560,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-03-25T05:04:25.239328Z",
+  "generated": "2025-03-26T03:51:25.180055Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter",

@@ -117,8 +117,13 @@ class ToolService extends GetxController {
     return compressedFile;
   }
 
-  void debug(dynamic e) {
+  void closeBottomSheet() {
+    var sysContext = Get.context!;
+    Navigator.of(sysContext, rootNavigator: true).pop(true);
+  }
+
+  void debug(dynamic e, [bool isJson = false]) {
     // ignore: avoid_print
-    print(e);
+    print(isJson ? jsonEncode(e) : e);
   }
 }

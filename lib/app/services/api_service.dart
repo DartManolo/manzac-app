@@ -47,7 +47,7 @@ class ApiService {
     var localStorage = await _storage.get<LocalStorage>(LocalStorage());
     var api = Dio()
     ..options.headers = {
-      Literals.autorization : localStorage!.token,
+      Literals.apiToken : localStorage!.token,
     }
     ..options.receiveTimeout = 3.minutes
     ..options.connectTimeout = 3.minutes

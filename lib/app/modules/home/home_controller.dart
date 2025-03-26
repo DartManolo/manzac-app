@@ -10,6 +10,9 @@ import '../login/login_page.dart';
 class HomeController extends GetInjection {
   List<MenuOpciones> menuOpciones = [];
 
+  String nombreMenu = "";
+  String usuarioMenu = "";
+
   @override void onInit() {
     _init();
     super.onInit();
@@ -34,6 +37,9 @@ class HomeController extends GetInjection {
           accion: () {}
         ),
       ];
+      var arguments = Get.arguments;
+      nombreMenu = arguments['nombre'] ?? "";
+      usuarioMenu = arguments['usuario'] ?? "";
     } finally {
       update();
     }
@@ -53,7 +59,7 @@ class HomeController extends GetInjection {
         duration: 1.5.seconds,
       );
     } catch(e) {
-
+      msg("Ocurrió un error al cerrar sesión", MsgType.error);
     }
   }
 }

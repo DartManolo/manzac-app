@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../data/models/local_storage/local_storage.dart';
 import '../../data/models/login/login_form.dart';
 import '../../utils/get_injection.dart';
 import '../../utils/literals.dart';
+import '../../widgets/columns/password_column.dart';
+import '../../widgets/containers/basic_bottom_sheet_container.dart';
 import '../home/home_binding.dart';
 import '../home/home_page.dart';
 
@@ -13,6 +16,11 @@ class LoginController extends GetInjection {
   FocusNode usuarioFocus = FocusNode();
   TextEditingController password = TextEditingController();
   FocusNode passwordFocus = FocusNode();
+
+  TextEditingController nuevaPassword = TextEditingController();
+  FocusNode nuevaPasswordFocus = FocusNode();
+  TextEditingController repetirPassword = TextEditingController();
+  FocusNode repetirPasswordFocus = FocusNode();
 
   bool ocultarPassword = true;
   bool mantenerSesion = false;
@@ -43,8 +51,10 @@ class LoginController extends GetInjection {
       );
       var result = await loginRepository.iniciarSesionAsync(loginForm);
       if(result == null) {
+        msg("Usuario y/o contraseña incorrecto", MsgType.warning);
         return;
       }
+      tool.debug(result, true);
       GetInjection.administrador = result.perfil == Literals.perfilAdministrador;
       GetInjection.perfil = result.perfil!;
       localStorage!.token = result.token;
@@ -52,23 +62,54 @@ class LoginController extends GetInjection {
       localStorage.usuario = loginForm.usuario;
       localStorage.login = mantenerSesion;
       localStorage.perfil = result.perfil;
+      localStorage.nombre = "${result.nombres} ${result.apellidos}";
       await storage.update(localStorage);
       isBusy(false);
+      if(result.status == Literals.statusPassTemporal) {
+        _abrirActualizaPasswordForm();
+        return;
+      }
       Get.offAll(
         const HomePage(),
         binding: HomeBinding(),
         transition: Transition.rightToLeft,
         duration: 1.5.seconds,
+        arguments: {
+          "nombre" : "${result.nombres} ${result.apellidos}",
+          "usuario" : loginForm.usuario,
+        }
       );
     } catch(e) {
-
+      msg("Ocurrió un error al iniciar sesión", MsgType.error);
     } finally {
       
     }
   }
 
   Future<void> recuperarPassword() async {
-
+    try {
+      if(!_validarFormPassword()) {
+        return;
+      }
+      isBusy();
+      var passwordForm = LoginForm(
+        usuario: usuario.text,
+      );
+      var nuevaPassword = await loginRepository.recuperarPasswordAsync(passwordForm);
+      if(nuevaPassword == null || nuevaPassword == Literals.newPasswordError) {
+        throw Exception();
+      }
+      if(nuevaPassword == Literals.newPasswordNoUsuario) {
+        msg('No se encontró ningun registro con el usuario proporcionado.', MsgType.warning);
+        return;
+      }
+      await tool.wait(1);
+      msg('Contraseña enviada a su correo; puede tardar unos minutos en llegar, le sugerimos revisar su bandeja de Spam', MsgType.success);
+      return;
+    } catch(e) {
+      msg('Ocurrio un error al intentar recuperar contraseña', MsgType.error);
+      return;
+    }
   }
 
   void verPassword() {
@@ -79,6 +120,55 @@ class LoginController extends GetInjection {
   void mantenerSesionCheck(bool? value) {
     mantenerSesion = value!;
     update();
+  }
+
+  void _abrirActualizaPasswordForm() {
+    password.text = "";
+    var context = Get.context;
+    nuevaPassword.text = "";
+    repetirPassword.text = "";
+    showMaterialModalBottomSheet(
+      context: context!,
+      expand: true,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BasicBottomSheetContainer(
+        context: context,
+        cerrar: true,
+        child: PasswordColumn(
+          nuevaPassword: nuevaPassword,
+          nuevaPasswordFocus: nuevaPasswordFocus,
+          repetirPassword: repetirPassword,
+          repetirPasswordFocus: repetirPasswordFocus,
+          esNueva: false,
+          guardarPassword: _actualizarPassword,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _actualizarPassword() async {
+    try {
+      if(!_validarFormActualizarPassword()) {
+        return;
+      }
+      isBusy();
+      var loginForm = LoginForm(
+        usuario: usuario.text,
+        password: nuevaPassword.text,
+      );
+      var result = await loginRepository.actualizarPasswordAsync(loginForm);
+      if(result == null || !result) {
+        tool.debug(result);
+        throw Exception();
+      }
+      await tool.wait(1);
+      tool.closeBottomSheet();
+      msg('Usuario actualizado. Ya puede iniciar sesión con su nueva contraseña.', MsgType.success);
+    } catch(e) {
+      msg('Ocurrio un error al intentar actualizar contraseña', MsgType.error);
+      return;
+    }
   }
 
   bool _validarForm() {
@@ -98,6 +188,45 @@ class LoginController extends GetInjection {
       correcto = true;
       usuarioFocus.unfocus();
       passwordFocus.unfocus();
+    }
+    if(!correcto) {
+      tool.toast(mensaje);
+    }
+    return correcto;
+  }
+
+  bool _validarFormPassword() {
+    var thisContext = Get.context;
+    var correcto = false;
+    var mensaje = "";
+    if(tool.isNullOrEmpty(usuario)) {
+      mensaje = "Escriba el usuario";
+      FocusScope.of(thisContext!).requestFocus(usuarioFocus);
+    } else if(!tool.isEmail(usuario.text)) {
+      mensaje = "El usuario no es válido";
+      FocusScope.of(thisContext!).requestFocus(usuarioFocus);
+    } else {
+      correcto = true;
+      usuarioFocus.unfocus();
+      passwordFocus.unfocus();
+    }
+    if(!correcto) {
+      tool.toast(mensaje);
+    }
+    return correcto;
+  }
+
+  bool _validarFormActualizarPassword() {
+    var correcto = false;
+    var mensaje = "";
+    if(tool.isNullOrEmpty(nuevaPassword)) {
+      mensaje = "Escriba la nueva contraseña";
+    } else if(tool.isNullOrEmpty(repetirPassword)) {
+      mensaje = "Escriba repetir contraseña";
+    } else if(nuevaPassword.text != repetirPassword.text) {
+      mensaje = "Las contraseñas NO coinciden";
+    } else {
+      correcto = true;
     }
     if(!correcto) {
       tool.toast(mensaje);

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class LocalStorage {
-  static const int _localStorageVersion = 1;
+  static const int _localStorageVersion = 2;
 
   String? tabla = "local_storage";
   int? version = _localStorageVersion;
@@ -10,6 +10,7 @@ class LocalStorage {
   String? usuario;
   String? password;
   String? perfil;
+  String? nombre;
   String? token;
 
   LocalStorage({
@@ -19,6 +20,7 @@ class LocalStorage {
     this.usuario = "",
     this.password = "",
     this.perfil = "",
+    this.nombre = "",
     this.token = "-",
   });
 
@@ -30,6 +32,7 @@ class LocalStorage {
     'usuario'           : usuario,
     'password'          : password,
     'perfil'            : perfil,
+    'nombre'            : nombre,
     'token'             : token,
   };
 
@@ -42,6 +45,7 @@ class LocalStorage {
       'usuario'           : usuario,
       'password'          : password,
       'perfil'            : perfil,
+      'nombre'            : nombre,
       'token'             : token,
     };
   }
@@ -53,6 +57,7 @@ class LocalStorage {
     usuario = json['usuario'] ?? "";
     password = json['password'] ?? "";
     perfil = json['perfil'] ?? "";
+    nombre = json['nombre'] ?? "";
     token = json['token'] ?? "";
   }
 
@@ -62,6 +67,7 @@ class LocalStorage {
     usuario = json['usuario'] ?? "";
     password = json['password'] ?? "";
     perfil = json['perfil'] ?? "";
+    nombre = json['nombre'] ?? "";
     token = json['token'] ?? "";
   }
 
@@ -73,6 +79,7 @@ class LocalStorage {
       usuario: json['usuario'] ?? "",
       password: json['password'] ?? "",
       perfil: json['perfil'] ?? "",
+      nombre: json['nombre'] ?? "",
       token: json['token'] ?? "",
     ) : LocalStorage();
   }
@@ -88,6 +95,7 @@ class LocalStorage {
           usuario: json['usuario'] ?? "",
           password: json['password'] ?? "",
           perfil: json['perfil'] ?? "",
+          nombre: json['nombre'] ?? "",
           token: json['token'] ?? "",
         ));
       }

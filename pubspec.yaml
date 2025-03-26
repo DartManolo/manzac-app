@@ -18,11 +18,16 @@ dependencies:
   material_color_gen: ^2.0.0
   flutter_vector_icons: ^2.0.0
   fluttertoast: ^8.2.12
+  modal_bottom_sheet: ^3.0.0
+  adaptive_action_sheet: ^2.0.4
+  auto_size_text_plus: ^3.0.2
   image: ^4.5.3
   image_picker: ^1.1.2
   uuid: ^4.5.1
   flutter_spinkit: ^5.2.1
 
+#  flutter_native_splash: ^2.2.15
+#  dart run flutter_native_splash:create 
   flutter_localizations:
     sdk: flutter
 

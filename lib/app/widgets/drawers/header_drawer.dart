@@ -1,15 +1,32 @@
+import 'package:auto_size_text_plus/auto_size_text_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/color_list.dart';
 
 class HeaderDrawer extends StatelessWidget {
-  const HeaderDrawer({super.key});
+  final String nombre;
+  final String usuario;
+  const HeaderDrawer({
+    super.key,
+    required this.nombre,
+    required this.usuario,
+  });
 
   @override
   Widget build(BuildContext context) {
     return UserAccountsDrawerHeader(
-      accountName: Text('Sandra Adams'),
-      accountEmail: Text('sandra_a88@gmail.com'),
+      accountName: AutoSizeText(
+        nombre,
+        maxLines: 1,
+        minFontSize: 7,
+        maxFontSize: 16,
+      ),
+      accountEmail: AutoSizeText(
+        usuario,
+        maxLines: 1,
+        minFontSize: 7,
+        maxFontSize: 14,
+      ),
       currentAccountPicture: Container(
         width: 130,
         height: 130,

@@ -15,6 +15,8 @@ import '../login/login_page.dart';
 class AlphaController extends GetInjection {
   late StatelessWidget _page;
   late Bindings _binding;
+
+  LocalStorage? _localStorage;
   
   File? fotografia;
   final ImagePicker seleccionarFoto = ImagePicker();
@@ -28,12 +30,12 @@ class AlphaController extends GetInjection {
   Future<void> _init() async {
     try {
       await storage.init();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      _localStorage = await storage.get<LocalStorage>(LocalStorage());
       await tool.wait();
-      _page = localStorage!.login! ? const HomePage() : const LoginPage();
-      _binding = localStorage.login! ? HomeBinding() : LoginBinding();
-      GetInjection.administrador = localStorage.perfil! == Literals.perfilAdministrador;
-      GetInjection.perfil = localStorage.perfil!;
+      _page = _localStorage!.login! ? const HomePage() : const LoginPage();
+      _binding = _localStorage!.login! ? HomeBinding() : LoginBinding();
+      GetInjection.administrador = _localStorage!.perfil! == Literals.perfilAdministrador;
+      GetInjection.perfil = _localStorage!.perfil!;
       return;
     } catch(e) {
       return;
@@ -44,6 +46,10 @@ class AlphaController extends GetInjection {
         binding: _binding,
         transition: Transition.cupertino,
         duration: 1.5.seconds,
+        arguments: {
+          "nombre" : _localStorage!.nombre,
+          "usuario" : _localStorage!.usuario,
+        }
       );
     }
   }

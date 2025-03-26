@@ -22,7 +22,10 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
         drawer: Drawer(
           child: Column(
             children: [
-              HeaderDrawer(),
+              HeaderDrawer(
+                nombre: c.nombreMenu,
+                usuario: c.usuarioMenu,
+              ),
               Column(
                   mainAxisSize: MainAxisSize.min,
                   children: c.menuOpciones.map((opcion) {
