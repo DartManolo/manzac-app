@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:manzac_app/app/widgets/dialogs/alerta_dialog.dart';
 
@@ -8,6 +9,7 @@ import '../services/api_service.dart';
 import '../services/storage_service.dart';
 import '../services/tool_service.dart';
 import '../widgets/dialogs/loading_dialog.dart';
+import '../widgets/dialogs/modal_dialog.dart';
 import 'color_list.dart';
 
 abstract class GetInjection extends GetxController {
@@ -82,6 +84,38 @@ abstract class GetInjection extends GetxController {
         },
       );
     } finally {}
+  }
+
+  void toast([String msg = ""]) {
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      textColor: Color(0xFFFFFFFF),
+      fontSize: 16.0,
+      webShowClose: true,
+    );
+  }
+
+  void modal({List<Widget> widgets = const [], double height = 150}) {
+    var modalContext = Get.context!;
+    showDialog(
+      context: modalContext,
+      builder: (BuildContext context) {
+        context = context;
+        return ModalDialog(
+          widgets: widgets,
+          height: height,
+        );
+      },
+    );
+  }
+
+  void modalClose() {
+    var altaContext = Get.context!;
+    Navigator.of(altaContext).pop(true);
   }
 }
 

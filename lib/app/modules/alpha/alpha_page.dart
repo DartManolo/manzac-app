@@ -34,14 +34,6 @@ class AlphaPage extends StatelessWidget with WidgetsBindingObserver {
                 ),
               ],
             ),
-            /*SizedBox(height: 100,),
-            SolidButton(
-              onPressed: c.tomarFotografia,
-              onLongPress: () {},
-            ),
-            c.fotografia != null
-              ? Image.file(c.fotografia!)
-              : Text("No se ha tomado ninguna foto"),*/
           ],
         ),
       ),

@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../data/models/local_storage/local_storage.dart';
@@ -17,9 +15,6 @@ class AlphaController extends GetInjection {
   late Bindings _binding;
 
   LocalStorage? _localStorage;
-  
-  File? fotografia;
-  final ImagePicker seleccionarFoto = ImagePicker();
 
   @override
   Future<void> onInit() async {
@@ -65,31 +60,5 @@ class AlphaController extends GetInjection {
         Permission.storage.request();
       }
     });
-  }
-
-  Future<void> tomarFotografia() async {
-    try {
-      isBusy();
-      var fotoCamara = await seleccionarFoto.pickImage(
-        source: ImageSource.camera,
-      );
-      tool.debug(fotoCamara);
-      if (fotoCamara != null) {
-        var fotoTemp = File(fotoCamara.path);
-        fotografia = await tool.imagenResize(fotoTemp);
-        var base64Foto = await tool.imagen2base64(fotografia);
-        var data = {
-          "imagenb64": base64Foto
-        };
-        var jsonSend = [data];
-        var g = await api.post("api/configuracion/test", jsonSend);
-        tool.debug("------------------------- BASE64 -------------------------");
-        tool.debug(base64Foto);
-        tool.debug(g);
-      }
-    } finally {
-      update();
-      isBusy(false);
-    }
   }
 }

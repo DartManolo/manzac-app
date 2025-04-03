@@ -6,7 +6,9 @@ class CardScrollableContainer extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
   final CrossAxisAlignment columnAlign;
+  final MainAxisAlignment mainAlign;
   final double width;
+  final double? height;
   final double radius;
   const CardScrollableContainer({
     super.key,
@@ -15,7 +17,9 @@ class CardScrollableContainer extends StatelessWidget {
     this.padding = const EdgeInsets.all(10,),
     this.margin = const EdgeInsets.fromLTRB(10, 10, 10, 10),
     this.columnAlign = CrossAxisAlignment.start,
+    this.mainAlign = MainAxisAlignment.start,
     this.width = double.infinity,
+    this.height,
     this.radius = 20,
   });
 
@@ -25,6 +29,7 @@ class CardScrollableContainer extends StatelessWidget {
       margin: margin,
       padding: padding,
       width: width,
+      height: height,
       decoration: BoxDecoration(
         color: Color(fondo),
         border: Border.all(
@@ -37,6 +42,7 @@ class CardScrollableContainer extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: columnAlign,
+          mainAxisAlignment: mainAlign,
           children: children,
         ),
       ),

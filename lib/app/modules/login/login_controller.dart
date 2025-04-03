@@ -190,7 +190,7 @@ class LoginController extends GetInjection {
       passwordFocus.unfocus();
     }
     if(!correcto) {
-      tool.toast(mensaje);
+      toast(mensaje);
     }
     return correcto;
   }
@@ -211,7 +211,7 @@ class LoginController extends GetInjection {
       passwordFocus.unfocus();
     }
     if(!correcto) {
-      tool.toast(mensaje);
+      toast(mensaje);
     }
     return correcto;
   }
@@ -229,7 +229,7 @@ class LoginController extends GetInjection {
       correcto = true;
     }
     if(!correcto) {
-      tool.toast(mensaje);
+      toast(mensaje);
     }
     return correcto;
   }

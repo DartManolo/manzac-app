@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 
@@ -19,20 +18,7 @@ class ToolService extends GetxController {
   Future<void> wait([int segundos = 2]) async {
     await Future.delayed(Duration(seconds: segundos));
     return;
-  }
-
-  void toast([String msg = ""]) {
-    Fluttertoast.cancel();
-    Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      textColor: Color(0xFFFFFFFF),
-      fontSize: 16.0,
-      webShowClose: true,
-    );
-  }
+  }  
 
   bool isNullOrEmpty(TextEditingController? input) {
     return input?.text == "" || input == null;

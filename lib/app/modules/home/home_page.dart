@@ -3,6 +3,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 
 import '../../utils/color_list.dart';
+import '../../widgets/buttons/solid_button.dart';
 import '../../widgets/drawers/header_drawer.dart';
 import '../../widgets/drawers/item_drawer.dart';
 import 'home_controller.dart';
@@ -49,7 +50,14 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
         ),
         body: Column(
           children: [
-
+            SizedBox(height: 100,),
+            SolidButton(
+              onPressed: c.tomarFotografiadddd,
+              onLongPress: () {},
+            ),
+            c.fotografia != null
+              ? Image.file(c.fotografia!)
+              : Text("No se ha tomado ninguna foto"),
           ],
         ),
       ),
