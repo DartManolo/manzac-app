@@ -8,6 +8,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "animate_do",
+      "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/animate_do-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/archive-4.0.4",
       "packageUri": "lib/",
@@ -620,7 +626,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-04-03T04:22:51.751726Z",
+  "generated": "2025-04-07T05:59:20.931694Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter",

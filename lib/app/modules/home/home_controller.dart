@@ -30,17 +30,17 @@ class HomeController extends GetInjection {
         MenuOpciones(
           titulo: "Entradas",
           icono: MaterialCommunityIcons.contain_start,
-          accion: () => _abrirVista(AppRoutes.reporteEntrada),
+          accion: () => _abrirVista(AppRoutes.reporte, { "tipo" : "Entrada" }),
         ),
         MenuOpciones(
           titulo: "Salidas",
           icono: MaterialCommunityIcons.contain_end,
-          accion: () => _abrirVista(AppRoutes.reporteSalida),
+          accion: () => _abrirVista(AppRoutes.reporte, { "tipo" : "Salida" }),
         ),
         MenuOpciones(
           titulo: "Registro de daños",
           icono: MaterialCommunityIcons.truck_cargo_container,
-          accion: () => _abrirVista(AppRoutes.reporteDanios),
+          accion: () => _abrirVista(AppRoutes.reporte, { "tipo" : "Daños" }),
         ),
       ];
       var arguments = Get.arguments;
@@ -84,7 +84,7 @@ class HomeController extends GetInjection {
         tool.debug(base64Foto);
         isBusy(false);
         Get.toNamed(
-          AppRoutes.reportes,
+          AppRoutes.reporteView,
           arguments: {
             'base64Img' : base64Foto,
           },
@@ -96,9 +96,10 @@ class HomeController extends GetInjection {
     }
   }
 
-  void _abrirVista(String ruta) {
+  void _abrirVista(String ruta, [dynamic arguments]) {
     Get.toNamed(
-      ruta
+      ruta,
+      arguments: arguments,
     );
   }
 }

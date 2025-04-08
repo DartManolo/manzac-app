@@ -6,14 +6,10 @@ import '../modules/login/login_binding.dart';
 import '../modules/login/login_page.dart';
 import '../modules/home/home_binding.dart';
 import '../modules/home/home_page.dart';
-import '../modules/reporte_danios/reporte_danios_binding.dart';
-import '../modules/reporte_danios/reporte_salida_page.dart';
-import '../modules/reporte_entrada/reporte_entrada_binding.dart';
-import '../modules/reporte_entrada/reporte_entrada_page.dart';
-import '../modules/reporte_salida/reporte_salida_binding.dart';
-import '../modules/reporte_salida/reporte_salida_page.dart';
-import '../modules/reportes/reportes_binding.dart';
-import '../modules/reportes/reportes_page.dart';
+import '../modules/reporte/reporte_binding.dart';
+import '../modules/reporte/reporte_page.dart';
+import '../modules/reporte_view/reporte_view_binding.dart';
+import '../modules/reporte_view/reporte_view_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -34,24 +30,14 @@ class AppPages {
       binding: HomeBinding(),
     ),
     GetPage(
-      name: AppRoutes.reportes,
-      page: () => const ReportesPage(),
-      binding: ReportesBinding(),
+      name: AppRoutes.reporteView,
+      page: () => const ReporteViewPage(),
+      binding: ReporteViewBinding(),
     ),
     GetPage(
-      name: AppRoutes.reporteEntrada,
-      page: () => const ReporteEntradaPage(),
-      binding: ReporteEntradaBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.reporteSalida,
-      page: () => const ReporteSalidaPage(),
-      binding: ReporteSalidaBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.reporteDanios,
-      page: () => const ReporteDaniosPage(),
-      binding: ReporteDaniosBinding(),
+      name: AppRoutes.reporte,
+      page: () => const ReportePage(),
+      binding: ReporteBinding(),
     ),
   ];
 }

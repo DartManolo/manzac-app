@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
@@ -19,13 +20,17 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
         body: Column(
           children: [
             Expanded(child: SizedBox()),
+            Image.asset(
+              'assets/manzac-login.png',
+              scale: 4.0,
+            ).fadeInDown(delay: 1.seconds,),
             StandardTextform(
               controller: c.usuario,
               focusNode: c.usuarioFocus,
               text: "Usuario",
-              ltrbp: const [20, 10, 20, 10],
+              ltrbp: const [20, 25, 20, 10],
               icon: MaterialIcons.person,
-            ),
+            ).fadeInLeft(delay: 1.seconds,),
             PasswordTextform(
               controller: c.password,
               focusNode: c.passwordFocus,
@@ -33,7 +38,7 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
               obscureTextFunc: c.verPassword,
               text: "Contraseña",
               ltrbp: const [20, 10, 20, 0],
-            ),
+            ).fadeInLeft(delay: 1.seconds,),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -50,7 +55,7 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
                   ),
                 ),
               ],
-            ),
+            ).fadeInLeft(delay: 1.seconds,),
             SolidButton(
               texto: "Iniciar Sesión",
               icono: MaterialIcons.login,
@@ -59,7 +64,7 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
               fondoColor: ColorList.sys[0],
               ltrbm: const [10, 10, 10, 0],
               onLongPress: () {},
-            ),
+            ).fadeInRight(delay: 1.seconds,),
             SolidButton(
               texto: "Recuperar contraseña",
               icono: MaterialIcons.refresh,
@@ -68,7 +73,7 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
               fondoColor: ColorList.sys[1],
               ltrbm: const [10, 0, 10, 0],
               onLongPress: () {},
-            ),
+            ).fadeInRight(delay: 1.seconds,),
             Expanded(child: SizedBox()),
           ],
         ),

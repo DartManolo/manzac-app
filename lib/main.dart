@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material_color_gen/material_color_gen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+// ignore: depend_on_referenced_packages
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'app/modules/alpha/alpha_binding.dart';
 import 'app/modules/alpha/alpha_page.dart';
@@ -11,7 +13,10 @@ import 'app/utils/color_list.dart';
 
 void main() {
   AppConfiguration.init();
-  runApp(const Manzac());
+  initializeDateFormatting(
+    'es_MX',
+    null
+  ).then((_) => runApp(const Manzac()));
 }
 
 class Manzac extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
@@ -21,8 +22,9 @@ class AlphaPage extends StatelessWidget with WidgetsBindingObserver {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/logo-manzac.png'
-                ),
+                  'assets/logo-manzac.png',
+                  scale: 3.5,
+                ).fadeInLeft(delay: 1.seconds,),
               ],
             ),
             SizedBox(height: 50,),
@@ -31,7 +33,7 @@ class AlphaPage extends StatelessWidget with WidgetsBindingObserver {
               children: [
                 SpinKitThreeInOut(
                   color: Color(ColorList.sys[2]),
-                ),
+                ).fadeIn(delay: 1.seconds,),
               ],
             ),
           ],

@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
-
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:get/get.dart';
 
 import '../utils/literals.dart';
@@ -86,6 +89,29 @@ class ToolService extends GetxController {
         int.parse(dateArr[2]), int.parse(dateArr[1]), int.parse(dateArr[0]));
   }
 
+  String fechaHoy() {
+    var fechaHoy = DateFormat("dd-MM-yyyy").format(DateTime.now()).toString();
+    return fechaHoy;
+  }
+
+  String horaHoy() {
+    var selectedHour = TimeOfDay.now();
+    var horaAux = selectedHour.hour;
+    var prefijo = "a.m.";
+    var hora = horaAux;
+    if(horaAux == 0) {
+      hora = 12;
+    } else if(horaAux > 12) {
+      hora = horaAux - 12;
+      prefijo = "p.m.";
+    }
+    if(horaAux == 12) {
+      prefijo = "p.m.";
+    }
+    var minutos = selectedHour.minute;
+    return "${(hora > 9 ? "$hora" : "0$hora")}:${(minutos > 9 ? "$minutos" : "0$minutos")} $prefijo";
+  }
+
   Future<String> imagen2base64(File? imgArchivo) async {
     var fotoBytes = await imgArchivo!.readAsBytes();
     var base64Foto = base64Encode(fotoBytes);
@@ -111,5 +137,18 @@ class ToolService extends GetxController {
   void debug(dynamic e, [bool isJson = false]) {
     // ignore: avoid_print
     print(isJson ? jsonEncode(e) : e);
+  }
+
+  Future<Uint8List> loadAssetImage(String path) async {
+    var data = await rootBundle.load(path);
+    return data.buffer.asUint8List();
+  }
+
+  String fecha(String formato, [DateTime? fechaPers]) {
+    var hoy = fechaPers ?? DateTime.now();
+    return DateFormat(
+     formato,
+     'es_MX'
+    ).format(hoy);
   }
 }
