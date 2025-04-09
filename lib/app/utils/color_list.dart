@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ColorList {
-  var probador = const Color(0xFFD3D3D3);
+  var probador = const Color(0xFF5499C7);
 
   static const List<int> sys = [
     0xFF0A3D62,

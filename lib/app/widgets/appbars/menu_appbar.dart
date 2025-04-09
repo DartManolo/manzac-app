@@ -13,6 +13,7 @@ class MenuAppbar extends StatelessWidget implements PreferredSizeWidget {
   final int textoColor;
   final List<MenuPopupOpciones> opciones;
   final void Function(String?) onTapPopup;
+  final void Function() onTap;
   final double height;
 
   const MenuAppbar({
@@ -24,6 +25,7 @@ class MenuAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.textoColor = 0xFF000000,
     this.opciones = const [],
     required this.onTapPopup,
+    required this.onTap,
     this.height = 100,
   });
 
@@ -39,6 +41,7 @@ class MenuAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       bottom: TabBar(
+        onTap: (t) => onTap(),
         dividerColor: Colors.transparent,
         labelColor: Color(ColorList.sys[0]),
         indicatorColor: Color(ColorList.sys[0]),

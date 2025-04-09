@@ -15,6 +15,7 @@ class DateTextform extends StatelessWidget {
   final IconData icon;
   final bool canTap;
   final double? height;
+  final String formato;
 
   const DateTextform({
     super.key,
@@ -28,6 +29,7 @@ class DateTextform extends StatelessWidget {
     required this.dateSelected,
     this.canTap = true,
     this.height,
+    this.formato = 'dd-MM-yyyy',
   });
 
   @override
@@ -58,7 +60,7 @@ class DateTextform extends StatelessWidget {
             locale: const Locale('es'),
           ).then((selectedDate) {
             selectedDate ??= DateTime.now();
-            controller!.text = DateFormat("dd-MM-yyyy").format(selectedDate).toString();
+            controller!.text = DateFormat(formato).format(selectedDate).toString();
             dateSelected();
           });
         },

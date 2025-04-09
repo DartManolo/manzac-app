@@ -15,9 +15,11 @@ import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
 import '../../widgets/buttons/circular_buttons.dart';
 import '../../widgets/containers/basic_bottom_sheet_container.dart';
+import '../../widgets/containers/titulo_container.dart';
 import '../../widgets/forms/mover_fila_form.dart';
 import '../../widgets/textformfields/entrada_textformfield.dart';
 import '../../widgets/textformfields/salida_textformfield.dart';
+import '../../widgets/textforms/multiline_textform.dart';
 
 class ReporteController extends GetInjection {
   EntradaTextformfield entradaForm = EntradaTextformfield();
@@ -27,6 +29,7 @@ class ReporteController extends GetInjection {
   DateTime? fechaHoy;
 
   ScrollController galeriaScrollController = ScrollController();
+  ScrollController formScrollController = ScrollController();
   File? fotografia;
   final ImagePicker seleccionarFoto = ImagePicker();
 
@@ -60,6 +63,8 @@ class ReporteController extends GetInjection {
       if(tipoReporte == "Entrada") {
         entradaForm.horaInicio.text = tool.horaHoy();
         entradaForm.horaFin.text = tool.horaHoy();
+        entradaForm.fechaDespacho.text = tool.fechaHoy('dd/MM/yyyy');
+        entradaForm.fechaVencimiento.text = tool.fechaHoy('dd/MM/yyyy');
       } else if(tipoReporte == "Salida") {
 
       }
@@ -70,6 +75,14 @@ class ReporteController extends GetInjection {
 
   void cerrar() {
     Get.back();
+  }
+
+  void seleccionarTap() {
+    if(tipoReporte == "Entrada") {
+      _entradaFormUnfocus();
+    } else if(tipoReporte == "Salida") {
+      _salidaFormUnfocus();
+    }
   }
 
   Future<void> operacionPopUp(String? id) async {
@@ -83,6 +96,29 @@ class ReporteController extends GetInjection {
         break;
       default:
         return;
+    }
+  }
+
+  Future<void> generarReporte() async {
+    try {
+      dynamic form;
+      if(tipoReporte == "Entrada") {
+        _entradaFormUnfocus();
+        form = entradaForm;
+      } else if(tipoReporte == "Salida") {
+        _salidaFormUnfocus();
+        form = salidaForm;
+      }
+      Get.toNamed(
+        AppRoutes.reporteView,
+        arguments: {
+          'tipoReporte' : tipoReporte,
+          'formData' : form,
+          'reporteImagenes' : reporteImagenes,
+        },
+      );
+    } finally {
+      update();
     }
   }
   
@@ -119,6 +155,37 @@ class ReporteController extends GetInjection {
 
   void hourSelected() {
     update();
+  }
+
+  void abrirComentario() {
+    var context = Get.context;
+    showMaterialModalBottomSheet(
+      context: context!,
+      expand: true,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BasicBottomSheetContainer(
+        context: context,
+        cerrar: true,
+        child: Column(
+          children: [
+            TituloContainer(
+              texto: 'Observaciones',
+              size: 16,
+            ),
+            MultilineTextform(
+              icon: Icons.comment,
+              lines: 12,
+              controller: tipoReporte == "Entrada" 
+                ? entradaForm.observaciones 
+                : (tipoReporte == "Salida" 
+                  ? salidaForm.observaciones 
+                  : null),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void agregarFilaImagenes() {
@@ -416,23 +483,54 @@ class ReporteController extends GetInjection {
     } finally { }
   }
 
-  Future<void> generarReporte() async {
-    try {
-      dynamic form;
-      if(tipoReporte == "Entrada") {
-        form = entradaForm;
-      } else if(tipoReporte == "Salida") {
-        form = salidaForm;
-      }
-      Get.toNamed(
-        AppRoutes.reporteView,
-        arguments: {
-          'tipoReporte' : tipoReporte,
-          'formData' : form,
-          'reporteImagenes' : reporteImagenes,
-        },
-      );
-      /*isBusy();
+  void _entradaFormUnfocus() {
+    entradaForm.referenciaLmFocus.unfocus();
+    entradaForm.imoFocus.unfocus();
+    entradaForm.horaInicioFocus.unfocus();
+    entradaForm.horaFinFocus.unfocus();
+    entradaForm.clienteFocus.unfocus();
+    entradaForm.mercanciaFocus.unfocus();
+    entradaForm.agenteAduanalFocus.unfocus();
+    entradaForm.ejecutivoFocus.unfocus();
+    entradaForm.contenedorFocus.unfocus();
+    entradaForm.pedimentoFocus.unfocus();
+    entradaForm.selloFocus.unfocus();
+    entradaForm.buqueFocus.unfocus();
+    entradaForm.refClienteFocus.unfocus();
+    entradaForm.bultosFocus.unfocus();
+    entradaForm.pesoFocus.unfocus();
+    entradaForm.terminalFocus.unfocus();
+    entradaForm.fechaDespachoFocus.unfocus();
+    entradaForm.diasLibresFocus.unfocus();
+    entradaForm.fechaDespachoFocus.unfocus();
+    entradaForm.movimientoFocus.unfocus();
+  }
+
+  void _salidaFormUnfocus() {
+    salidaForm.referenciaLmFocus.unfocus();
+    salidaForm.imoFocus.unfocus();
+    salidaForm.horaInicioFocus.unfocus();
+    salidaForm.horaFinFocus.unfocus();
+    salidaForm.clienteFocus.unfocus();
+    salidaForm.mercanciaFocus.unfocus();
+    salidaForm.agenteAduanalFocus.unfocus();
+    salidaForm.ejecutivoFocus.unfocus();
+    salidaForm.contenedorFocus.unfocus();
+    salidaForm.pedimentoFocus.unfocus();
+    salidaForm.selloFocus.unfocus();
+    salidaForm.buqueFocus.unfocus();
+    salidaForm.refClienteFocus.unfocus();
+    salidaForm.bultosFocus.unfocus();
+    salidaForm.pesoFocus.unfocus();
+    salidaForm.terminalFocus.unfocus();
+    salidaForm.transporteFocus.unfocus();
+    salidaForm.operadorFocus.unfocus();
+    salidaForm.placasFocus.unfocus();
+    salidaForm.licenciaFocus.unfocus();
+  }
+}
+
+/*isBusy();
       var fotoCamara = await seleccionarFoto.pickImage(
         source: ImageSource.camera,
       );
@@ -451,9 +549,3 @@ class ReporteController extends GetInjection {
           },
         );
       }*/
-    } finally {
-      update();
-      isBusy(false);
-    }
-  }
-}

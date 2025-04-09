@@ -7,6 +7,7 @@ import '../../widgets/appbars/menu_appbar.dart';
 import '../../widgets/buttons/solid_button.dart';
 import '../../widgets/forms/entrada_reporte_form.dart';
 import '../../widgets/forms/galeria_reporte_form.dart';
+import '../../widgets/forms/salida_reporte_form.dart';
 import '../../widgets/forms/sin_galeria_form.dart';
 import '../../widgets/switchs/opcion_switch.dart';
 import 'reporte_controller.dart';
@@ -25,6 +26,7 @@ class ReportePage extends StatelessWidget {
             opciones: c.opcionesConsulta,
             cerrar: c.cerrar,
             onTapPopup: c.operacionPopUp,
+            onTap: c.seleccionarTap,
           ),
           body: TabBarView(
             children: [
@@ -34,9 +36,18 @@ class ReportePage extends StatelessWidget {
                     return EntradaReporteForm(
                       form: c.entradaForm,
                       hourSelected: c.hourSelected,
+                      dateSelected: c.dateSelected,
+                      abrirComentario: c.abrirComentario,
+                      scrollController: c.formScrollController,
                     );
                   } else if(c.tipoReporte == "Salida") {
-
+                    return SalidaReporteForm(
+                      form: c.salidaForm,
+                      hourSelected: c.hourSelected,
+                      dateSelected: c.dateSelected,
+                      abrirComentario: c.abrirComentario,
+                      scrollController: c.formScrollController,
+                    );
                   } else if(c.tipoReporte == "Daños") {
 
                   }

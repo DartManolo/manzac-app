@@ -89,8 +89,8 @@ class ToolService extends GetxController {
         int.parse(dateArr[2]), int.parse(dateArr[1]), int.parse(dateArr[0]));
   }
 
-  String fechaHoy() {
-    var fechaHoy = DateFormat("dd-MM-yyyy").format(DateTime.now()).toString();
+  String fechaHoy([String formato = "dd-MM-yyyy"]) {
+    var fechaHoy = DateFormat(formato).format(DateTime.now()).toString();
     return fechaHoy;
   }
 
