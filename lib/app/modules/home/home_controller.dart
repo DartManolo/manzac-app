@@ -53,6 +53,10 @@ class HomeController extends GetInjection {
 
   Future<void> cerrarSesion() async {
     try {
+      var verify = await ask("Cerrar sesión", "¿Desea continuar?");
+      if(!verify) {
+        return;
+      }
       isBusy();
       var localStorage = await storage.get<LocalStorage>(LocalStorage());
       localStorage!.login = false;

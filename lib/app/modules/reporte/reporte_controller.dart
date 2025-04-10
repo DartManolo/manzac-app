@@ -27,6 +27,7 @@ class ReporteController extends GetInjection {
 
   String tipoReporte = "";
   DateTime? fechaHoy;
+  String fechaReporte = "";
 
   ScrollController galeriaScrollController = ScrollController();
   ScrollController formScrollController = ScrollController();
@@ -59,6 +60,10 @@ class ReporteController extends GetInjection {
   void _init() {
     try {
       tipoReporte = Get.arguments['tipo'];
+      var inicio = tool.fecha('EEEE, dd');
+      var mes = tool.fecha('MMMM');
+      var anio = tool.fecha('y');
+      fechaReporte = "$inicio de $mes de $anio";
       _cargarOpcionesPopup();
       if(tipoReporte == "Entrada") {
         entradaForm.horaInicio.text = tool.horaHoy();
@@ -66,7 +71,8 @@ class ReporteController extends GetInjection {
         entradaForm.fechaDespacho.text = tool.fechaHoy('dd/MM/yyyy');
         entradaForm.fechaVencimiento.text = tool.fechaHoy('dd/MM/yyyy');
       } else if(tipoReporte == "Salida") {
-
+        salidaForm.horaInicio.text = tool.horaHoy();
+        salidaForm.horaFin.text = tool.horaHoy();
       }
     } finally {
       update();
@@ -113,6 +119,7 @@ class ReporteController extends GetInjection {
         AppRoutes.reporteView,
         arguments: {
           'tipoReporte' : tipoReporte,
+          'fechaReporte' : fechaReporte,
           'formData' : form,
           'reporteImagenes' : reporteImagenes,
         },

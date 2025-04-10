@@ -10,6 +10,7 @@ import '../services/storage_service.dart';
 import '../services/tool_service.dart';
 import '../widgets/dialogs/loading_dialog.dart';
 import '../widgets/dialogs/modal_dialog.dart';
+import '../widgets/dialogs/pregunta_dialog.dart';
 import 'color_list.dart';
 
 abstract class GetInjection extends GetxController {
@@ -97,6 +98,32 @@ abstract class GetInjection extends GetxController {
       fontSize: 16.0,
       webShowClose: true,
     );
+  }
+
+  Future<bool> ask(String mensaje, String pregunta,
+      {String si = "Aceptar", String no = "Cancelar"}) async {
+    try {
+      var askDialog = Get.context!;
+      bool respuesta = false;
+      await showDialog(
+          context: askDialog,
+          builder: (BuildContext context) {
+            context = context;
+            return PreguntaDialog(
+              mensaje: mensaje,
+              pregunta: pregunta,
+              siBoton: si,
+              noBoton: no,
+              respuesta: (resp) {
+                respuesta = resp;
+                Navigator.of(context).pop();
+              },
+            );
+          });
+      return respuesta;
+    } catch (e) {
+      return false;
+    }
   }
 
   void modal({List<Widget> widgets = const [], double height = 150}) {

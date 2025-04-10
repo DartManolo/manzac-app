@@ -54,7 +54,6 @@ class LoginController extends GetInjection {
         msg("Usuario y/o contraseña incorrecto", MsgType.warning);
         return;
       }
-      tool.debug(result, true);
       GetInjection.administrador = result.perfil == Literals.perfilAdministrador;
       GetInjection.perfil = result.perfil!;
       localStorage!.token = result.token;
@@ -159,7 +158,6 @@ class LoginController extends GetInjection {
       );
       var result = await loginRepository.actualizarPasswordAsync(loginForm);
       if(result == null || !result) {
-        tool.debug(result);
         throw Exception();
       }
       await tool.wait(1);

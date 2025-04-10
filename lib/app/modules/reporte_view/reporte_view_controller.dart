@@ -36,6 +36,7 @@ class ReporteViewController extends GetInjection {
   Future<void> _init() async {
     var arguments = Get.arguments;
     tipoReporte = arguments['tipoReporte'];
+    fechaReporte = arguments['fechaReporte'];
     tituloVisor = "Reporte de $tipoReporte";
     if(arguments['reporteNuevo'] != null) {
       reporteNuevo = arguments['reporteNuevo'] as bool;
@@ -368,10 +369,6 @@ class ReporteViewController extends GetInjection {
   }
 
   void _crearDatosAdicionalesReporte() {
-    var inicio = tool.fecha('EEEE, dd');
-    var mes = tool.fecha('MMMM');
-    var anio = tool.fecha('y');
-    fechaReporte = "$inicio de $mes de $anio";
     if(tipoReporte == "Entrada") {
       imagenesTitulo = "IMÁGENES DE LA DESCARGA";
       observacionesReporte = _validaText(entradaForm.observaciones);

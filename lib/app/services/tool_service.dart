@@ -7,11 +7,25 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 
 import '../utils/literals.dart';
 
 class ToolService extends GetxController {
+  final Connectivity _conneccion = Connectivity();
+
+  Future<bool> isOnline() async {
+    try {
+      var coneccion = await _conneccion.checkConnectivity();
+      var wifi = coneccion.contains(ConnectivityResult.wifi);
+      var datosMobiles = coneccion.contains(ConnectivityResult.mobile);
+      return wifi || datosMobiles;
+    } catch (_) {
+      return false;
+    }
+  }
+
   String guid() {
     const uuid = Uuid();
     var newGuid = uuid.v4();
