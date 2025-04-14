@@ -8,6 +8,20 @@
       jars="C:\Users\52312\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-stdlib-jdk7\1.8.22\4dabb8248310d833bb6a8b516024a91fd3d275c\kotlin-stdlib-jdk7-1.8.22.jar"
       resolved="org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"/>
   <library
+      name=":@@:connectivity_plus::release"
+      jars="C:\Users\52312\.gradle\caches\8.10.2\transforms\06bfeb2fb3051abd82eb10546a4e277a\transformed\out\jars\classes.jar;C:\Users\52312\.gradle\caches\8.10.2\transforms\06bfeb2fb3051abd82eb10546a4e277a\transformed\out\jars\libs\R.jar"
+      resolved="dev.fluttercommunity.plus.connectivity:connectivity_plus:1.0-SNAPSHOT"
+      partialResultsDir="C:\dev\manzac-app\build\connectivity_plus\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
+      folder="C:\Users\52312\.gradle\caches\8.10.2\transforms\06bfeb2fb3051abd82eb10546a4e277a\transformed\out"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
       name=":@@:flutter_plugin_android_lifecycle::release"
       jars="C:\Users\52312\.gradle\caches\8.10.2\transforms\433aa327c82cab945e34ee93bb9c1c0e\transformed\out\jars\classes.jar;C:\Users\52312\.gradle\caches\8.10.2\transforms\433aa327c82cab945e34ee93bb9c1c0e\transformed\out\jars\libs\R.jar"
       resolved="io.flutter.plugins.flutter_plugin_android_lifecycle:flutter_plugin_android_lifecycle:1.0"

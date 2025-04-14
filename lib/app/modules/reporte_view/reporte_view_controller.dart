@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:money_formatter/money_formatter.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -109,7 +110,7 @@ class ReporteViewController extends GetInjection {
           [
             _validaText(entradaForm.refCliente),
             _validaText(entradaForm.bultos),
-            _validaText(entradaForm.peso),
+            _formatterNumero(entradaForm.peso),
             _validaText(entradaForm.terminal)
           ]),
         _filaTablaEstandar(
@@ -132,8 +133,8 @@ class ReporteViewController extends GetInjection {
             [
               _validaText(salidaForm.referenciaLm),
               _validaText(salidaForm.imo),
-              _validaText(entradaForm.horaInicio),
-              _validaText(entradaForm.horaFin)
+              _validaText(salidaForm.horaInicio),
+              _validaText(salidaForm.horaFin)
             ]),
           _filaTablaEstandar(
             ['Cliente', 'Mercancia', 'Agente aduanal', 'Ejecutivo'],
@@ -162,7 +163,7 @@ class ReporteViewController extends GetInjection {
             [
               _validaText(salidaForm.refCliente),
               _validaText(salidaForm.bultos),
-              _validaText(salidaForm.peso),
+              _formatterNumero(salidaForm.peso),
               _validaText(salidaForm.terminal)
             ]),
           _filaTablaEstandar(
@@ -384,6 +385,21 @@ class ReporteViewController extends GetInjection {
       return "\n";
     }
     return texto;
+  }
+
+  String _formatterNumero(TextEditingController controller) {
+    var texto = controller.text;
+    if(texto == "") {
+      return "0";
+    }
+    try {
+      var numeroFormatter = MoneyFormatter(amount: double.parse(texto)).output.nonSymbol;
+      var numero = numeroFormatter.replaceAll(",", ".").replaceAll("\$", "");
+      numero = numero.substring(0, numero.length - 3);
+      return numero;
+    } catch(e) {
+      return "0";
+    }
   }
 }
 

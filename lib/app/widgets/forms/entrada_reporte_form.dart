@@ -157,6 +157,7 @@ class EntradaReporteForm extends StatelessWidget {
               text: 'Peso',
               controller: form.peso,
               focusNode: form.pesoFocus,
+              keyboardType: TextInputType.number,
             ),
           ),
           SliverToBoxAdapter(
@@ -198,8 +199,8 @@ class EntradaReporteForm extends StatelessWidget {
                 Expanded(
                   child: DateTextform(
                     text: 'Fecha vencimiento',
-                    controller: form.fechaDespacho,
-                    focusNode: form.fechaDespachoFocus,
+                    controller: form.fechaVencimiento,
+                    focusNode: form.fechaVencimientoFocus,
                     dateSelected: dateSelected,
                     icon: FontAwesome.calendar_times_o,
                     formato: 'dd/MM/yyyy',

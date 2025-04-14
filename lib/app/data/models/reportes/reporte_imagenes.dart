@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class ReporteImagenes {
+  String? idTarja;
   String? idImagen;
   String? formato;
   int? fila;
@@ -9,6 +10,7 @@ class ReporteImagenes {
   String? tipo;
 
   ReporteImagenes({
+    this.idTarja = "",
     this.idImagen = "",
     this.formato = "",
     this.fila = 0,
@@ -18,6 +20,7 @@ class ReporteImagenes {
   });
 
   Map toJson() => {
+    'idTarja'   : idTarja,
     'idImagen'  : idImagen,
     'formato'   : formato,
     'fila'      : fila,
@@ -28,11 +31,31 @@ class ReporteImagenes {
 
   ReporteImagenes.fromString(String jsonString) {
     var json = jsonDecode(jsonString);
+    idTarja = json['idTarja'] ?? "";
     idImagen = json['login'] ?? "";
     formato = json['idUsuario'] ?? "";
     fila = json['usuario'] ?? 0;
     posicion = json['password'] ?? 0;
     base64 = json['perfil'] ?? "";
     tipo = json['nombre'] ?? "";
+  }
+
+  List<ReporteImagenes> fromArray(List<dynamic>? array) {
+    if(array != null) {
+      List<ReporteImagenes> jsonArray = [];
+      for(var json in array) {
+        jsonArray.add(ReporteImagenes(
+          idTarja: json['idTarja'] ?? "",
+          idImagen: json['idImagen'] ?? "",
+          formato: json['formato'] ?? "",
+          fila: json['fila'] ?? 0,
+          posicion: json['posicion'] ?? 0,
+          base64: json['base64'] ?? "",
+          tipo: json['tipo'] ?? "",
+        ));
+      }
+      return jsonArray;
+    }
+    return [];
   }
 }

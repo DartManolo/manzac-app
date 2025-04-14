@@ -28,6 +28,7 @@ dependencies:
   auto_size_text_plus: ^3.0.2
   toggle_switch: ^2.3.0
   image: ^4.5.3
+  money_formatter: ^0.0.6
   image_picker: ^1.1.2
   photo_view: ^0.15.0
   flutter_slidable: ^4.0.0

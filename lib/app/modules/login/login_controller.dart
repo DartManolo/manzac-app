@@ -90,6 +90,10 @@ class LoginController extends GetInjection {
       if(!_validarFormPassword()) {
         return;
       }
+      var verify = await ask("Recuperar contraseña", "¿Desea continuar con el proceso?");
+      if(!verify) {
+        return;
+      }
       isBusy();
       var passwordForm = LoginForm(
         usuario: usuario.text,

@@ -18,14 +18,17 @@ class HeaderDrawer extends StatelessWidget {
       accountName: AutoSizeText(
         nombre,
         maxLines: 1,
-        minFontSize: 7,
-        maxFontSize: 16,
+        minFontSize: 6,
+        maxFontSize: 13,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
       ),
       accountEmail: AutoSizeText(
         usuario,
         maxLines: 1,
-        minFontSize: 7,
-        maxFontSize: 14,
+        minFontSize: 6,
+        maxFontSize: 13,
       ),
       currentAccountPicture: Container(
         width: 130,

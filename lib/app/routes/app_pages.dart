@@ -10,6 +10,8 @@ import '../modules/reporte/reporte_binding.dart';
 import '../modules/reporte/reporte_page.dart';
 import '../modules/reporte_view/reporte_view_binding.dart';
 import '../modules/reporte_view/reporte_view_page.dart';
+import '../modules/usuarios/usuarios_binding.dart';
+import '../modules/usuarios/usuarios_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -38,6 +40,11 @@ class AppPages {
       name: AppRoutes.reporte,
       page: () => const ReportePage(),
       binding: ReporteBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.usuarios,
+      page: () => const UsuariosPage(),
+      binding: UsuariosBinding(),
     ),
   ];
 }

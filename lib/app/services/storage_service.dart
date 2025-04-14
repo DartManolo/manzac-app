@@ -40,7 +40,7 @@ class StorageService {
     try {
       var isArray = S.toString().contains("List<");
       var jsonData = jsonDecode(jsonEncode(elem));
-      var tabla = isArray ? jsonData[0]['tabla'] : jsonData['tabla'];
+      var tabla = jsonData['tabla'];
       var dataStorage = await _storage.read(
         key: tabla,
         aOptions: _getAndroidOptions(),
@@ -54,6 +54,7 @@ class StorageService {
         ? elem.fromArray(jsonData)
         : elem.fromJson(jsonData);
     } catch(e) {
+      print(e);
       return null;
     }
   }
@@ -65,7 +66,7 @@ class StorageService {
       var tabla = isArray ? jsonData[0]['tabla'] : jsonData['tabla'];
       await _storage.write(
         key: tabla,
-        value: jsonEncode(jsonData),
+        value: jsonEncode(isArray ? [] : jsonData),
         aOptions: _getAndroidOptions(),
       );
       return true;
@@ -74,7 +75,7 @@ class StorageService {
     }
   }
 
-  Future<void> update(dynamic elem) async {
+  Future<bool> update(dynamic elem) async {
     try {
       var jsonData = jsonDecode(jsonEncode(elem));
       var tabla = _tool.isArray(jsonData) ? jsonData[0]['tabla'] : jsonData['tabla'];
@@ -87,10 +88,9 @@ class StorageService {
         value: jsonEncode(jsonData),
         aOptions: _getAndroidOptions(),
       );
-      await Future.delayed(1.seconds);
-      return;
+      return true;
     } catch(e) {
-      return;
+      return false;
     }
   }
 

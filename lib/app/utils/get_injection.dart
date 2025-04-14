@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:manzac_app/app/widgets/dialogs/alerta_dialog.dart';
 
+import '../data/models/reportes/reporte_alta_local.dart';
 import '../data/repositories/login_repository.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
@@ -18,10 +19,15 @@ abstract class GetInjection extends GetxController {
   final tool = Get.find<ToolService>();
   final api = Get.find<ApiService>();
 
+  final loginRepository = Get.find<LoginRepository>();
+
   static bool administrador = false;
   static String perfil = "";
 
-  final loginRepository = Get.find<LoginRepository>();
+  Future<void> localStorageClassInit() async {
+    await ReporteAltaLocal.init();
+    return;
+  }
 
   bool _loadingOpen = false;
 

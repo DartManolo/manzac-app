@@ -19,8 +19,19 @@ class ItemDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: selected ? Color(ColorList.sys[0]) : Colors.grey[700]),
-      title: Text(text),
+      leading: Icon(
+        icon,
+        size: 28,
+        color: selected ? Color(ColorList.sys[0]) : Color(ColorList.sys[1]),
+      ),
+      title: Text(
+        text,
+        style: TextStyle(
+          fontSize: 15,
+          color: Color(ColorList.sys[0]),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       tileColor: selected ? Color(ColorList.sys[0]).withValues(alpha: 0.2) : null,
       onTap: () {
         Navigator.pop(context);

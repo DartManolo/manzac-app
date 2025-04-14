@@ -8,7 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../data/models/reportes/reporte_alta_local.dart';
+import '../../data/models/reportes/reporte_entrada.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
+import '../../data/models/reportes/reporte_salida.dart';
 import '../../data/models/system/menu_popup_opciones.dart';
 import '../../routes/app_routes.dart';
 import '../../utils/color_list.dart';
@@ -20,11 +23,13 @@ import '../../widgets/forms/mover_fila_form.dart';
 import '../../widgets/textformfields/entrada_textformfield.dart';
 import '../../widgets/textformfields/salida_textformfield.dart';
 import '../../widgets/textforms/multiline_textform.dart';
+import '../home/home_controller.dart';
 
 class ReporteController extends GetInjection {
   EntradaTextformfield entradaForm = EntradaTextformfield();
   SalidaTextformfield salidaForm = SalidaTextformfield();
 
+  ReporteAltaLocal? reporteAltaLocal;
   String tipoReporte = "";
   DateTime? fechaHoy;
   String fechaReporte = "";
@@ -79,7 +84,11 @@ class ReporteController extends GetInjection {
     }
   }
 
-  void cerrar() {
+  Future<void> cerrar() async {
+    var verify = await ask("Los cambios se perderán", "¿Desea salir?");
+    if(!verify) {
+      return;
+    }
     Get.back();
   }
 
@@ -97,6 +106,7 @@ class ReporteController extends GetInjection {
         await generarReporte();
         break;
       case "1":
+        await soloGuardar();
         break;
       case "2":
         break;
@@ -126,6 +136,27 @@ class ReporteController extends GetInjection {
       );
     } finally {
       update();
+    }
+  }
+
+  Future<void> soloGuardar() async {
+    try {
+      isBusy();
+      var reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
+      tool.debug(reportesLocal, true);
+      _crearAltaData();
+      reportesLocal!.add(reporteAltaLocal!);
+      var guardar = await storage.update(reportesLocal);
+      if(!guardar) {
+        throw Exception();
+      }
+      await tool.wait(1);
+      isBusy(false);
+      Get.back();
+      await Get.find<HomeController>().recargarReportesLocal();
+      msg("Reporte guardado correctamente", MsgType.success);
+    } catch(e) {
+      msg("Ocurrió un error al intentar guardar el reporte", MsgType.error);
     }
   }
   
@@ -535,24 +566,86 @@ class ReporteController extends GetInjection {
     salidaForm.placasFocus.unfocus();
     salidaForm.licenciaFocus.unfocus();
   }
-}
 
-/*isBusy();
-      var fotoCamara = await seleccionarFoto.pickImage(
-        source: ImageSource.camera,
+  void _crearAltaData() {
+    var idTarja = tool.guid();
+    reporteAltaLocal = ReporteAltaLocal(
+      tipo: tipoReporte,
+    );
+    if(tipoReporte == "Entrada") {
+      var reporteEntradaAlta = ReporteEntrada(    
+        idTarja: idTarja,
+        tipo: tipoReporte.toUpperCase(),
+        fecha: fechaReporte,
+        referenciaLm: entradaForm.referenciaLm.text,
+        imo: entradaForm.imo.text,
+        horaInicio: entradaForm.horaInicio.text,
+        horaFin: entradaForm.horaFin.text,
+        cliente: entradaForm.cliente.text,
+        mercancia: entradaForm.mercancia.text,
+        agenteAduanal: entradaForm.agenteAduanal.text,
+        ejecutivo: entradaForm.ejecutivo.text,
+        contenedor: entradaForm.contenedor.text,
+        pedimento: entradaForm.pedimento.text,
+        sello: entradaForm.sello.text,
+        buque: entradaForm.buque.text,
+        refCliente: entradaForm.refCliente.text,
+        bultos: entradaForm.bultos.text,
+        peso: entradaForm.peso.text,
+        terminal: entradaForm.terminal.text,
+        fechaDespacho: entradaForm.fechaDespacho.text,
+        diasLibres: entradaForm.diasLibres.text,
+        fechaVencimiento: entradaForm.fechaVencimiento.text,
+        movimiento: entradaForm.movimiento.text,
+        observaciones: entradaForm.observaciones.text,
+        imagenes: _generarListaImagenesAlta(idTarja),
       );
-      tool.debug(fotoCamara);
-      if (fotoCamara != null) {
-        var fotoTemp = File(fotoCamara.path);
-        fotografia = await tool.imagenResize(fotoTemp);
-        var base64Foto = await tool.imagen2base64(fotografia);
-        tool.debug("------------------------- BASE64 -------------------------");
-        tool.debug(base64Foto);
-        isBusy(false);
-        Get.toNamed(
-          AppRoutes.reportes,
-          arguments: {
-            'base64Img' : base64Foto,
-          },
-        );
-      }*/
+      reporteAltaLocal!.reporteEntrada = reporteEntradaAlta;
+    } else if(tipoReporte == "Salida") {
+      var reporteSalidaAlta = ReporteSalida(    
+        idTarja: idTarja,
+        tipo: tipoReporte.toUpperCase(),
+        fecha: fechaReporte,
+        referenciaLm: salidaForm.referenciaLm.text,
+        imo: salidaForm.imo.text,
+        horaInicio: salidaForm.horaInicio.text,
+        horaFin: salidaForm.horaFin.text,
+        cliente: salidaForm.cliente.text,
+        mercancia: salidaForm.mercancia.text,
+        agenteAduanal: salidaForm.agenteAduanal.text,
+        ejecutivo: salidaForm.ejecutivo.text,
+        contenedor: salidaForm.contenedor.text,
+        pedimento: salidaForm.pedimento.text,
+        sello: salidaForm.sello.text,
+        buque: salidaForm.buque.text,
+        refCliente: salidaForm.refCliente.text,
+        bultos: salidaForm.bultos.text,
+        peso: salidaForm.peso.text,
+        terminal: salidaForm.terminal.text,
+        transporte: salidaForm.transporte.text,
+        operador: salidaForm.operador.text,
+        placas: salidaForm.placas.text,
+        licencia: salidaForm.licencia.text,
+        observaciones: salidaForm.observaciones.text,
+        imagenes: _generarListaImagenesAlta(idTarja),
+      );
+      reporteAltaLocal!.reporteSalida = reporteSalidaAlta;
+    }
+  }
+
+  List<ReporteImagenes> _generarListaImagenesAlta(String idTarja) {
+    List<ReporteImagenes> listaAlta = [];
+    for (var i = 0; i < reporteImagenes.length; i++) {
+      for (var j = 0; j < reporteImagenes[i].length; j++) {
+        var imagenReporte = reporteImagenes[i][j];
+        if(imagenReporte.base64 == "") {
+          continue;
+        }
+        imagenReporte.idTarja = idTarja;
+        imagenReporte.formato = "jpg";
+        listaAlta.add(reporteImagenes[i][j]);
+      }
+    }
+    return listaAlta;
+  }
+}

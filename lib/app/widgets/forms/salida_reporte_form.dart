@@ -156,6 +156,7 @@ class SalidaReporteForm extends StatelessWidget {
               text: 'Peso',
               controller: form.peso,
               focusNode: form.pesoFocus,
+              keyboardType: TextInputType.number,
             ),
           ),
           SliverToBoxAdapter(

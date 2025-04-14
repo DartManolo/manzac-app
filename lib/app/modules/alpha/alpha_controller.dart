@@ -31,6 +31,7 @@ class AlphaController extends GetInjection {
       _binding = _localStorage!.login! ? HomeBinding() : LoginBinding();
       GetInjection.administrador = _localStorage!.perfil! == Literals.perfilAdministrador;
       GetInjection.perfil = _localStorage!.perfil!;
+      await localStorageClassInit();
       return;
     } catch(e) {
       return;

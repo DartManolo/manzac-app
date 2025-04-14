@@ -18,104 +18,113 @@ class ReportePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ReporteController>(
-      builder: (c) => DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: MenuAppbar(
-            texto: "Crear reporte de ${c.tipoReporte}",
-            opciones: c.opcionesConsulta,
-            cerrar: c.cerrar,
-            onTapPopup: c.operacionPopUp,
-            onTap: c.seleccionarTap,
-          ),
-          body: TabBarView(
-            children: [
-              Builder(
-                builder: (context) {
-                  if(c.tipoReporte == "Entrada") {
-                    return EntradaReporteForm(
-                      form: c.entradaForm,
-                      hourSelected: c.hourSelected,
-                      dateSelected: c.dateSelected,
-                      abrirComentario: c.abrirComentario,
-                      scrollController: c.formScrollController,
-                    );
-                  } else if(c.tipoReporte == "Salida") {
-                    return SalidaReporteForm(
-                      form: c.salidaForm,
-                      hourSelected: c.hourSelected,
-                      dateSelected: c.dateSelected,
-                      abrirComentario: c.abrirComentario,
-                      scrollController: c.formScrollController,
-                    );
-                  } else if(c.tipoReporte == "Daños") {
-
-                  }
-                  return SizedBox();
-                }
-              ),
-              Column(
-                children: [
-                  SizedBox(height: 5,),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    child: Row(
-                      children: [
-                        ToggleSwitch(
-                          initialLabelIndex: c.tipoFila,
-                          minWidth: 80,
-                          totalSwitches: 2,
-                          labels: ['2 fotos', '3 fotos'],
-                          activeBgColor: [Color(ColorList.sys[0])],
-                          inactiveBgColor: Color(ColorList.sys[2]),
-                          onToggle: c.tipoFilaChanged,
-                        ),
-                        Expanded(
-                          child: SolidButton(
-                            texto: 'Agregar',
-                            fondoColor: ColorList.sys[1],
-                            textoColor: ColorList.sys[3],
-                            height: 60,
-                            onPressed: () => c.agregarFilaImagenes(),
-                            onLongPress: () {},
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        OpcionSwitch(
-                          value: c.usarGaleria,
-                          text: "Usar galería",
-                          onChanged: c.usarGaleriaChanged,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Builder(
-                    builder: (context) {
-                      if(c.reporteImagenes.isNotEmpty) {
-                        return GaleriaReporteForm(
-                          scrollController: c.galeriaScrollController,
-                          reporteImagenes: c.reporteImagenes,
-                          usarGaleria: c.usarGaleria,
-                          elimarFilaFotografia: c.elimarFilaFotografia,
-                          configurarImagen: c.configurarImagen,
-                          configurarFila: c.configurarFila,
-                          tomarFotografia: c.tomarFotografia,
-                        );
-                      } else {
-                        return SinGaleriaForm(); 
-                      }
+      builder: (c) => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (pop, result) async {
+          if(pop) {
+            return;
+          }
+          await c.cerrar();
+        },
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: MenuAppbar(
+              texto: "Crear reporte de ${c.tipoReporte}",
+              opciones: c.opcionesConsulta,
+              cerrar: c.cerrar,
+              onTapPopup: c.operacionPopUp,
+              onTap: c.seleccionarTap,
+            ),
+            body: TabBarView(
+              children: [
+                Builder(
+                  builder: (context) {
+                    if(c.tipoReporte == "Entrada") {
+                      return EntradaReporteForm(
+                        form: c.entradaForm,
+                        hourSelected: c.hourSelected,
+                        dateSelected: c.dateSelected,
+                        abrirComentario: c.abrirComentario,
+                        scrollController: c.formScrollController,
+                      );
+                    } else if(c.tipoReporte == "Salida") {
+                      return SalidaReporteForm(
+                        form: c.salidaForm,
+                        hourSelected: c.hourSelected,
+                        dateSelected: c.dateSelected,
+                        abrirComentario: c.abrirComentario,
+                        scrollController: c.formScrollController,
+                      );
+                    } else if(c.tipoReporte == "Daños") {
+        
                     }
-                  ),
-                ],
-              ),
-            ],
+                    return SizedBox();
+                  }
+                ),
+                Column(
+                  children: [
+                    SizedBox(height: 5,),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      child: Row(
+                        children: [
+                          ToggleSwitch(
+                            initialLabelIndex: c.tipoFila,
+                            minWidth: 80,
+                            totalSwitches: 2,
+                            labels: ['2 fotos', '3 fotos'],
+                            activeBgColor: [Color(ColorList.sys[0])],
+                            inactiveBgColor: Color(ColorList.sys[2]),
+                            onToggle: c.tipoFilaChanged,
+                          ),
+                          Expanded(
+                            child: SolidButton(
+                              texto: 'Agregar',
+                              fondoColor: ColorList.sys[1],
+                              textoColor: ColorList.sys[3],
+                              height: 60,
+                              onPressed: () => c.agregarFilaImagenes(),
+                              onLongPress: () {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          OpcionSwitch(
+                            value: c.usarGaleria,
+                            text: "Usar galería",
+                            onChanged: c.usarGaleriaChanged,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Builder(
+                      builder: (context) {
+                        if(c.reporteImagenes.isNotEmpty) {
+                          return GaleriaReporteForm(
+                            scrollController: c.galeriaScrollController,
+                            reporteImagenes: c.reporteImagenes,
+                            usarGaleria: c.usarGaleria,
+                            elimarFilaFotografia: c.elimarFilaFotografia,
+                            configurarImagen: c.configurarImagen,
+                            configurarFila: c.configurarFila,
+                            tomarFotografia: c.tomarFotografia,
+                          );
+                        } else {
+                          return SinGaleriaForm(); 
+                        }
+                      }
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
