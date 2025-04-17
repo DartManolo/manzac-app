@@ -19,6 +19,7 @@ dependencies:
   connectivity_plus: ^6.1.3
   permission_handler: ^11.4.0
   cupertino_icons: ^1.0.8
+  bottom_navy_bar: ^6.1.0
   material_color_gen: ^2.0.0
   flutter_vector_icons: ^2.0.0
   fluttertoast: ^8.2.12

@@ -6,11 +6,13 @@ class TituloContainer extends StatelessWidget {
   final String texto;
   final double size;
   final List<double> ltrbp;
+  final bool bold;
   const TituloContainer({
     super.key,
     this.texto = '',
     this.size = 22,
     this.ltrbp = const [10, 10, 10, 10,],
+    this.bold = true,
   });
 
   @override
@@ -26,7 +28,7 @@ class TituloContainer extends StatelessWidget {
         texto,
         style: TextStyle(
           fontSize: size,
-          fontWeight: FontWeight.bold,
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
           color: Color(ColorList.sys[0]),
         ),
       ),

@@ -1,16 +1,17 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:auto_size_text_plus/auto_size_text_plus.dart';
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 
 import '../../utils/color_list.dart';
-import '../../widgets/buttons/circular_buttons.dart';
 import '../../widgets/buttons/solid_button.dart';
-import '../../widgets/containers/card_container.dart';
+import '../../widgets/combos/selection_combo.dart';
 import '../../widgets/drawers/header_drawer.dart';
 import '../../widgets/drawers/item_drawer.dart';
+import '../../widgets/forms/ajustes_form.dart';
+import '../../widgets/forms/pendientes_listado_form.dart';
 import '../../widgets/forms/sin_reportes_local_form.dart';
 import '../../widgets/textforms/date_textform.dart';
 import 'home_controller.dart';
@@ -26,23 +27,8 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
         child: Scaffold(
           backgroundColor: Color(ColorList.ui[1]),
           appBar: AppBar(
-            title: Text(''),
+            title: SizedBox.shrink(),
             backgroundColor: Color(ColorList.ui[1]),
-            bottom: TabBar(
-              onTap: c.cambiarOpcionMenu,
-              dividerColor: Colors.transparent,
-              labelColor: Color(ColorList.sys[0]),
-              indicatorColor: Color(ColorList.sys[0]),
-              unselectedLabelColor: Color(ColorList.theme[4]),
-              tabs: [
-                Tab(
-                  text: 'Reportes',
-                ),
-                Tab(
-                  text: 'Pendientes',
-                ),
-              ],
-            ),
           ),
           drawer: Drawer(
             child: Column(
@@ -72,18 +58,55 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
               ],
             ),
           ),
-          body: TabBarView(
+          bottomNavigationBar: BottomNavyBar(
+            selectedIndex: c.menuIndex,
+            onItemSelected: c.menuItemSelected,
+            showElevation: false,
+            items: <BottomNavyBarItem>[
+              BottomNavyBarItem(
+                title: Text('Consultar'),
+                icon: Icon(Icons.manage_search_outlined),
+                activeColor: Color(ColorList.sys[0]),
+              ),
+              BottomNavyBarItem(
+                title: Text('Pendientes'),
+                icon: Icon(Icons.pending_actions_rounded),
+                activeColor: Color(ColorList.sys[0]),
+              ),
+              BottomNavyBarItem(
+                title: Text('Ajustes'),
+                icon: Icon(Icons.settings),
+                activeColor: Color(ColorList.sys[0]),
+              ),
+            ],
+          ),
+          body: PageView(
+            controller: c.menuController,
+            onPageChanged: c.menuPageChanged,
             children: [
               Column(
                 children: [
-                  SizedBox(height: 10,),
-                  DateTextform(
-                    height: 70,
-                    controller: c.fechaBusqueda,
-                    focusNode: c.fechaBusquedaFocus,
-                    dateSelected: c.dateSelected,
-                    text: 'Fecha consulta',
-                    formato: 'dd/MM/yyyy',
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DateTextform(
+                          height: 70,
+                          controller: c.fechaBusqueda,
+                          focusNode: c.fechaBusquedaFocus,
+                          dateSelected: c.dateSelected,
+                          text: 'Fecha consulta',
+                          formato: 'dd/MM/yyyy',
+                        ),
+                      ),
+                      Expanded(
+                        child: SelectionCombo(
+                          titulo: "- Tipo reporte -",
+                          controller: c.tipoReporteBusqueda,
+                          values: c.listaTiposReportes,
+                          icono: MaterialIcons.list_alt,
+                        ),
+                      ),
+                    ],
                   ),
                   Expanded(
                     child: Builder(
@@ -107,94 +130,11 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                   if(c.reportesLocal!.isNotEmpty) {
                     return Column(
                       children: [
-                        SizedBox(height: 10,),
-                        Expanded(
-                          child: Column(
-                            children: c.reportesLocal!.map((reporte) {
-                              var fecha = "";
-                              if(reporte.reporteEntrada != null) {
-                                fecha = reporte.reporteEntrada!.fecha!;
-                              } else if(reporte.reporteSalida != null) {
-                                fecha = reporte.reporteSalida!.fecha!;
-                              }
-                              return CardContainer(
-                                fondo: 0xFFC9CBCD,
-                                padding: const EdgeInsets.all(15),
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Tipo reporte:  ',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color(ColorList.sys[0]),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  reporte.tipo!,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w300,
-                                                    color: Color(ColorList.sys[0]),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10,),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Fecha creacion:  ',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color(ColorList.sys[0]),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                AutoSizeText(
-                                                  fecha,
-                                                  minFontSize: 7,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w300,
-                                                    color: Color(ColorList.sys[0]),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                                        child: Column(
-                                          children: [
-                                            CircularButton(
-                                              color: ColorList.sys[0],
-                                              colorIcono: ColorList.sys[3],
-                                              icono: Octicons.file_symlink_file,
-                                              onPressed: () => c.abrirReporte(reporte),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
+                        PendientesListadoForm(
+                          scrollController: c.pendientesScrollController,
+                          reportesLocal: c.reportesLocal,
+                          abrirReporte: c.gestionarReporteLocal,
+                          subirReportePendiente: c.subirReportePendiente,
                         ),
                         SolidButton(
                           ltrbm: [0, 20, 10, 0],
@@ -213,6 +153,15 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                     );
                   }
                 },
+              ),
+              AjustesForm(
+                idUsuarioMenu: c.idUsuarioMenu,
+                usuarioMenu: c.usuarioMenu,
+                nombreMenu: c.nombreMenu,
+                perfilMenu: c.perfilMenu,
+                scrollController: c.ajustesScrollController,
+                cambiarPasswordForm: c.cambiarPasswordForm,
+                reestablcerAplicacion: c.reestablcerAplicacion,
               ),
             ],
           ),

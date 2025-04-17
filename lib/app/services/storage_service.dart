@@ -54,7 +54,6 @@ class StorageService {
         ? elem.fromArray(jsonData)
         : elem.fromJson(jsonData);
     } catch(e) {
-      print(e);
       return null;
     }
   }

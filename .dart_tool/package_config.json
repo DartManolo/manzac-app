@@ -56,6 +56,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "bottom_navy_bar",
+      "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/bottom_navy_bar-6.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "characters",
       "rootUri": "file:///C:/Users/52312/AppData/Local/Pub/Cache/hosted/pub.dev/characters-1.4.0",
       "packageUri": "lib/",
@@ -662,7 +668,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-04-11T04:03:33.010224Z",
+  "generated": "2025-04-14T23:22:33.143747Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter",

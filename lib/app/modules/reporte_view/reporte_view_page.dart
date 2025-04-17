@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:printing/printing.dart';
 
+import '../../utils/color_list.dart';
 import 'reporte_view_controller.dart';
 
 class ReporteViewPage extends StatelessWidget {
@@ -19,6 +20,9 @@ class ReporteViewPage extends StatelessWidget {
           canChangePageFormat: false,
           canChangeOrientation: false,
           canDebug: false,
+          actionBarTheme: PdfActionBarTheme(
+            backgroundColor: Color(ColorList.sys[0]),
+          ),
         ),
       ),
     );

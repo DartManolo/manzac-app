@@ -24,6 +24,7 @@ class LoginController extends GetInjection {
 
   bool ocultarPassword = true;
   bool mantenerSesion = false;
+  bool usuarioTextEnabled = true;
 
   @override
   Future<void> onInit() async {
@@ -34,6 +35,7 @@ class LoginController extends GetInjection {
   Future<void> _init() async {
     var localStorage = await storage.get<LocalStorage>(LocalStorage());
     usuario.text = localStorage!.usuario!;
+    usuarioTextEnabled = localStorage.usuario == "";
     update();
     return;
   }
@@ -73,10 +75,6 @@ class LoginController extends GetInjection {
         binding: HomeBinding(),
         transition: Transition.rightToLeft,
         duration: 1.5.seconds,
-        arguments: {
-          "nombre" : "${result.nombres} ${result.apellidos}",
-          "usuario" : loginForm.usuario,
-        }
       );
     } catch(e) {
       msg("Ocurrió un error al iniciar sesión", MsgType.error);

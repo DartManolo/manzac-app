@@ -18,6 +18,8 @@ class Literals {
 
   static const String apiTrue = "true";
 
+  static const String advertenciaSalidaApp = 'Esta acción eliminará permanentemente toda la información almacenada en su dispositivo (reportes de salida, entrada y daños del menu pendientes), así como su información personal.';
+
   static const String regexEmail =
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
 }

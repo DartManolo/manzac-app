@@ -33,6 +33,8 @@ class ReporteController extends GetInjection {
   String tipoReporte = "";
   DateTime? fechaHoy;
   String fechaReporte = "";
+  bool editarReporte = false;
+  String idTarjaEditar = "";
 
   ScrollController galeriaScrollController = ScrollController();
   ScrollController formScrollController = ScrollController();
@@ -69,16 +71,27 @@ class ReporteController extends GetInjection {
       var mes = tool.fecha('MMMM');
       var anio = tool.fecha('y');
       fechaReporte = "$inicio de $mes de $anio";
-      _cargarOpcionesPopup();
-      if(tipoReporte == "Entrada") {
-        entradaForm.horaInicio.text = tool.horaHoy();
-        entradaForm.horaFin.text = tool.horaHoy();
-        entradaForm.fechaDespacho.text = tool.fechaHoy('dd/MM/yyyy');
-        entradaForm.fechaVencimiento.text = tool.fechaHoy('dd/MM/yyyy');
-      } else if(tipoReporte == "Salida") {
-        salidaForm.horaInicio.text = tool.horaHoy();
-        salidaForm.horaFin.text = tool.horaHoy();
+      if(Get.arguments['formEditar'] == null) {
+        if(tipoReporte == "Entrada") {
+          entradaForm.horaInicio.text = tool.horaHoy();
+          entradaForm.horaFin.text = tool.horaHoy();
+          entradaForm.fechaDespacho.text = tool.fechaHoy('dd/MM/yyyy');
+          entradaForm.fechaVencimiento.text = tool.fechaHoy('dd/MM/yyyy');
+        } else if(tipoReporte == "Salida") {
+          salidaForm.horaInicio.text = tool.horaHoy();
+          salidaForm.horaFin.text = tool.horaHoy();
+        }
+      } else {
+        editarReporte = true;
+        if(tipoReporte == "Entrada") {
+          entradaForm = Get.arguments['formEditar'] as EntradaTextformfield;
+        } else if(tipoReporte == "Salida") {
+          salidaForm = Get.arguments['formEditar'] as SalidaTextformfield;
+        }
+        reporteImagenes = Get.arguments['reporteImagenes'] as List<List<ReporteImagenes>>;
+        idTarjaEditar = Get.arguments['idTarja'];
       }
+      _cargarOpcionesPopup();
     } finally {
       update();
     }
@@ -143,9 +156,26 @@ class ReporteController extends GetInjection {
     try {
       isBusy();
       var reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
-      tool.debug(reportesLocal, true);
       _crearAltaData();
-      reportesLocal!.add(reporteAltaLocal!);
+      if(!editarReporte) {
+        reportesLocal!.add(reporteAltaLocal!);
+      } else {
+        for (var i = 0; i < reportesLocal!.length; i++) {
+          if(reportesLocal[i].tipo != tipoReporte) {
+            continue;
+          }
+          var idTarjaVerify = "";
+          if(tipoReporte == "Entrada") {
+            idTarjaVerify = reportesLocal[i].reporteEntrada!.idTarja!;
+          } else if(tipoReporte == "Salida") {
+            idTarjaVerify = reportesLocal[i].reporteSalida!.idTarja!;
+          }
+          if(idTarjaVerify != idTarjaEditar) {
+            continue;
+          }
+          reportesLocal[i] = reporteAltaLocal!;
+        }
+      }
       var guardar = await storage.update(reportesLocal);
       if(!guardar) {
         throw Exception();
@@ -568,7 +598,7 @@ class ReporteController extends GetInjection {
   }
 
   void _crearAltaData() {
-    var idTarja = tool.guid();
+    var idTarja = !editarReporte ? tool.guid() : idTarjaEditar;
     reporteAltaLocal = ReporteAltaLocal(
       tipo: tipoReporte,
     );

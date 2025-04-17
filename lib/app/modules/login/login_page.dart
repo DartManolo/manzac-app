@@ -30,6 +30,7 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
               text: "Usuario",
               ltrbp: const [20, 25, 20, 10],
               icon: MaterialIcons.person,
+              enabled: c.usuarioTextEnabled,
             ).fadeInLeft(delay: 1.seconds,),
             PasswordTextform(
               controller: c.password,
