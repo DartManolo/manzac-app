@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:photo_view/photo_view.dart';
 
 import '../../data/models/local_storage/local_storage.dart';
 import '../../data/models/login/login_form.dart';
@@ -13,9 +15,11 @@ import '../../data/models/reportes/reporte_alta_local.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
 import '../../data/models/system/menu_opciones.dart';
 import '../../routes/app_routes.dart';
+import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
 import '../../widgets/columns/password_column.dart';
 import '../../widgets/containers/basic_bottom_sheet_container.dart';
+import '../../widgets/textformfields/danios_textformfield.dart';
 import '../../widgets/textformfields/entrada_textformfield.dart';
 import '../../widgets/textformfields/salida_textformfield.dart';
 import '../../widgets/texts/combo_texts.dart';
@@ -29,6 +33,7 @@ class HomeController extends GetInjection {
   ScrollController ajustesScrollController = ScrollController();
   EntradaTextformfield entradaForm = EntradaTextformfield();
   SalidaTextformfield salidaForm = SalidaTextformfield();
+  DaniosTextformfield daniosForm = DaniosTextformfield();
   
   TextEditingController fechaBusqueda = TextEditingController();
   FocusNode fechaBusquedaFocus = FocusNode();
@@ -52,6 +57,7 @@ class HomeController extends GetInjection {
   bool mostrarAlertaPendientes = true;
   List<MenuOpciones> menuOpciones = [];
   bool cargandoReportes = true;
+  bool mayusculas = false;
 
   String idUsuarioMenu = "";
   String nombreMenu = "";
@@ -98,7 +104,7 @@ class HomeController extends GetInjection {
         ),
         MenuOpciones(
           titulo: "Registro de daños",
-          icono: MaterialCommunityIcons.truck_remove_outline,
+          icono: Octicons.container,
           accion: () => _abrirVista(AppRoutes.reporte, { "tipo" : "Daños" }),
         ),
       ];
@@ -113,7 +119,8 @@ class HomeController extends GetInjection {
       tipoReporteBusqueda.text = tiposReporte.first;
       _cargarTipoReporteBusquedaLista();
       var localStorage = await storage.get<LocalStorage>(LocalStorage());
-      idUsuarioMenu = localStorage!.idUsuario!;
+      mayusculas = localStorage!.mayusculas!;
+      idUsuarioMenu = localStorage.idUsuario!;
       nombreMenu = localStorage.nombre!;
       usuarioMenu = localStorage.usuario!;
       perfilMenu = localStorage.perfil!;
@@ -163,9 +170,15 @@ class HomeController extends GetInjection {
       fechaReporte = reporte.reporteSalida!.fecha!;
       idTarja = reporte.reporteSalida!.idTarja!;
       listaImagenes = reporte.reporteSalida!.imagenes!;
+    } else if(reporte.tipo! == "Daños") {
+      form = daniosForm;
+      fechaReporte = reporte.reporteDanio!.fecha!;
+      idTarja = reporte.reporteDanio!.idTarja!;
+      listaImagenes = reporte.reporteDanio!.imagenes!;
     }
     List<List<ReporteImagenes>> reporteImagenes = crearListaImagenes(listaImagenes);
     if(visualizar) {
+      var localStorage = await storage.get<LocalStorage>(LocalStorage());
       Get.toNamed(
         AppRoutes.reporteView,
         arguments: {
@@ -173,6 +186,7 @@ class HomeController extends GetInjection {
           'fechaReporte' : fechaReporte,
           'formData' : form,
           'reporteImagenes' : reporteImagenes,
+          'localStorage' : localStorage,
         },
       );
     } else {
@@ -311,6 +325,99 @@ class HomeController extends GetInjection {
     );
   }
 
+  Future<void> configMayusculas(bool mayus) async {
+    try {
+      isBusy();
+      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      localStorage!.mayusculas = mayus;
+      var actualizar = await storage.update(localStorage);
+      if(!actualizar) {
+        throw Exception();
+      }
+      mayusculas = mayus;
+      isBusy(false);
+    } catch(e) {
+      msg("Ocurrió un error al guardar la configuración", MsgType.error);
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> verFirma(String firma) async {
+    try {
+      isBusy();
+      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var firmaLocal = "";
+      if(firma == "OPERACIONES") {
+        firmaLocal = localStorage!.firmaOperaciones!;
+      } else if(firma == "GERENCIA") {
+        firmaLocal = localStorage!.firmaGerencia!;
+      }
+      if(firmaLocal == "") {
+        msg("No tiene una firma (${firma.toLowerCase()}) en la configuración");
+        return;
+      }
+      isBusy(false);
+      var imageBytes = base64Decode(firmaLocal);
+      var context = Get.context;
+      showMaterialModalBottomSheet(
+        // ignore: use_build_context_synchronously
+        context: context!,
+        expand: true,
+        enableDrag: false,
+        backgroundColor: Colors.transparent,
+        builder: (context) => BasicBottomSheetContainer(
+          context: context,
+          cerrar: true,
+          child: Column(
+            children: [
+              Text(
+                "Firma ${firma.toLowerCase()}",
+                style: TextStyle(
+                  color: Color(ColorList.sys[0]),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Expanded(
+                child: PhotoView(
+                  imageProvider: MemoryImage(imageBytes),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } catch(e) {
+      msg("Ocurrió un error al visualizar la firma", MsgType.error);
+    }
+  }
+
+  Future<void> configFirma(String firma) async {
+    try {
+      var fotoFirma = await seleccionarFoto.pickImage(
+        source: ImageSource.gallery,
+      );
+      if (fotoFirma != null) {
+        var fotoTemp = File(fotoFirma.path);
+        fotografia = await tool.imagenResize(fotoTemp, maxWidth: 160);
+        var base64Foto = await tool.imagen2base64(fotografia);
+        var localStorage = await storage.get<LocalStorage>(LocalStorage());
+        if(firma == "OPERACIONES") {
+          localStorage!.firmaOperaciones = base64Foto;
+        } else if(firma == "GERENCIA") {
+          localStorage!.firmaGerencia = base64Foto;
+        }
+        var actualizar = await storage.update(localStorage);
+        if(!actualizar) {
+          throw Exception();
+        }
+        msg("La firma de ${firma.toLowerCase()} se guardó correctamente", MsgType.success);
+      }
+    } catch(e) {
+      msg("Ocurrió un error al guardar la configuración de la firma", MsgType.error);
+    }
+  }
+
   void _filtrarBusquedaOnline() {
     try {
       _cargarTipoReporteBusquedaLista();
@@ -389,6 +496,43 @@ class HomeController extends GetInjection {
       salidaForm.placas.text = reporte.reporteSalida!.placas!;
       salidaForm.licencia.text = reporte.reporteSalida!.licencia!;
       salidaForm.observaciones.text = reporte.reporteSalida!.observaciones!;
+    } else if(reporte.tipo! == "Daños") {
+      daniosForm.version.text = reporte.reporteDanio!.version!;
+      daniosForm.clave.text = reporte.reporteDanio!.clave!;
+      daniosForm.fechaReporte.text = reporte.reporteDanio!.fechaReporte!;
+      daniosForm.lineaNaviera.text = reporte.reporteDanio!.lineaNaviera!;
+      daniosForm.cliente.text = reporte.reporteDanio!.cliente!;
+      daniosForm.numContenedor.text = reporte.reporteDanio!.numContenedor!;
+      daniosForm.vacio = reporte.reporteDanio!.vacio! == "X";
+      daniosForm.lleno = reporte.reporteDanio!.lleno! == "X";
+      daniosForm.d20 = reporte.reporteDanio!.d20! == "X";
+      daniosForm.d40 = reporte.reporteDanio!.d40! == "X";
+      daniosForm.hc = reporte.reporteDanio!.hc! == "X";
+      daniosForm.otro = reporte.reporteDanio!.otro! == "X";
+      daniosForm.estandar = reporte.reporteDanio!.estandar! == "X";
+      daniosForm.opentop = reporte.reporteDanio!.opentop! == "X";
+      daniosForm.flatRack = reporte.reporteDanio!.flatRack! == "X";
+      daniosForm.reefer = reporte.reporteDanio!.reefer! == "X";
+      daniosForm.reforzado = reporte.reporteDanio!.reforzado! == "X";
+      daniosForm.numSello.text = reporte.reporteDanio!.numSello!;
+      daniosForm.intPuertasIzq.text = reporte.reporteDanio!.intPuertasIzq!;
+      daniosForm.intPuertasDer.text = reporte.reporteDanio!.intPuertasDer!;
+      daniosForm.intPiso.text = reporte.reporteDanio!.intPiso!;
+      daniosForm.intTecho.text = reporte.reporteDanio!.intTecho!;
+      daniosForm.intPanelLateralIzq.text = reporte.reporteDanio!.intPanelLateralIzq!;
+      daniosForm.intPanelLateralDer.text = reporte.reporteDanio!.intPanelLateralDer!;
+      daniosForm.intPanelFondo.text = reporte.reporteDanio!.intPanelFondo!;
+      daniosForm.extPuertasIzq.text = reporte.reporteDanio!.extPuertasIzq!;
+      daniosForm.extPuertasDer.text = reporte.reporteDanio!.extPuertasDer!;
+      daniosForm.extPoste.text = reporte.reporteDanio!.extPoste!;
+      daniosForm.extPalanca.text = reporte.reporteDanio!.extPalanca!;
+      daniosForm.extGanchoCierre.text = reporte.reporteDanio!.extGanchoCierre!;
+      daniosForm.extPanelIzq.text = reporte.reporteDanio!.extPanelIzq!;
+      daniosForm.extPanelDer.text = reporte.reporteDanio!.extPanelDer!;
+      daniosForm.extPanelFondo.text = reporte.reporteDanio!.extPanelFondo!;
+      daniosForm.extCantonera.text = reporte.reporteDanio!.extCantonera!;
+      daniosForm.extFrisa.text = reporte.reporteDanio!.extFrisa!;
+      daniosForm.observaciones.text = reporte.reporteDanio!.observaciones!;
     }
   }
 

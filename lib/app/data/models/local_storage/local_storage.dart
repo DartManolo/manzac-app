@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class LocalStorage {
-  static const int _localStorageVersion = 2;
+  static const int _localStorageVersion = 1;
 
   String? tabla = "local_storage";
   int? version = _localStorageVersion;
@@ -12,6 +12,9 @@ class LocalStorage {
   String? perfil;
   String? nombre;
   String? token;
+  bool? mayusculas;
+  String? firmaOperaciones;
+  String? firmaGerencia;
 
   LocalStorage({
     this.version = _localStorageVersion,
@@ -22,6 +25,9 @@ class LocalStorage {
     this.perfil = "",
     this.nombre = "",
     this.token = "-",
+    this.mayusculas = true,
+    this.firmaOperaciones = "",
+    this.firmaGerencia = "",
   });
 
   Map toJson() => {
@@ -34,6 +40,9 @@ class LocalStorage {
     'perfil'            : perfil,
     'nombre'            : nombre,
     'token'             : token,
+    'mayusculas'        : mayusculas,
+    'firmaOperaciones'  : firmaOperaciones,
+    'firmaGerencia'     : firmaGerencia,
   };
 
   Map<String, dynamic> toMap() {
@@ -47,6 +56,9 @@ class LocalStorage {
       'perfil'            : perfil,
       'nombre'            : nombre,
       'token'             : token,
+      'mayusculas'        : mayusculas,
+      'firmaOperaciones'  : firmaOperaciones,
+      'firmaGerencia'     : firmaGerencia,
     };
   }
 
@@ -59,6 +71,9 @@ class LocalStorage {
     perfil = json['perfil'] ?? "";
     nombre = json['nombre'] ?? "";
     token = json['token'] ?? "";
+    mayusculas = json['mayusculas'] ?? false;
+    firmaOperaciones = json['firmaOperaciones'] ?? "";
+    firmaGerencia = json['firmaGerencia'] ?? "";
   }
 
   LocalStorage.fromMap(Map<String, dynamic> json) {
@@ -69,6 +84,9 @@ class LocalStorage {
     perfil = json['perfil'] ?? "";
     nombre = json['nombre'] ?? "";
     token = json['token'] ?? "";
+    mayusculas = json['mayusculas'] ?? true;
+    firmaOperaciones = json['firmaOperaciones'] ?? "";
+    firmaGerencia = json['firmaGerencia'] ?? "";
   }
 
   LocalStorage fromJson(Map<String, dynamic>? json) {
@@ -81,6 +99,9 @@ class LocalStorage {
       perfil: json['perfil'] ?? "",
       nombre: json['nombre'] ?? "",
       token: json['token'] ?? "",
+      mayusculas: json['mayusculas'] ?? true,
+      firmaOperaciones: json['firmaOperaciones'] ?? "",
+      firmaGerencia: json['firmaGerencia'] ?? "",
     ) : LocalStorage();
   }
 
@@ -97,6 +118,9 @@ class LocalStorage {
           perfil: json['perfil'] ?? "",
           nombre: json['nombre'] ?? "",
           token: json['token'] ?? "",
+          mayusculas: json['mayusculas'] ?? true,
+          firmaOperaciones: json['firmaOperaciones'] ?? "",
+          firmaGerencia: json['firmaGerencia'] ?? "",
         ));
       }
       return jsonArray;

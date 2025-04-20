@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:material_color_gen/material_color_gen.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../utils/color_list.dart';
 import '../../widgets/appbars/menu_appbar.dart';
 import '../../widgets/buttons/solid_button.dart';
+import '../../widgets/forms/danios_reporte.dart';
 import '../../widgets/forms/entrada_reporte_form.dart';
 import '../../widgets/forms/galeria_reporte_form.dart';
 import '../../widgets/forms/salida_reporte_form.dart';
@@ -57,7 +59,13 @@ class ReportePage extends StatelessWidget {
                         scrollController: c.formScrollController,
                       );
                     } else if(c.tipoReporte == "Daños") {
-        
+                      return DaniosReporteForm(
+                        form: c.daniosForm,
+                        dateSelected: c.dateSelected,
+                        abrirComentario: c.abrirComentario,
+                        onChangedCheck: c.onChangedCheck,
+                        scrollController: c.formScrollController,
+                      );
                     }
                     return SizedBox();
                   }
@@ -125,6 +133,19 @@ class ReportePage extends StatelessWidget {
                 ),
               ],
             ),
+            floatingActionButton: Visibility(
+              visible: c.mostrarButtonAyudaDanios,
+              child: FloatingActionButton(
+                onPressed: c.abrirAyudaDanios,
+                shape: const CircleBorder(),
+                backgroundColor: Color(ColorList.sys[0]),
+                child: Icon(
+                  Icons.help,
+                  color: Color(ColorList.sys[2]).toMaterialColor(),
+                ),
+              ),
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
           ),
         ),
       ),

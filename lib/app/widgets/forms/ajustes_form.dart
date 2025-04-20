@@ -4,28 +4,40 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import '../../utils/color_list.dart';
 import '../../utils/literals.dart';
+import '../buttons/circular_buttons.dart';
 import '../buttons/solid_button.dart';
 import '../containers/card_container.dart';
 import '../containers/titulo_container.dart';
 import '../defaults/small_header.dart';
+import '../switchs/opcion_switch.dart';
 
 class AjustesForm extends StatelessWidget {
   final ScrollController? scrollController;
   final void Function() cambiarPasswordForm;
   final void Function() reestablcerAplicacion;
+  final bool esMayusculas;
+  final void Function(bool) configMayusculas;
+  final void Function(String) configFirma;
+  final void Function(String) verFirma;
   final String idUsuarioMenu;
   final String usuarioMenu;
   final String nombreMenu;
   final String perfilMenu;
+  final bool isAdmin;
   const AjustesForm({
     super.key,
     required this.scrollController,
     required this.cambiarPasswordForm,
     required this.reestablcerAplicacion,
+    this.esMayusculas = false,
+    required this.configMayusculas,
+    required this.configFirma,
+    required this.verFirma,
     this.idUsuarioMenu = "",
     this.usuarioMenu = "",
     this.nombreMenu = "",
     this.perfilMenu = "",
+    this.isAdmin = false,
   });
 
   @override
@@ -114,6 +126,103 @@ class AjustesForm extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w300,
                           color: Color(ColorList.sys[0]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 15)),
+                SliverToBoxAdapter(
+                  child: TituloContainer(
+                    texto: 'Configurar reportes',
+                    size: 18,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Text(
+                          'Cambiar automáticamente en mayúsculas todas las palabras de los reportes (solo la de los formularios escritos por el usuario).',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(ColorList.sys[0]),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+                        child: OpcionSwitch(
+                          value: esMayusculas,
+                          text: "",
+                          onChanged: configMayusculas,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 15)),
+                SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Text(
+                          'Firma Operaciones (Reporte de daños)',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(ColorList.sys[0]),
+                          ),
+                        ),
+                      ),
+                      CircularButton(
+                        icono: Icons.remove_red_eye_outlined,
+                        colorIcono: ColorList.sys[0],
+                        margin: EdgeInsets.fromLTRB(10, 0, 15, 10),
+                        onPressed: () => verFirma('OPERACIONES'),
+                      ),
+                      Visibility(
+                        visible: isAdmin,
+                        child: CircularButton(
+                          icono: Icons.edit,
+                          color: ColorList.sys[1],
+                          colorIcono: ColorList.sys[3],
+                          margin: EdgeInsets.fromLTRB(10, 0, 15, 10),
+                          onPressed: () => configFirma('OPERACIONES'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 15)),
+                SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Text(
+                          'Firma Gerencia (Reporte de daños)',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(ColorList.sys[0]),
+                          ),
+                        ),
+                      ),
+                      CircularButton(
+                        icono: Icons.remove_red_eye_outlined,
+                        colorIcono: ColorList.sys[0],
+                        margin: EdgeInsets.fromLTRB(10, 0, 15, 10),
+                        onPressed: () => verFirma('GERENCIA'),
+                      ),
+                      Visibility(
+                        visible: isAdmin,
+                        child: CircularButton(
+                          icono: Icons.edit,
+                          color: ColorList.sys[1],
+                          colorIcono: ColorList.sys[3],
+                          margin: EdgeInsets.fromLTRB(10, 0, 15, 10),
+                          onPressed: () => configFirma('GERENCIA'),
                         ),
                       ),
                     ],

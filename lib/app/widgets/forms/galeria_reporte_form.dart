@@ -109,7 +109,7 @@ class GaleriaReporteForm extends StatelessWidget {
                                       child: Icon(
                                         usarGaleria
                                           ? MaterialIcons.image_search
-                                          : MaterialIcons.camera_alt,
+                                          : Octicons.device_camera,
                                         size: 35,
                                         color: Color(ColorList.sys[0]),
                                       ),

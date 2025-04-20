@@ -49,8 +49,9 @@ class ApiService {
     ..options.headers = {
       Literals.apiToken : localStorage!.token,
     }
-    ..options.receiveTimeout = 3.minutes
-    ..options.connectTimeout = 3.minutes
+    ..options.receiveTimeout = 9.minutes
+    ..options.connectTimeout = 9.minutes
+    ..options.sendTimeout = 9.minutes
     ..options.followRedirects = false
     ..options.contentType = Literals.applicationJson
     ..options.validateStatus = (status) => status! < 500;

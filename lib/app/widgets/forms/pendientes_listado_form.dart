@@ -39,6 +39,9 @@ class PendientesListadoForm extends StatelessWidget {
             } else if (reporte.reporteSalida != null) {
               fecha = reporte.reporteSalida!.fecha!;
               icono = MaterialCommunityIcons.truck_flatbed;
+            } else if (reporte.reporteDanio != null) {
+              fecha = reporte.reporteDanio!.fechaCreado!;
+              icono = Octicons.container;
             }
             return SliverToBoxAdapter(
               child: CardContainer(

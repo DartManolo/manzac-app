@@ -8,7 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../data/models/local_storage/local_storage.dart';
 import '../../data/models/reportes/reporte_alta_local.dart';
+import '../../data/models/reportes/reporte_danio.dart';
 import '../../data/models/reportes/reporte_entrada.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
 import '../../data/models/reportes/reporte_salida.dart';
@@ -20,6 +22,7 @@ import '../../widgets/buttons/circular_buttons.dart';
 import '../../widgets/containers/basic_bottom_sheet_container.dart';
 import '../../widgets/containers/titulo_container.dart';
 import '../../widgets/forms/mover_fila_form.dart';
+import '../../widgets/textformfields/danios_textformfield.dart';
 import '../../widgets/textformfields/entrada_textformfield.dart';
 import '../../widgets/textformfields/salida_textformfield.dart';
 import '../../widgets/textforms/multiline_textform.dart';
@@ -28,11 +31,13 @@ import '../home/home_controller.dart';
 class ReporteController extends GetInjection {
   EntradaTextformfield entradaForm = EntradaTextformfield();
   SalidaTextformfield salidaForm = SalidaTextformfield();
-
+  DaniosTextformfield daniosForm = DaniosTextformfield();
+  
   ReporteAltaLocal? reporteAltaLocal;
   String tipoReporte = "";
   DateTime? fechaHoy;
   String fechaReporte = "";
+  String fechaReporteAux = "";
   bool editarReporte = false;
   String idTarjaEditar = "";
 
@@ -45,6 +50,8 @@ class ReporteController extends GetInjection {
 
   bool usarGaleria = false;
   int tipoFila = 0;
+  int tabSelected = 0;
+  bool mostrarButtonAyudaDanios = false;
 
   String opcionSelected = "";
   List<MenuPopupOpciones> opcionesConsulta = [];
@@ -71,6 +78,7 @@ class ReporteController extends GetInjection {
       var mes = tool.fecha('MMMM');
       var anio = tool.fecha('y');
       fechaReporte = "$inicio de $mes de $anio";
+      fechaReporteAux = "$inicio de $mes de $anio";
       if(Get.arguments['formEditar'] == null) {
         if(tipoReporte == "Entrada") {
           entradaForm.horaInicio.text = tool.horaHoy();
@@ -80,6 +88,10 @@ class ReporteController extends GetInjection {
         } else if(tipoReporte == "Salida") {
           salidaForm.horaInicio.text = tool.horaHoy();
           salidaForm.horaFin.text = tool.horaHoy();
+        } else if(tipoReporte == "Daños") {
+          fechaReporte = tool.fecha('dd/MM/yyyy');
+          daniosForm.fechaReporte.text = tool.fechaHoy('dd-MM-yyyy');
+          formScrollController.addListener(_scrollListenerDanios);
         }
       } else {
         editarReporte = true;
@@ -87,6 +99,10 @@ class ReporteController extends GetInjection {
           entradaForm = Get.arguments['formEditar'] as EntradaTextformfield;
         } else if(tipoReporte == "Salida") {
           salidaForm = Get.arguments['formEditar'] as SalidaTextformfield;
+        } else if(tipoReporte == "Daños") {
+          fechaReporte = tool.fecha('dd/MM/yyyy');
+          daniosForm = Get.arguments['formEditar'] as DaniosTextformfield;
+          formScrollController.addListener(_scrollListenerDanios);
         }
         reporteImagenes = Get.arguments['reporteImagenes'] as List<List<ReporteImagenes>>;
         idTarjaEditar = Get.arguments['idTarja'];
@@ -105,11 +121,22 @@ class ReporteController extends GetInjection {
     Get.back();
   }
 
-  void seleccionarTap() {
-    if(tipoReporte == "Entrada") {
-      _entradaFormUnfocus();
-    } else if(tipoReporte == "Salida") {
-      _salidaFormUnfocus();
+  void seleccionarTap(int tab) {
+    try {
+      tabSelected = tab;
+      if(tab > 0) {
+        mostrarButtonAyudaDanios = false;
+      }
+      if(tipoReporte == "Entrada") {
+        _entradaFormUnfocus();
+      } else if(tipoReporte == "Salida") {
+        _salidaFormUnfocus();
+      } else if(tipoReporte == "Daños") {
+        _daniosFormUnfocus();
+        _scrollListenerDanios();
+      }
+    } finally {
+      update();
     }
   }
 
@@ -130,6 +157,7 @@ class ReporteController extends GetInjection {
 
   Future<void> generarReporte() async {
     try {
+      var localStorage = await storage.get<LocalStorage>(LocalStorage());
       dynamic form;
       if(tipoReporte == "Entrada") {
         _entradaFormUnfocus();
@@ -137,6 +165,9 @@ class ReporteController extends GetInjection {
       } else if(tipoReporte == "Salida") {
         _salidaFormUnfocus();
         form = salidaForm;
+      } else if(tipoReporte == "Daños") {
+        _daniosFormUnfocus();
+        form = daniosForm;
       }
       Get.toNamed(
         AppRoutes.reporteView,
@@ -145,6 +176,7 @@ class ReporteController extends GetInjection {
           'fechaReporte' : fechaReporte,
           'formData' : form,
           'reporteImagenes' : reporteImagenes,
+          'localStorage' : localStorage,
         },
       );
     } finally {
@@ -169,6 +201,8 @@ class ReporteController extends GetInjection {
             idTarjaVerify = reportesLocal[i].reporteEntrada!.idTarja!;
           } else if(tipoReporte == "Salida") {
             idTarjaVerify = reportesLocal[i].reporteSalida!.idTarja!;
+          } else if(tipoReporte == "Daños") {
+            idTarjaVerify = reportesLocal[i].reporteDanio!.idTarja!;
           }
           if(idTarjaVerify != idTarjaEditar) {
             continue;
@@ -211,7 +245,7 @@ class ReporteController extends GetInjection {
           }
         }
         update();
-      } 
+      }
     } finally {
       isBusy(false);
     }
@@ -222,6 +256,10 @@ class ReporteController extends GetInjection {
   }
 
   void hourSelected() {
+    update();
+  }
+
+  void onChangedCheck() {
     update();
   }
 
@@ -248,7 +286,9 @@ class ReporteController extends GetInjection {
                 ? entradaForm.observaciones 
                 : (tipoReporte == "Salida" 
                   ? salidaForm.observaciones 
-                  : null),
+                  : (tipoReporte == "Daños"
+                    ? daniosForm.observaciones
+                    : null)),
             ),
           ],
         ),
@@ -398,6 +438,10 @@ class ReporteController extends GetInjection {
 
   void tipoFilaChanged(int? fila) {
     tipoFila = fila!;
+  }
+
+  void abrirAyudaDanios() {
+    
   }
 
   void _eliminarImagenLista(ReporteImagenes? imagen) {
@@ -597,6 +641,34 @@ class ReporteController extends GetInjection {
     salidaForm.licenciaFocus.unfocus();
   }
 
+  void _daniosFormUnfocus() {
+    daniosForm.versionFocus.unfocus();
+    daniosForm.claveFocus.unfocus();
+    daniosForm.fechaReporteFocus.unfocus();
+    daniosForm.lineaNavieraFocus.unfocus();
+    daniosForm.clienteFocus.unfocus();
+    daniosForm.numContenedorFocus.unfocus();
+    daniosForm.numSelloFocus.unfocus();
+    daniosForm.intPuertasIzqFocus.unfocus();
+    daniosForm.intPuertasDerFocus.unfocus();
+    daniosForm.intPisoFocus.unfocus();
+    daniosForm.intTechoFocus.unfocus();
+    daniosForm.intPanelLateralIzqFocus.unfocus();
+    daniosForm.intPanelLateralDerFocus.unfocus();
+    daniosForm.intPanelFondoFocus.unfocus();
+    daniosForm.extPuertasIzqFocus.unfocus();
+    daniosForm.extPuertasDerFocus.unfocus();
+    daniosForm.extPosteFocus.unfocus();
+    daniosForm.extPalancaFocus.unfocus();
+    daniosForm.extGanchoCierreFocus.unfocus();
+    daniosForm.extPanelIzqFocus.unfocus();
+    daniosForm.extPanelDerFocus.unfocus();
+    daniosForm.extPanelFondoFocus.unfocus();
+    daniosForm.extCantoneraFocus.unfocus();
+    daniosForm.extFrisaFocus.unfocus();
+    daniosForm.observacionesFocus.unfocus();
+  }
+
   void _crearAltaData() {
     var idTarja = !editarReporte ? tool.guid() : idTarjaEditar;
     reporteAltaLocal = ReporteAltaLocal(
@@ -660,7 +732,69 @@ class ReporteController extends GetInjection {
         imagenes: _generarListaImagenesAlta(idTarja),
       );
       reporteAltaLocal!.reporteSalida = reporteSalidaAlta;
+    } else if(tipoReporte == "Daños") {
+      var reporteDanioAlta = ReporteDanio(
+        idTarja: idTarja,
+        tipo: tipoReporte.toUpperCase(),
+        fecha: fechaReporte,
+        fechaCreado: fechaReporteAux,
+        version: daniosForm.version.text,
+        clave: daniosForm.clave.text,
+        fechaReporte: daniosForm.fechaReporte.text,
+        lineaNaviera: daniosForm.lineaNaviera.text,
+        cliente: daniosForm.cliente.text,
+        numContenedor: daniosForm.numContenedor.text,
+        vacio: daniosForm.vacio ? "X" : "",
+        lleno: daniosForm.lleno ? "X" : "",
+        d20: daniosForm.d20 ? "X" : "",
+        d40: daniosForm.d40 ? "X" : "",
+        hc: daniosForm.hc ? "X" : "",
+        otro: daniosForm.otro ? "X" : "",
+        estandar: daniosForm.estandar ? "X" : "",
+        opentop: daniosForm.opentop ? "X" : "",
+        flatRack: daniosForm.flatRack ? "X" : "",
+        reefer: daniosForm.reefer ? "X" : "",
+        reforzado: daniosForm.reforzado ? "X" : "",
+        numSello: daniosForm.numSello.text,
+        intPuertasIzq: daniosForm.intPuertasIzq.text,
+        intPuertasDer: daniosForm.intPuertasDer.text,
+        intPiso: daniosForm.intPiso.text,
+        intTecho: daniosForm.intTecho.text,
+        intPanelLateralIzq: daniosForm.intPanelLateralIzq.text,
+        intPanelLateralDer: daniosForm.intPanelLateralDer.text,
+        intPanelFondo: daniosForm.intPanelFondo.text,
+        extPuertasIzq: daniosForm.extPuertasIzq.text,
+        extPuertasDer: daniosForm.extPuertasDer.text,
+        extPoste: daniosForm.extPoste.text,
+        extPalanca: daniosForm.extPalanca.text,
+        extGanchoCierre: daniosForm.extGanchoCierre.text,
+        extPanelIzq: daniosForm.extPanelIzq.text,
+        extPanelDer: daniosForm.extPanelDer.text,
+        extPanelFondo: daniosForm.extPanelFondo.text,
+        extCantonera: daniosForm.extCantonera.text,
+        extFrisa: daniosForm.extFrisa.text,
+        observaciones: daniosForm.observaciones.text,
+        imagenes: _generarListaImagenesAlta(idTarja),
+      );
+      reporteAltaLocal!.reporteDanio = reporteDanioAlta;
     }
+  }
+
+  void _scrollListenerDanios() {
+    try {
+      if(tabSelected > 0) {
+        mostrarButtonAyudaDanios = false;
+        update();
+        return;
+      }
+      if(formScrollController.offset > 170 && !mostrarButtonAyudaDanios) {
+        mostrarButtonAyudaDanios = true;
+        update();
+      } else if(formScrollController.offset <= 170 && mostrarButtonAyudaDanios) {
+        mostrarButtonAyudaDanios = false;
+        update();
+      }
+    } finally { }
   }
 
   List<ReporteImagenes> _generarListaImagenesAlta(String idTarja) {
@@ -668,9 +802,6 @@ class ReporteController extends GetInjection {
     for (var i = 0; i < reporteImagenes.length; i++) {
       for (var j = 0; j < reporteImagenes[i].length; j++) {
         var imagenReporte = reporteImagenes[i][j];
-        if(imagenReporte.base64 == "") {
-          continue;
-        }
         imagenReporte.idTarja = idTarja;
         imagenReporte.formato = "jpg";
         listaAlta.add(reporteImagenes[i][j]);

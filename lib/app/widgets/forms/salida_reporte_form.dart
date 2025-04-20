@@ -148,6 +148,7 @@ class SalidaReporteForm extends StatelessWidget {
               text: 'Bultos',
               controller: form.bultos,
               focusNode: form.bultosFocus,
+              keyboardType: TextInputType.number,
             ),
           ),
           SliverToBoxAdapter(

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 
 import '../../../services/storage_service.dart';
+import 'reporte_danio.dart';
 import 'reporte_entrada.dart';
 import 'reporte_salida.dart';
 
@@ -11,11 +12,13 @@ class ReporteAltaLocal {
   String? tipo;
   ReporteEntrada? reporteEntrada;
   ReporteSalida? reporteSalida;
+  ReporteDanio? reporteDanio;
 
   ReporteAltaLocal({
     this.tipo,
     this.reporteEntrada,
     this.reporteSalida,
+    this.reporteDanio,
   });
 
   static Future<void> init() async {
@@ -34,6 +37,7 @@ class ReporteAltaLocal {
     'tipo' : tipo,
     'reporteEntrada' : reporteEntrada,
     'reporteSalida' : reporteSalida,
+    'reporteDanio' : reporteDanio,
   };
 
   ReporteAltaLocal fromJson(Map<String, dynamic>? json) {
@@ -41,6 +45,7 @@ class ReporteAltaLocal {
       tipo: json['tipo'] ?? "",
       reporteEntrada: jsonDecode(jsonEncode(json['reporteEntrada'])) ?? ReporteEntrada(),
       reporteSalida: jsonDecode(jsonEncode(json['reporteSalida'])) ?? ReporteSalida(),
+      reporteDanio: jsonDecode(jsonEncode(json['reporteDanio'])) ?? ReporteDanio(),
     ) : ReporteAltaLocal();
   }
 
@@ -50,16 +55,21 @@ class ReporteAltaLocal {
       for(var json in array) {
         ReporteEntrada? reporteEntrada;
         ReporteSalida? reporteSalida;
+        ReporteDanio? reporteDanio;
         if(json['reporteEntrada'] != null) {
           reporteEntrada = ReporteEntrada.fromMap(jsonDecode(jsonEncode(json['reporteEntrada'])));
         }
         if(json['reporteSalida'] != null) {
           reporteSalida = ReporteSalida.fromMap(jsonDecode(jsonEncode(json['reporteSalida'])));
         }
+        if(json['reporteDanio'] != null) {
+          reporteDanio = ReporteDanio.fromMap(jsonDecode(jsonEncode(json['reporteDanio'])));
+        }
         jsonArray.add(ReporteAltaLocal(
           tipo: json['tipo'] ?? "",
           reporteEntrada:  reporteEntrada,
           reporteSalida: reporteSalida,
+          reporteDanio: reporteDanio,
         ));
       }
       return jsonArray;
