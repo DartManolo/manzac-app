@@ -56,6 +56,10 @@ class LoginController extends GetInjection {
         msg("Usuario y/o contraseña incorrecto", MsgType.warning);
         return;
       }
+      if(result.status == Literals.statusInactivo) {
+        msg("El usuario se encuentra INACTIVO. Consulte con su administrador", MsgType.warning);
+        return;
+      }
       GetInjection.administrador = result.perfil == Literals.perfilAdministrador;
       GetInjection.perfil = result.perfil!;
       localStorage!.token = result.token;
@@ -65,6 +69,12 @@ class LoginController extends GetInjection {
       localStorage.perfil = result.perfil;
       localStorage.nombre = "${result.nombres} ${result.apellidos}";
       await storage.update(localStorage);
+      var configuracionFirmas = await configuracionRepository.obtenerConfiguracionAsync("firmas");
+      if(configuracionFirmas != null) {
+        localStorage.firmaOperaciones = configuracionFirmas.firmaOperador;
+        localStorage.firmaGerencia = configuracionFirmas.firmaGerencia;
+        await storage.update(localStorage);
+      }
       isBusy(false);
       if(result.status == Literals.statusPassTemporal) {
         _abrirActualizaPasswordForm();
@@ -93,6 +103,20 @@ class LoginController extends GetInjection {
         return;
       }
       isBusy();
+      var validar = await usuariosRepository.validarUsuarioAsync(usuario.text);
+      if(validar == null) {
+        throw Exception();
+      }
+      if(validar != Literals.usuarioOk) {
+        var detalleErr = "No especificado";
+        if(validar == Literals.usuarioNoExiste) {
+          detalleErr = "usuario NO registrado";
+        } else if(validar == Literals.usuarioInactivo) {
+          detalleErr = "usuario INACTIVO";
+        }
+        msg('No es posible recuperar contraseña ($detalleErr)', MsgType.warning);
+        return;
+      }
       var passwordForm = LoginForm(
         usuario: usuario.text,
       );
@@ -180,7 +204,7 @@ class LoginController extends GetInjection {
       FocusScope.of(thisContext!).requestFocus(usuarioFocus);
     } else if(!tool.isEmail(usuario.text)) {
       mensaje = "Formato de usuario es incorrecto";
-      FocusScope.of(thisContext!).requestFocus(passwordFocus);
+      FocusScope.of(thisContext!).requestFocus(usuarioFocus);
     } else if(tool.isNullOrEmpty(password)) {
       mensaje = "Escriba la contraseña";
       FocusScope.of(thisContext!).requestFocus(passwordFocus);

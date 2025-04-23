@@ -61,4 +61,14 @@ class LoginData {
     sesion = json['sesion'].toString();
     acepta = _tool.str2int(json['acepta'].toString());
   }
+
+  LoginData.fromJson(Map<String, dynamic> json) {
+    id = _tool.str2int(json['id'].toString());
+    idSistema = json['idSistema'].toString();
+    usuario = json['usuario'].toString();
+    status = json['status'].toString();
+    nombres = json['nombres'].toString();
+    apellidos = json['apellidos'].toString();
+    perfil = json['perfil'].toString();
+  }
 }

@@ -8,6 +8,7 @@ import '../../widgets/columns/loading_column.dart';
 import '../../widgets/containers/titulo_container.dart';
 import '../../widgets/forms/sin_internet_form.dart';
 import '../../widgets/forms/sin_usuarios_form.dart';
+import '../../widgets/forms/usuarios_form.dart';
 import 'usuarios_controller.dart';
 
 class UsuariosPage extends StatelessWidget with WidgetsBindingObserver {
@@ -35,9 +36,10 @@ class UsuariosPage extends StatelessWidget with WidgetsBindingObserver {
                     ),
                     Builder(
                       builder: (context) {
-                        if(c.listaUsuarios.isNotEmpty) {
-                          return Expanded(
-                            child: SizedBox(),
+                        if(c.listaUsuarios!.isNotEmpty) {
+                          return UsuariosForm(
+                            usuarios: c.listaUsuarios!,
+                            cambiarEstatus: c.cambiarEstatus
                           );
                         } else {
                           return SinUsuariosForm(

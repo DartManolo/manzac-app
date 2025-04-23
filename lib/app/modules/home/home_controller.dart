@@ -17,6 +17,7 @@ import '../../data/models/system/menu_opciones.dart';
 import '../../routes/app_routes.dart';
 import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
+import '../../utils/literals.dart';
 import '../../widgets/columns/password_column.dart';
 import '../../widgets/containers/basic_bottom_sheet_container.dart';
 import '../../widgets/textformfields/danios_textformfield.dart';
@@ -131,6 +132,7 @@ class HomeController extends GetInjection {
   }
 
   Future<void> _ready() async {
+    await _validarEstatusUsuario();
     if(mostrarAlertaPendientes && reportesLocal!.isNotEmpty) {
       mostrarAlertaPendientes = false;
       await tool.wait(1);
@@ -301,6 +303,25 @@ class HomeController extends GetInjection {
     }
   }
 
+  Future<void> obtenerFirmas() async {
+    try {
+      isBusy();
+      var configuracionFirmas = await configuracionRepository.obtenerConfiguracionAsync("firmas");
+      if(configuracionFirmas == null) {
+        throw Exception();
+      }
+      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      localStorage!.firmaOperaciones = configuracionFirmas.firmaOperador;
+      localStorage.firmaGerencia = configuracionFirmas.firmaGerencia;
+      await storage.update(localStorage);
+      msg("Firmas actualizadas correctamente", MsgType.success);
+    } catch(e) {
+      msg("Ocurrió un error al intentar obtener las firmas del servidor", MsgType.error);
+    } finally {
+      update();
+    }
+  }
+
   void cambiarPasswordForm() {
     var context = Get.context;
     nuevaPassword.text = "";
@@ -398,14 +419,26 @@ class HomeController extends GetInjection {
         source: ImageSource.gallery,
       );
       if (fotoFirma != null) {
+        var verify = await ask("Guardar firma", "La firma se enviará al servidor, ¿Desea continuar?");
+        if(!verify) {
+          return;
+        }
+        isBusy();
         var fotoTemp = File(fotoFirma.path);
         fotografia = await tool.imagenResize(fotoTemp, maxWidth: 160);
         var base64Foto = await tool.imagen2base64(fotografia);
         var localStorage = await storage.get<LocalStorage>(LocalStorage());
+        var firmaServer = "";
         if(firma == "OPERACIONES") {
           localStorage!.firmaOperaciones = base64Foto;
+          firmaServer = "firma_operador.txt";
         } else if(firma == "GERENCIA") {
           localStorage!.firmaGerencia = base64Foto;
+          firmaServer = "firma_gerencia.txt";
+        }
+        var actualizarServer = await configuracionRepository.guardarFirmaAsync("${Literals.rutaFirmasApi}$firmaServer", base64Foto);
+        if(!actualizarServer) {
+          throw Exception();
         }
         var actualizar = await storage.update(localStorage);
         if(!actualizar) {
@@ -582,5 +615,27 @@ class HomeController extends GetInjection {
       toast(mensaje);
     }
     return correcto;
+  }
+
+  Future<void> _validarEstatusUsuario() async {
+    try {
+      var online = await tool.isOnline();
+      if(!online) {
+        return;
+      }
+      var estatus = await usuariosRepository.verificarEstatusAsync(usuarioMenu);
+      if(estatus == null) {
+        return;
+      }
+      if(estatus != Literals.statusActivo) {
+        Get.offAll(
+          const LoginPage(),
+          binding: LoginBinding(),
+          transition: Transition.leftToRight,
+          duration: 1.seconds,
+        );
+        msg("Su usuario se encuentra INACTIVO. Consulte con su administrador", MsgType.warning);
+      }
+    } finally { }
   }
 }

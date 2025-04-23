@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:manzac_app/app/widgets/dialogs/alerta_dialog.dart';
 
 import '../data/models/reportes/reporte_alta_local.dart';
+import '../data/repositories/configuracion_repository.dart';
 import '../data/repositories/login_repository.dart';
+import '../data/repositories/usuarios_repository.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
 import '../services/tool_service.dart';
@@ -20,6 +22,8 @@ abstract class GetInjection extends GetxController {
   final api = Get.find<ApiService>();
 
   final loginRepository = Get.find<LoginRepository>();
+  final configuracionRepository = Get.find<ConfiguracionRepository>();
+  final usuariosRepository = Get.find<UsuariosRepository>();
 
   static bool administrador = false;
   static String perfil = "";

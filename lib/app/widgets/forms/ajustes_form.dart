@@ -15,6 +15,7 @@ class AjustesForm extends StatelessWidget {
   final ScrollController? scrollController;
   final void Function() cambiarPasswordForm;
   final void Function() reestablcerAplicacion;
+  final void Function() obtenerFirmas;
   final bool esMayusculas;
   final void Function(bool) configMayusculas;
   final void Function(String) configFirma;
@@ -29,6 +30,7 @@ class AjustesForm extends StatelessWidget {
     required this.scrollController,
     required this.cambiarPasswordForm,
     required this.reestablcerAplicacion,
+    required this.obtenerFirmas,
     this.esMayusculas = false,
     required this.configMayusculas,
     required this.configFirma,
@@ -228,6 +230,16 @@ class AjustesForm extends StatelessWidget {
                     ],
                   ),
                 ),
+                SliverToBoxAdapter(
+                  child: SolidButton(
+                    texto: 'Obtener firmas del servidor',
+                    icono: MaterialIcons.file_download,
+                    fondoColor: ColorList.sys[3],
+                    textoColor: ColorList.sys[0],
+                    onPressed: obtenerFirmas,
+                    onLongPress: () {},
+                  ),
+                ),
                 SliverToBoxAdapter(child: SizedBox(height: 15)),
                 SliverToBoxAdapter(
                   child: TituloContainer(
@@ -271,6 +283,30 @@ class AjustesForm extends StatelessWidget {
                     onLongPress: reestablcerAplicacion,
                   ),
                 ),
+                SliverToBoxAdapter(child: SizedBox(height: 15)),
+                SliverToBoxAdapter(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: Divider(),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Versión: ${Literals.version}",
+                        style: TextStyle(
+                          color: Color(0xFFAEB6BF),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 25)),
               ],
             ),
           ),

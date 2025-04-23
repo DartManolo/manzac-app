@@ -6,6 +6,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 
 import '../../utils/color_list.dart';
+import '../../utils/literals.dart';
 import '../../widgets/buttons/solid_button.dart';
 import '../../widgets/combos/selection_combo.dart';
 import '../../widgets/drawers/header_drawer.dart';
@@ -53,6 +54,20 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                   icon: MaterialIcons.logout,
                   text: 'Cerrar sesión',
                   accion: c.cerrarSesion,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Versión: ${Literals.version}",
+                      style: TextStyle(
+                        color: Color(0xFFAEB6BF),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20,),
               ],
@@ -162,6 +177,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                 scrollController: c.ajustesScrollController,
                 cambiarPasswordForm: c.cambiarPasswordForm,
                 reestablcerAplicacion: c.reestablcerAplicacion,
+                obtenerFirmas: c.obtenerFirmas,
                 esMayusculas: c.mayusculas,
                 configMayusculas: c.configMayusculas,
                 verFirma: c.verFirma,
