@@ -25,6 +25,7 @@ class ReporteEntrada {
   String? fechaVencimiento;
   String? movimiento;
   String? observaciones;
+  String? usuario;
   List<ReporteImagenes>? imagenes;
 
   ReporteEntrada({
@@ -52,6 +53,7 @@ class ReporteEntrada {
     this.fechaVencimiento = "\n",
     this.movimiento = "\n",
     this.observaciones = "\n",
+    this.usuario = "",
     this.imagenes = const [],
   });
 
@@ -80,6 +82,7 @@ class ReporteEntrada {
     'fechaVencimiento' : fechaVencimiento,
     'movimiento' : movimiento,
     'observaciones' : observaciones,
+    'usuario' :   usuario,
     'imagenes' : imagenes,
   };
 
@@ -108,6 +111,7 @@ class ReporteEntrada {
     fechaVencimiento = json['fechaVencimiento'] ?? "";
     movimiento = json['movimiento'] ?? "";
     observaciones = json['observaciones'] ?? "";
+    usuario = json['usuario'] ?? "";
     imagenes = ReporteImagenes().fromArray(json['imagenes']);
   }
 }

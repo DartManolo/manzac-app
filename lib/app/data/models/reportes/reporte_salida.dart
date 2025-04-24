@@ -25,6 +25,7 @@ class ReporteSalida {
   String? placas;
   String? licencia;
   String? observaciones;
+  String? usuario;
   List<ReporteImagenes>? imagenes;
 
   ReporteSalida({
@@ -52,6 +53,7 @@ class ReporteSalida {
     this.placas = "\n",
     this.licencia = "\n",
     this.observaciones = "\n",
+    this.usuario = "",
     this.imagenes = const [],
   });
 
@@ -80,6 +82,7 @@ class ReporteSalida {
     'placas' : placas,
     'licencia' : licencia,
     'observaciones' : observaciones,
+    'usuario' :   usuario,
     'imagenes' : imagenes,
   };
 
@@ -108,6 +111,7 @@ class ReporteSalida {
     placas = json['placas'] ?? "";
     licencia = json['licencia'] ?? "";
     observaciones = json['observaciones'] ?? "";
+    usuario = json['usuario'] ?? "";
     imagenes = ReporteImagenes().fromArray(json['imagenes']);
   }
 }

@@ -66,6 +66,8 @@ class ReporteController extends GetInjection {
     Icons.file_upload_outlined,
   ];
 
+  String _usuarioAlta = "";
+
   @override void onInit() {
     _init();
     super.onInit();
@@ -187,6 +189,8 @@ class ReporteController extends GetInjection {
   Future<void> soloGuardar() async {
     try {
       isBusy();
+      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      _usuarioAlta = localStorage!.idUsuario!;
       var reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
       _crearAltaData();
       if(!editarReporte) {
@@ -700,6 +704,7 @@ class ReporteController extends GetInjection {
         fechaVencimiento: entradaForm.fechaVencimiento.text,
         movimiento: entradaForm.movimiento.text,
         observaciones: entradaForm.observaciones.text,
+        usuario: _usuarioAlta,
         imagenes: _generarListaImagenesAlta(idTarja),
       );
       reporteAltaLocal!.reporteEntrada = reporteEntradaAlta;
@@ -729,6 +734,7 @@ class ReporteController extends GetInjection {
         placas: salidaForm.placas.text,
         licencia: salidaForm.licencia.text,
         observaciones: salidaForm.observaciones.text,
+        usuario: _usuarioAlta,
         imagenes: _generarListaImagenesAlta(idTarja),
       );
       reporteAltaLocal!.reporteSalida = reporteSalidaAlta;
@@ -774,6 +780,7 @@ class ReporteController extends GetInjection {
         extCantonera: daniosForm.extCantonera.text,
         extFrisa: daniosForm.extFrisa.text,
         observaciones: daniosForm.observaciones.text,
+        usuario: _usuarioAlta,
         imagenes: _generarListaImagenesAlta(idTarja),
       );
       reporteAltaLocal!.reporteDanio = reporteDanioAlta;
@@ -804,7 +811,8 @@ class ReporteController extends GetInjection {
         var imagenReporte = reporteImagenes[i][j];
         imagenReporte.idTarja = idTarja;
         imagenReporte.formato = "jpg";
-        listaAlta.add(reporteImagenes[i][j]);
+        imagenReporte.usuario = _usuarioAlta;
+        listaAlta.add(imagenReporte);
       }
     }
     return listaAlta;

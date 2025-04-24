@@ -8,6 +8,7 @@ class ReporteImagenes {
   int? posicion;
   String? base64;
   String? tipo;
+  String? usuario;
 
   ReporteImagenes({
     this.idTarja = "",
@@ -17,6 +18,7 @@ class ReporteImagenes {
     this.posicion = 0,
     this.base64 = "",
     this.tipo = "",
+    this.usuario = "",
   });
 
   Map toJson() => {
@@ -27,6 +29,7 @@ class ReporteImagenes {
     'posicion'  : posicion,
     'base64'    : base64,
     'tipo'      : tipo,
+    'usuario' :   usuario,
   };
 
   ReporteImagenes.fromString(String jsonString) {
@@ -38,6 +41,7 @@ class ReporteImagenes {
     posicion = json['password'] ?? 0;
     base64 = json['perfil'] ?? "";
     tipo = json['nombre'] ?? "";
+    usuario = json['usuario'] ?? "";
   }
 
   List<ReporteImagenes> fromArray(List<dynamic>? array) {
@@ -52,6 +56,7 @@ class ReporteImagenes {
           posicion: json['posicion'] ?? 0,
           base64: json['base64'] ?? "",
           tipo: json['tipo'] ?? "",
+          usuario: json['usuario'] ?? "",
         ));
       }
       return jsonArray;

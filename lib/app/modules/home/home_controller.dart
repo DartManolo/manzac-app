@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,7 @@ class HomeController extends GetInjection {
   String tipoReporteSelected = "";
 
   List<ReporteAltaLocal>? reportesLocal = [];
+  double reportesLocalSize = 0;
   bool mostrarAlertaPendientes = true;
   List<MenuOpciones> menuOpciones = [];
   bool cargandoReportes = true;
@@ -251,6 +253,9 @@ class HomeController extends GetInjection {
   Future<void> recargarReportesLocal() async {
     try {
       reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
+      var listaString = jsonEncode(reportesLocal);
+      var listaBytes = Uint8List.fromList(utf8.encode(listaString)).lengthInBytes;
+      reportesLocalSize = listaBytes / (1024 * 1024);
     } catch(e) {
       msg("Ocurrió un error al cargar listado de reportes pendientes", MsgType.error);
     } finally {

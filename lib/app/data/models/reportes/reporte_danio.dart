@@ -41,6 +41,7 @@ class ReporteDanio {
   String? extCantonera;
   String? extFrisa;
   String? observaciones;
+  String? usuario;
   List<ReporteImagenes>? imagenes;
 
   ReporteDanio({
@@ -84,6 +85,7 @@ class ReporteDanio {
     this.extCantonera = "",
     this.extFrisa = "",
     this.observaciones = "",
+    this.usuario = "",
     this.imagenes = const [],
   });
 
@@ -128,6 +130,7 @@ class ReporteDanio {
     'extCantonera' :   extCantonera,
     'extFrisa' :   extFrisa,
     'observaciones' :   observaciones,
+    'usuario' :   usuario,
     'imagenes' : imagenes,
   };
 
@@ -172,6 +175,7 @@ class ReporteDanio {
     extCantonera = json['extCantonera'] ?? "";
     extFrisa = json['extFrisa'] ?? "";
     observaciones = json['observaciones'] ?? "";
+    usuario = json['usuario'] ?? "";
     imagenes = ReporteImagenes().fromArray(json['imagenes']);
   }
 }
