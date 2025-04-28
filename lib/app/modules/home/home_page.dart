@@ -13,7 +13,10 @@ import '../../widgets/drawers/header_drawer.dart';
 import '../../widgets/drawers/item_drawer.dart';
 import '../../widgets/forms/ajustes_form.dart';
 import '../../widgets/forms/pendientes_listado_form.dart';
+import '../../widgets/forms/reportes_servidor.dart';
+import '../../widgets/forms/sin_internet_form.dart';
 import '../../widgets/forms/sin_reportes_local_form.dart';
+import '../../widgets/forms/sin_reportes_servidor.dart';
 import '../../widgets/textforms/date_textform.dart';
 import 'home_controller.dart';
 
@@ -30,6 +33,33 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
           appBar: AppBar(
             title: SizedBox.shrink(),
             backgroundColor: Color(ColorList.ui[1]),
+            actions: c.menuIndex == 0 ? <Widget>[
+              PopupMenuButton(
+                onSelected: (value) {},
+                itemBuilder: (BuildContext context) {
+                  return c.opcionesConsulta.map((opcion) {
+                    return PopupMenuItem(
+                      onTap: () {
+                        c.operacionPopUp(opcion.id);
+                      },
+                      labelTextStyle: WidgetStateProperty.all(
+                        TextStyle(
+                          color: Color(ColorList.sys[0]),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          opcion.icono,
+                          color: Color(ColorList.sys[0]),
+                        ),
+                        title: Text(opcion.value!,),
+                      ),
+                    );
+                  }).toList();
+                }
+              ),
+            ] : null,
           ),
           drawer: Drawer(
             child: Column(
@@ -96,6 +126,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
             ],
           ),
           body: PageView(
+            physics: NeverScrollableScrollPhysics(),
             controller: c.menuController,
             onPageChanged: c.menuPageChanged,
             children: [
@@ -115,7 +146,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                       ),
                       Expanded(
                         child: SelectionCombo(
-                          titulo: "- Tipo reporte -",
+                          titulo: "- Filtrar por tipo -",
                           controller: c.tipoReporteBusqueda,
                           values: c.listaTiposReportes,
                           icono: MaterialIcons.list_alt,
@@ -127,12 +158,27 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                     child: Builder(
                       builder: (context) {
                         if(!c.cargandoReportes) {
-                          return SizedBox();
+                          if(c.conInternet) {
+                            if(c.reportesServidor!.isNotEmpty) {
+                              return ReportesServidorForm(
+                                scrollController: c.servidorScrollController,
+                                reportesServidor: c.reportesServidor,
+                                abrirReporte: c.abrirReporteServidor,
+                              );
+                            } else {
+                              return SinReportesServidorForm();
+                            }
+                          } else {
+                            return SinInternetForm(
+                              recargar: () {},
+                              mostrarBoton: false,
+                            );
+                          }
                         } else {
                           return Center(
                             child: SpinKitThreeInOut(
                               color: Color(ColorList.sys[1]),
-                            ).fadeIn(delay: 1.seconds,),
+                            ).fadeIn(delay: 0.5.seconds,),
                           );
                         }
                       },
@@ -157,7 +203,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                           textoColor: ColorList.sys[3],
                           icono: MaterialIcons.upload_file,
                           texto: "Subir todos los pendientes",
-                          onPressed: () {}, 
+                          onPressed: c.subirTodosReportesPendientes, 
                           onLongPress: () {},
                         ),
                       ],

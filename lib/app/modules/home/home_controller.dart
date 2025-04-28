@@ -15,6 +15,7 @@ import '../../data/models/login/login_form.dart';
 import '../../data/models/reportes/reporte_alta_local.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
 import '../../data/models/system/menu_opciones.dart';
+import '../../data/models/system/menu_popup_opciones.dart';
 import '../../routes/app_routes.dart';
 import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
@@ -32,6 +33,7 @@ class HomeController extends GetInjection {
   PageController? menuController;
   int menuIndex = 0;
   ScrollController pendientesScrollController = ScrollController();
+  ScrollController servidorScrollController = ScrollController();
   ScrollController ajustesScrollController = ScrollController();
   EntradaTextformfield entradaForm = EntradaTextformfield();
   SalidaTextformfield salidaForm = SalidaTextformfield();
@@ -45,6 +47,15 @@ class HomeController extends GetInjection {
   TextEditingController repetirPassword = TextEditingController();
   FocusNode repetirPasswordFocus = FocusNode();
 
+  String opcionSelected = "";
+  List<MenuPopupOpciones> opcionesConsulta = [];
+  List<String> opcionesBase = [
+    "Consulta avanzada~B",
+  ];
+  List<IconData?> opcionesIcono = [
+    FontAwesome5Solid.search,
+  ];
+
   List<String> tiposReporte = [
     "Todos",
     "Entrada",
@@ -55,11 +66,15 @@ class HomeController extends GetInjection {
   List<BottomSheetAction> listaTiposReportes = [];
   String tipoReporteSelected = "";
 
+  List<ReporteAltaLocal>? reportesServidor = [];
+  List<ReporteAltaLocal>? reportesServidorAux = [];
+  bool cargandoReportes = true;
+  bool conInternet = true;
+
   List<ReporteAltaLocal>? reportesLocal = [];
   double reportesLocalSize = 0;
   bool mostrarAlertaPendientes = true;
   List<MenuOpciones> menuOpciones = [];
-  bool cargandoReportes = true;
   bool mayusculas = false;
 
   String idUsuarioMenu = "";
@@ -128,6 +143,7 @@ class HomeController extends GetInjection {
       usuarioMenu = localStorage.usuario!;
       perfilMenu = localStorage.perfil!;
       await recargarReportesLocal();
+      _cargarOpcionesPopup();
     } finally {
       update();
     }
@@ -135,10 +151,21 @@ class HomeController extends GetInjection {
 
   Future<void> _ready() async {
     await _validarEstatusUsuario();
+    await _obtenerReportesServidor();
     if(mostrarAlertaPendientes && reportesLocal!.isNotEmpty) {
       mostrarAlertaPendientes = false;
       await tool.wait(1);
       msg("Le recordamos que tiene reportes pendientes por subir al servidor", MsgType.warning);
+    }
+  }
+
+  Future<void> operacionPopUp(String? id) async {
+    switch(id) {
+      case "0":
+        _consultaAvanzadaReportesServidor();
+        break;
+      default:
+        return;
     }
   }
 
@@ -156,6 +183,34 @@ class HomeController extends GetInjection {
     menuIndex = index;
     menuController?.jumpToPage(index);
     update(); 
+  }
+
+  Future<void> abrirReporteServidor(ReporteAltaLocal reporte, String idTarja) async {
+    try {
+      isBusy();
+      var verifyOnline = await tool.isOnline();
+      if(!verifyOnline) {
+        await tool.wait(1);
+        msg("Al parecer no cuenta con conexión a internet. Verifíquela y vuelva a intentarlo", MsgType.warning);
+        return;
+      }
+      var imagenes = await reportesRepository.consultaImagenesReporteAsync(idTarja);
+      if(imagenes == null) {
+        throw Exception();
+      }
+      await tool.wait(1);
+      if(reporte.tipo == "Entrada") {
+        reporte.reporteEntrada!.imagenes = imagenes;
+      } else if(reporte.tipo! == "Salida") {
+        reporte.reporteSalida!.imagenes = imagenes;
+      } else if(reporte.tipo! == "Daños") {
+        reporte.reporteDanio!.imagenes = imagenes;
+      }
+      isBusy(false);
+      await gestionarReporteLocal(reporte);
+    } catch(e) {
+      msg("Ocurrió un error al visualizar reporte", MsgType.error);
+    }
   }
 
   Future<void> gestionarReporteLocal(ReporteAltaLocal reporte, [bool visualizar = true]) async {
@@ -206,16 +261,9 @@ class HomeController extends GetInjection {
     }
   }
 
-  Future<void> subirReportePendiente(ReporteAltaLocal reporte) async {
-    try {
-      var verify = await ask("Subir reporte", "¿Desea continuar?");
-      if(!verify) {
-        return;
-      }
-    } catch(e) {
-      msg("Ocurrió un error al intentar subir reporte pendiente", MsgType.error);
-    }
-  }
+  Future<void> subirReportePendiente(ReporteAltaLocal reporte) => _subirPendiente([reporte]);
+
+  Future<void> subirTodosReportesPendientes() => _subirPendiente(reportesLocal!, true);
 
   List<List<ReporteImagenes>> crearListaImagenes(List<ReporteImagenes> reporteImagenes) {
     List<List<ReporteImagenes>> listaImagenes = [];
@@ -278,7 +326,7 @@ class HomeController extends GetInjection {
         const LoginPage(),
         binding: LoginBinding(),
         transition: Transition.leftToRight,
-        duration: 1.5.seconds,
+        duration: 1.seconds,
       );
     } catch(e) {
       msg("Ocurrió un error al cerrar sesión", MsgType.error);
@@ -456,9 +504,133 @@ class HomeController extends GetInjection {
     }
   }
 
+  Future<void> _obtenerReportesServidor() async {
+    try {
+      reportesServidor = [];
+      reportesServidorAux = [];
+      if(!cargandoReportes) {
+        cargandoReportes = true;
+        update();
+      }
+      conInternet = await tool.isOnline();
+      if(!conInternet) {
+        await tool.wait(1);
+        return;
+      }
+      var fechaArr = fechaBusqueda.text.split("/");
+      var fechaConsulta = "${fechaArr[2]}-${fechaArr[1]}-${fechaArr[0]}";
+      reportesServidor = await reportesRepository.consultaReporteAsync(fechaConsulta);
+      reportesServidorAux = reportesServidor;
+    } catch(e) {
+      return;
+    } finally {
+      cargandoReportes = false;
+      _filtarReportesServidor();
+      update();
+    }
+  }
+
+  void _filtarReportesServidor([bool recargar = false]) {
+    if(reportesServidor!.isEmpty) {
+      return;
+    }
+    var reportesServidorQuery = reportesServidorAux;
+    if(tipoReporteBusqueda.text != tiposReporte[0]) {
+      reportesServidorQuery = reportesServidorQuery!.where((r) => r.tipo == tipoReporteBusqueda.text).toList();
+    }
+    if(!isAdmin) {
+      reportesServidorQuery = reportesServidorQuery!.where((reporte) {
+        if(reporte.tipo == "Entrada") {
+          return reporte.reporteEntrada!.usuario == idUsuarioMenu;
+        } else if(reporte.tipo! == "Salida") {
+          return reporte.reporteSalida!.usuario == idUsuarioMenu;
+        } else if(reporte.tipo! == "Daños") {
+          return reporte.reporteDanio!.usuario == idUsuarioMenu;
+        } else {
+          return false;
+        }
+      }).toList();
+    }
+    reportesServidor = reportesServidorQuery;
+    if(recargar) {
+      update();
+    }
+  }
+
+  void _consultaAvanzadaReportesServidor() {
+    
+  }
+
+  Future<void> _subirPendiente(List<ReporteAltaLocal> reportes, [bool multiple = false]) async {
+    try {
+      var verify = await ask("Subir ${(multiple ? "todos los reportes" : "reporte")}", "¿Desea continuar?");
+      if(!verify) {
+        return;
+      }
+      isBusy();
+      var subirReporte = await reportesRepository.altaReporteAsync(reportes);
+      if(!subirReporte) {
+        throw Exception();
+      }
+      var actualiza = false;
+      if(multiple) {
+        reportesLocal = [];
+        var _ = await storage.delete(ReporteAltaLocal());
+        actualiza = await storage.put([ReporteAltaLocal()]);
+      } else {
+        var reporte = reportes.first;
+        List<ReporteAltaLocal> reportesLocalAux = [];
+        for (var i = 0; i < reportesLocal!.length; i++) {
+          if(reportesLocal![i].tipo != reporte.tipo) {
+            reportesLocalAux.add(reportesLocal![i]);
+            continue;
+          }
+          var idTarja = "";
+          var idTarjaAlta = "";
+          if(reporte.tipo == "Entrada") {
+            idTarja = reportesLocal![i].reporteEntrada!.idTarja!;
+            idTarjaAlta = reporte.reporteEntrada!.idTarja!;
+          } else if(reporte.tipo == "Salida") {
+            idTarja = reportesLocal![i].reporteSalida!.idTarja!;
+            idTarjaAlta = reporte.reporteSalida!.idTarja!;
+          } else if(reporte.tipo == "Daños") {
+            idTarja = reportesLocal![i].reporteDanio!.idTarja!;
+            idTarjaAlta = reporte.reporteDanio!.idTarja!;
+          }
+          if(idTarja != idTarjaAlta) {
+            reportesLocalAux.add(reportesLocal![i]);
+          }
+        }
+        reportesLocal = reportesLocalAux;
+        if(reportesLocal!.isNotEmpty) {
+          actualiza = await storage.update(reportesLocal);
+        } else {
+          var _ = await storage.delete(ReporteAltaLocal());
+          actualiza = await storage.put([ReporteAltaLocal()]);
+        }
+      }
+      update();
+      if(!actualiza) {
+        msg(
+          "${(multiple ? "Los reportes se subieron al servidor" : "El reporte se subió al servidor")}, pero ocurrió un problema al actualizar la lista de pendientes.", 
+          MsgType.warning
+        );
+        return;
+      }
+      msg(
+        multiple ? "Los reportes han sido enviados al servidor" : "El reporte ha sido enviado al servidor", 
+        MsgType.success
+      );
+    } catch(e) {
+      tool.debug(e);
+      msg("Ocurrió un error al intentar subir ${(multiple ? "reportes pendientes" : "reporte pendiente")}", MsgType.error);
+    }
+  }
+
   void _filtrarBusquedaOnline() {
     try {
       _cargarTipoReporteBusquedaLista();
+      _filtarReportesServidor(true);
     } finally { }
   }
 
@@ -485,8 +657,28 @@ class HomeController extends GetInjection {
     }
   }
 
-  void dateSelected() {
+  Future<void> dateSelected() async {
+    if(cargandoReportes) {
+      return;
+    }
     update();
+    await _obtenerReportesServidor();
+  }
+
+  void _cargarOpcionesPopup() {
+    try {
+      opcionesConsulta = [];
+      for (var i = 0; i < opcionesBase.length; i++) {
+        var opciones = opcionesBase[i].split("~");
+        opcionesConsulta.add(MenuPopupOpciones(
+          id: i.toString(),
+          value: opciones[0],
+          tipo: opciones[1],
+          icono: opcionesIcono[i],
+        ));
+      }
+      update();
+    } finally { }
   }
 
   void _fillFormsReportes(ReporteAltaLocal reporte) {

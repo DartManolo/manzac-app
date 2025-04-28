@@ -62,7 +62,7 @@ class BasicBottomSheetContainer extends StatelessWidget {
                       height: 20,
                       child: Icon(
                         MaterialIcons.close,
-                        size: 19,
+                        size: 25,
                       ),
                     ),
                     onTap: () {

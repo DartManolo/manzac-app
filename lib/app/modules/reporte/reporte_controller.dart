@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:manzac_app/app/widgets/containers/card_container.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -64,6 +65,18 @@ class ReporteController extends GetInjection {
     FontAwesome5Solid.file_pdf,
     MaterialIcons.save_alt,
     Icons.file_upload_outlined,
+  ];
+
+  List<String> codigosDanios = [
+    "PI~HUNDIDO", "B~DOBLADO",
+    "M~FALTA", "PO~ABOMBADO",
+    "MN~DESPRENDIDO", "R~OXIDADO",
+    "D~ABOLLADO", "BR~ROTO",
+    "DY~SUCIO", "SC~RASPADO",
+    "L~FLOJO", "IR~REP-IMPRO.",
+    "C~CORTADO", "DT~TORSIÓN",
+    "PT~PINTADO", "H~PERFORADO",
+    "CR~RAJADO", "XXX~OTRO"
   ];
 
   String _usuarioAlta = "";
@@ -445,7 +458,55 @@ class ReporteController extends GetInjection {
   }
 
   void abrirAyudaDanios() {
-    
+    _daniosFormUnfocus();
+    var context = Get.context;
+    showMaterialModalBottomSheet(
+      context: context!,
+      expand: true,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BasicBottomSheetContainer(
+        context: context,
+        cerrar: true,
+        child: Column(
+          children: [
+            TituloContainer(
+              texto: "Códigos de daño",
+              size: 16,
+            ),
+            CardContainer(
+              padding: EdgeInsets.all(15),
+              children: codigosDanios.map((codigo) {
+                var texto = codigo.split("~");
+                return Container(
+                  padding: EdgeInsets.fromLTRB(0, 2, 0, 2),
+                  child: RichText(
+                    text: TextSpan(
+                      text: "${texto[0]}: ",
+                      style: TextStyle(
+                        color: Color(ColorList.sys[0]),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: texto[1],
+                          style: TextStyle(
+                            color: Color(ColorList.sys[0]),
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _eliminarImagenLista(ReporteImagenes? imagen) {

@@ -27,6 +27,7 @@ class ReporteSalida {
   String? observaciones;
   String? usuario;
   List<ReporteImagenes>? imagenes;
+  String? nombreUsuario;
 
   ReporteSalida({
     this.idTarja = "",
@@ -55,9 +56,10 @@ class ReporteSalida {
     this.observaciones = "\n",
     this.usuario = "",
     this.imagenes = const [],
+    this.nombreUsuario = "",
   });
 
-  Map toJson() => {
+  Map<String, dynamic> toJson() => {
     'idTarja' : idTarja,
     'tipo' : tipo,
     'fecha' : fecha,
@@ -83,7 +85,8 @@ class ReporteSalida {
     'licencia' : licencia,
     'observaciones' : observaciones,
     'usuario' :   usuario,
-    'imagenes' : imagenes,
+    'imagenes' : imagenes?.map((img) => img.toJson()).toList(),
+    'nombreUsuario' :   nombreUsuario,
   };
 
   ReporteSalida.fromMap(Map<String, dynamic> json) {
@@ -113,5 +116,6 @@ class ReporteSalida {
     observaciones = json['observaciones'] ?? "";
     usuario = json['usuario'] ?? "";
     imagenes = ReporteImagenes().fromArray(json['imagenes']);
+    nombreUsuario = json['nombreUsuario'] ?? "";
   }
 }

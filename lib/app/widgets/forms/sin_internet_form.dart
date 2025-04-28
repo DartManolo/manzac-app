@@ -7,9 +7,11 @@ import '../containers/card_container.dart';
 
 class SinInternetForm extends StatelessWidget {
   final void Function() recargar;
+  final bool mostrarBoton;
   const SinInternetForm({
     super.key,
     required this.recargar,
+    this.mostrarBoton = true,
   });
 
   @override
@@ -31,14 +33,17 @@ class SinInternetForm extends StatelessWidget {
                 color: Color(0xFF515A5A),
               ),
             ),
-            SolidButton(
-              ltrbm: const [0, 20, 0, 0],
-              fondoColor: ColorList.sys[1],
-              textoColor: ColorList.sys[2],
-              icono: Icons.refresh,
-              texto: "Volver a intentar",
-              onPressed: recargar,
-              onLongPress: () {},
+            Visibility(
+              visible: mostrarBoton,
+              child: SolidButton(
+                ltrbm: const [0, 20, 0, 0],
+                fondoColor: ColorList.sys[1],
+                textoColor: ColorList.sys[2],
+                icono: Icons.refresh,
+                texto: "Volver a intentar",
+                onPressed: recargar,
+                onLongPress: () {},
+              ),
             ),
           ],
         ),

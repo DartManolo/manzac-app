@@ -24,7 +24,7 @@ class ApiService {
       var api = await _api();
       var response = post ? await api.post(
         "${Literals.uri}$url",
-        data: data,
+        data: json.encode(data),
       ) : await api.get(
         "${Literals.uri}$url"
       );
@@ -43,7 +43,6 @@ class ApiService {
   }
 
   Future<Dio> _api() async {
-    
     var localStorage = await _storage.get<LocalStorage>(LocalStorage());
     var api = Dio()
     ..options.headers = {

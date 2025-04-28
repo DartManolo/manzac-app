@@ -43,6 +43,7 @@ class ReporteDanio {
   String? observaciones;
   String? usuario;
   List<ReporteImagenes>? imagenes;
+  String? nombreUsuario;
 
   ReporteDanio({
     this.idTarja = "",
@@ -87,9 +88,10 @@ class ReporteDanio {
     this.observaciones = "",
     this.usuario = "",
     this.imagenes = const [],
+    this.nombreUsuario = "",
   });
 
-  Map toJson () => {
+  Map<String, dynamic> toJson () => {
     'idTarja' : idTarja,
     'tipo' : tipo,
     'fecha' : fecha,
@@ -131,7 +133,8 @@ class ReporteDanio {
     'extFrisa' :   extFrisa,
     'observaciones' :   observaciones,
     'usuario' :   usuario,
-    'imagenes' : imagenes,
+    'imagenes' : imagenes?.map((img) => img.toJson()).toList(),
+    'nombreUsuario' :   nombreUsuario,
   };
 
   ReporteDanio.fromMap(Map<String, dynamic> json) {
@@ -177,5 +180,6 @@ class ReporteDanio {
     observaciones = json['observaciones'] ?? "";
     usuario = json['usuario'] ?? "";
     imagenes = ReporteImagenes().fromArray(json['imagenes']);
+    nombreUsuario = json['nombreUsuario'] ?? "";
   }
 }

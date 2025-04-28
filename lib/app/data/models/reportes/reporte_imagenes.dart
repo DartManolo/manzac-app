@@ -1,6 +1,12 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
+
+import '../../../services/tool_service.dart';
+
 class ReporteImagenes {
+  final ToolService _tool = Get.find<ToolService>();
+  
   String? idTarja;
   String? idImagen;
   String? formato;
@@ -21,7 +27,7 @@ class ReporteImagenes {
     this.usuario = "",
   });
 
-  Map toJson() => {
+  Map<String, dynamic> toJson() => {
     'idTarja'   : idTarja,
     'idImagen'  : idImagen,
     'formato'   : formato,
@@ -62,5 +68,16 @@ class ReporteImagenes {
       return jsonArray;
     }
     return [];
+  }
+
+  ReporteImagenes.fromApi(Map<String, dynamic> json) {
+    idTarja = json['idTarja'].toString();
+    idImagen = json['idImagen'].toString();
+    formato = json['formato'].toString();
+    fila = _tool.str2int(json['fila'].toString());
+    posicion = _tool.str2int(json['posicion'].toString());
+    base64 = json['base64'].toString();
+    tipo = json['tipo'].toString();
+    usuario = json['usuario'].toString();
   }
 }

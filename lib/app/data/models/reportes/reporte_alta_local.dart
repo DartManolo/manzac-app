@@ -32,12 +32,12 @@ class ReporteAltaLocal {
     } finally { }
   }
 
-  Map toJson() => {
+  Map<String, dynamic> toJson() => {
     'tabla' : tabla,
     'tipo' : tipo,
-    'reporteEntrada' : reporteEntrada,
-    'reporteSalida' : reporteSalida,
-    'reporteDanio' : reporteDanio,
+    'reporteEntrada' : reporteEntrada?.toJson(),
+    'reporteSalida' : reporteSalida?.toJson(),
+    'reporteDanio' : reporteDanio?.toJson(),
   };
 
   ReporteAltaLocal fromJson(Map<String, dynamic>? json) {
@@ -75,5 +75,24 @@ class ReporteAltaLocal {
       return jsonArray;
     }
     return [ReporteAltaLocal()];
+  }
+
+  ReporteAltaLocal.fromApi(Map<String, dynamic> json) {
+    ReporteEntrada? entrada;
+    ReporteSalida? salida;
+    ReporteDanio? danio;
+    if(json['reporteEntrada'] != null) {
+      entrada = ReporteEntrada.fromMap(jsonDecode(jsonEncode(json['reporteEntrada'])));
+    }
+    if(json['reporteSalida'] != null) {
+      salida = ReporteSalida.fromMap(jsonDecode(jsonEncode(json['reporteSalida'])));
+    }
+    if(json['reporteDanio'] != null) {
+      danio = ReporteDanio.fromMap(jsonDecode(jsonEncode(json['reporteDanio'])));
+    }
+    tipo = json['tipo'].toString();
+    reporteEntrada = entrada;
+    reporteSalida = salida;
+    reporteDanio = danio;
   }
 }

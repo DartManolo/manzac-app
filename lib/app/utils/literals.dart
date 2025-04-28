@@ -1,6 +1,6 @@
 class Literals {
   static const String version = "1.0.0+1";
-  //static const String uri = "http://187.144.240.242:81/manzac-server/";
+  //static const String uri = "http://187.144.254.1:81/manzac-server/";
   static const String uri = "https://manzaclogistica.com.mx/";
   static const String contentType = "ContentType";
   static const String applicationJson = "application/json";
