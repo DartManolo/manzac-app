@@ -15,13 +15,20 @@ class ReporteViewPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(c.tituloVisor),
         ),
-        body: PdfPreview(
-          build: c.pdfReporte,
-          canChangePageFormat: false,
-          canChangeOrientation: false,
-          canDebug: false,
-          actionBarTheme: PdfActionBarTheme(
-            backgroundColor: Color(ColorList.sys[0]),
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Color(ColorList.sys[0]),
+            ),
+          ),
+          child: PdfPreview(
+            build: c.pdfReporte,
+            canChangePageFormat: false,
+            canChangeOrientation: false,
+            canDebug: false,
+            actionBarTheme: PdfActionBarTheme(
+              backgroundColor: Color(ColorList.sys[0]),
+            ),
           ),
         ),
       ),

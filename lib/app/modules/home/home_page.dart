@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
           appBar: AppBar(
             title: SizedBox.shrink(),
             backgroundColor: Color(ColorList.ui[1]),
-            actions: c.menuIndex == 0 ? <Widget>[
+            /*actions: c.menuIndex == 0 ? <Widget>[
               PopupMenuButton(
                 onSelected: (value) {},
                 itemBuilder: (BuildContext context) {
@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                   }).toList();
                 }
               ),
-            ] : null,
+            ] : null,*/
           ),
           drawer: Drawer(
             child: Column(
@@ -136,7 +136,8 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                     children: [
                       Expanded(
                         child: DateTextform(
-                          height: 70,
+                          ltrbp: [10, 5, 10, 0],
+                          height: 50,
                           controller: c.fechaBusqueda,
                           focusNode: c.fechaBusquedaFocus,
                           dateSelected: c.dateSelected,
@@ -146,11 +147,28 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                       ),
                       Expanded(
                         child: SelectionCombo(
+                          ltrb: [10, 5, 10, 0],
+                          height: 50,
                           titulo: "- Filtrar por tipo -",
                           controller: c.tipoReporteBusqueda,
                           values: c.listaTiposReportes,
                           icono: MaterialIcons.list_alt,
                         ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SelectionCombo(
+                            ltrb: [10, 0, 10, 0],
+                            height: 45,
+                            titulo: "- Filtrar por usuario -",
+                            controller: c.usuariosBusqueda,
+                            values: c.listaUsuarios,
+                            icono: MaterialIcons.person_search,
+                          ),
                       ),
                     ],
                   ),

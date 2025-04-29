@@ -58,8 +58,8 @@ class ReporteController extends GetInjection {
   List<MenuPopupOpciones> opcionesConsulta = [];
   List<String> opcionesBase = [
     "Visualizar reporte~B",
-    "Solo guardar~B",
-    "Guardar y subir~B",
+    "Guardar localmente~B",
+    "Subir al servidor~B",
   ];
   List<IconData?> opcionesIcono = [
     FontAwesome5Solid.file_pdf,
@@ -81,9 +81,16 @@ class ReporteController extends GetInjection {
 
   String _usuarioAlta = "";
 
-  @override void onInit() {
+  @override
+  void onInit() {
     _init();
     super.onInit();
+  }
+
+  @override
+  Future<void> onReady() async {
+    await _ready();
+    super.onReady();
   }
 
   void _init() {
@@ -128,6 +135,11 @@ class ReporteController extends GetInjection {
     }
   }
 
+  Future<void> _ready() async {
+    var localStorage = await storage.get<LocalStorage>(LocalStorage());
+    _usuarioAlta = localStorage!.idUsuario!;
+  }
+
   Future<void> cerrar() async {
     var verify = await ask("Los cambios se perderán", "¿Desea salir?");
     if(!verify) {
@@ -164,6 +176,7 @@ class ReporteController extends GetInjection {
         await soloGuardar();
         break;
       case "2":
+        await subirReporteSevidor();
         break;
       default:
         return;
@@ -202,8 +215,6 @@ class ReporteController extends GetInjection {
   Future<void> soloGuardar() async {
     try {
       isBusy();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
-      _usuarioAlta = localStorage!.idUsuario!;
       var reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
       _crearAltaData();
       if(!editarReporte) {
@@ -238,6 +249,27 @@ class ReporteController extends GetInjection {
       msg("Reporte guardado correctamente", MsgType.success);
     } catch(e) {
       msg("Ocurrió un error al intentar guardar el reporte", MsgType.error);
+    }
+  }
+
+  Future<void> subirReporteSevidor() async {
+    try {
+      var verify = await ask("Subir al servidor", "El reporte ya NO podrá ser editado\n¿Desea continuar?");
+      if(!verify) {
+        return;
+      }
+      isBusy();
+      _crearAltaData();
+      var subirReporte = await reportesRepository.altaReporteAsync([reporteAltaLocal!]);
+      if(!subirReporte) {
+        throw Exception();
+      }
+      await tool.wait(1);
+      isBusy(false);
+      Get.back();
+      msg("Reporte guardado correctamente", MsgType.success);
+    } catch(e) {
+      msg("Ocurrió un error al intentar subir el reporte al servidor", MsgType.error);
     }
   }
   

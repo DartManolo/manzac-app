@@ -16,6 +16,7 @@ import '../../data/models/reportes/reporte_alta_local.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
 import '../../data/models/system/menu_opciones.dart';
 import '../../data/models/system/menu_popup_opciones.dart';
+import '../../data/models/system/usuarios_busqueda.dart';
 import '../../routes/app_routes.dart';
 import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
@@ -65,6 +66,11 @@ class HomeController extends GetInjection {
   TextEditingController tipoReporteBusqueda = TextEditingController();
   List<BottomSheetAction> listaTiposReportes = [];
   String tipoReporteSelected = "";
+
+  List<UsuariosBusqueda> usuariosReporte = [];
+  TextEditingController usuariosBusqueda = TextEditingController();
+  List<BottomSheetAction> listaUsuarios = [];
+  String usuarioSelected = "";
 
   List<ReporteAltaLocal>? reportesServidor = [];
   List<ReporteAltaLocal>? reportesServidorAux = [];
@@ -133,9 +139,11 @@ class HomeController extends GetInjection {
           accion: () => _abrirVista(AppRoutes.usuarios),
         ));
       }
+      _cargarOpcionesPopup();
       tipoReporteSelected = tiposReporte.first;
       tipoReporteBusqueda.text = tiposReporte.first;
       _cargarTipoReporteBusquedaLista();
+      _crearFiltroUsuarios();
       var localStorage = await storage.get<LocalStorage>(LocalStorage());
       mayusculas = localStorage!.mayusculas!;
       idUsuarioMenu = localStorage.idUsuario!;
@@ -143,7 +151,6 @@ class HomeController extends GetInjection {
       usuarioMenu = localStorage.usuario!;
       perfilMenu = localStorage.perfil!;
       await recargarReportesLocal();
-      _cargarOpcionesPopup();
     } finally {
       update();
     }
@@ -519,19 +526,21 @@ class HomeController extends GetInjection {
       }
       var fechaArr = fechaBusqueda.text.split("/");
       var fechaConsulta = "${fechaArr[2]}-${fechaArr[1]}-${fechaArr[0]}";
-      reportesServidor = await reportesRepository.consultaReporteAsync(fechaConsulta);
-      reportesServidorAux = reportesServidor;
+      var result = await reportesRepository.consultaReporteAsync(fechaConsulta);
+      reportesServidor = result;
+      reportesServidorAux = result;
     } catch(e) {
       return;
     } finally {
       cargandoReportes = false;
+      _crearFiltroUsuarios();
       _filtarReportesServidor();
       update();
     }
   }
 
   void _filtarReportesServidor([bool recargar = false]) {
-    if(reportesServidor!.isEmpty) {
+    if(reportesServidorAux!.isEmpty) {
       return;
     }
     var reportesServidorQuery = reportesServidorAux;
@@ -551,15 +560,82 @@ class HomeController extends GetInjection {
         }
       }).toList();
     }
+    if(usuarioSelected != "TODOS") {
+      reportesServidorQuery = reportesServidorQuery!.where((reporte) {
+        if(reporte.tipo == "Entrada") {
+          return reporte.reporteEntrada!.usuario == usuarioSelected;
+        } else if(reporte.tipo! == "Salida") {
+          return reporte.reporteSalida!.usuario == usuarioSelected;
+        } else if(reporte.tipo! == "Daños") {
+          return reporte.reporteDanio!.usuario == usuarioSelected;
+        } else {
+          return false;
+        }
+      }).toList();
+    }
     reportesServidor = reportesServidorQuery;
     if(recargar) {
       update();
     }
   }
 
-  void _consultaAvanzadaReportesServidor() {
-    
+  void _crearFiltroUsuarios([bool inicio = true]) {
+    try {
+      listaUsuarios = [];
+      usuariosReporte = [
+        UsuariosBusqueda(
+          id: "TODOS",
+          nonbre: "Todos los usuarios",
+        ),
+      ];
+      if(inicio) {
+        usuarioSelected = usuariosReporte.first.id!;
+        usuariosBusqueda.text = usuariosReporte.first.nonbre!;
+      }
+      for (var i = 0; i < reportesServidorAux!.length; i++) {
+        var nombre = "";
+        var usuario = "";
+        if(reportesServidorAux![i].tipo == "Entrada") {
+          nombre = reportesServidorAux![i].reporteEntrada!.nombreUsuario!;
+          usuario = reportesServidorAux![i].reporteEntrada!.usuario!;
+        } else if(reportesServidorAux![i].tipo == "Salida") {
+          nombre = reportesServidorAux![i].reporteSalida!.nombreUsuario!;
+          usuario = reportesServidorAux![i].reporteSalida!.usuario!;
+        } else if(reportesServidorAux![i].tipo == "Daños") {
+          nombre = reportesServidorAux![i].reporteDanio!.nombreUsuario!;
+          usuario = reportesServidorAux![i].reporteDanio!.usuario!;
+        }
+        var verify = usuariosReporte.where((u) => u.id == usuario).firstOrNull;
+        if(verify == null) {
+          usuariosReporte.add(UsuariosBusqueda(
+            id: usuario,
+            nonbre: nombre
+          ));
+        }
+      }
+      for (var i = 0; i < usuariosReporte.length; i++) {
+        listaUsuarios.add(
+          BottomSheetAction(
+            title: ComboText(
+              texto: usuariosReporte[i].nonbre!,
+              fontWeight: usuarioSelected == usuariosReporte[i].id
+                ? FontWeight.bold
+                : FontWeight.normal,
+            ),
+            onPressed: (context) {
+              usuariosBusqueda.text = usuariosReporte[i].nonbre!;
+              usuarioSelected = usuariosReporte[i].id!;
+              update();
+              Navigator.of(context).pop();
+              _filtrarUsuarioBusquedaOnline();
+            },
+          ),
+        );
+      }
+    } finally { }
   }
+
+  void _consultaAvanzadaReportesServidor() { }
 
   Future<void> _subirPendiente(List<ReporteAltaLocal> reportes, [bool multiple = false]) async {
     try {
@@ -627,9 +703,16 @@ class HomeController extends GetInjection {
     }
   }
 
-  void _filtrarBusquedaOnline() {
+  void _filtrarTipoReporteBusquedaOnline() {
     try {
       _cargarTipoReporteBusquedaLista();
+      _filtarReportesServidor(true);
+    } finally { }
+  }
+
+  void _filtrarUsuarioBusquedaOnline() {
+    try {
+      _crearFiltroUsuarios(false);
       _filtarReportesServidor(true);
     } finally { }
   }
@@ -789,7 +872,7 @@ class HomeController extends GetInjection {
             tipoReporteSelected = tiposReporte[i];
             update();
             Navigator.of(context).pop();
-            _filtrarBusquedaOnline();
+            _filtrarTipoReporteBusquedaOnline();
           },
         ),
       );
