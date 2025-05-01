@@ -9,6 +9,7 @@ import '../../utils/color_list.dart';
 import '../../utils/literals.dart';
 import '../../widgets/buttons/solid_button.dart';
 import '../../widgets/combos/selection_combo.dart';
+import '../../widgets/containers/limite_pendientes_container.dart';
 import '../../widgets/drawers/header_drawer.dart';
 import '../../widgets/drawers/item_drawer.dart';
 import '../../widgets/forms/ajustes_form.dart';
@@ -209,6 +210,10 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                   if(c.reportesLocal!.isNotEmpty) {
                     return Column(
                       children: [
+                        LimitePendientesContainer(
+                          reportesLocalSize: c.reportesLocalSize,
+                          reportesLocalSizeLimit: c.reportesLocalSizeLimit,
+                        ),
                         PendientesListadoForm(
                           scrollController: c.pendientesScrollController,
                           reportesLocal: c.reportesLocal,

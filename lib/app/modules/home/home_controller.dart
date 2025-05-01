@@ -79,6 +79,7 @@ class HomeController extends GetInjection {
 
   List<ReporteAltaLocal>? reportesLocal = [];
   double reportesLocalSize = 0;
+  double reportesLocalSizeLimit = 25;
   bool mostrarAlertaPendientes = true;
   List<MenuOpciones> menuOpciones = [];
   bool mayusculas = false;
@@ -342,6 +343,12 @@ class HomeController extends GetInjection {
 
   Future<void> reestablcerAplicacion() async {
     try {
+      if(reportesLocal!.isNotEmpty) {
+        var verifyRepo = await ask("¡Tiene reportes pendientes!", "Si Acepta, TODOS los pendientes se perderán, ¿Desea continuar?");
+        if(!verifyRepo) {
+          return;
+        }
+      }
       var verify = await ask("Salir de la sesión", "¿Desea continuar?");
       if(!verify) {
         return;
