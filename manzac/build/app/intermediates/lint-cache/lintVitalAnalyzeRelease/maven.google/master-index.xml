@@ -269,6 +269,7 @@
   <com.google.android.tv.tvpanelframework/>
   <com.google.android.ump/>
   <com.google.android.wearable/>
+  <com.google.android.wearable.watchface.validator/>
   <com.google.androidbrowserhelper/>
   <com.google.ar/>
   <com.google.ar.sceneform/>
