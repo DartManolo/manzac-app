@@ -64,6 +64,7 @@ class ReportePage extends StatelessWidget {
                         dateSelected: c.dateSelected,
                         abrirComentario: c.abrirComentario,
                         onChangedCheck: c.onChangedCheck,
+                        seleccionarDanio: c.seleccionarDanio,
                         scrollController: c.formScrollController,
                       );
                     }

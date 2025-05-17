@@ -15,6 +15,7 @@ class DaniosReporteForm extends StatelessWidget {
   final void Function() dateSelected;
   final void Function() abrirComentario;
   final void Function() onChangedCheck;
+  final void Function(TextEditingController, String) seleccionarDanio;
   final ScrollController? scrollController;
   const DaniosReporteForm({
     super.key,
@@ -22,6 +23,7 @@ class DaniosReporteForm extends StatelessWidget {
     required this.dateSelected,
     required this.abrirComentario,
     required this.onChangedCheck,
+    required this.seleccionarDanio,
     this.scrollController,
   });
 
@@ -280,6 +282,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Puertas (Izquierda)',
               controller: form.intPuertasIzq,
               focusNode: form.intPuertasIzqFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intPuertasIzq,
+                'Puertas (Izquierda)'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -288,6 +295,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Puertas (Derecha)',
               controller: form.intPuertasDer,
               focusNode: form.intPuertasDerFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intPuertasDer,
+                'Puertas (Derecha)'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -296,6 +308,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Piso',
               controller: form.intPiso,
               focusNode: form.intPisoFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intPiso,
+                'Piso'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -304,6 +321,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Techo',
               controller: form.intTecho,
               focusNode: form.intTechoFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intTecho,
+                'Techo'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -312,6 +334,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Panel Lateral (Izquierda)',
               controller: form.intPanelLateralIzq,
               focusNode: form.intPanelLateralIzqFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intPanelLateralIzq,
+                'Panel Lateral (Izquierda)'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -320,6 +347,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Panel Lateral (Derecha)',
               controller: form.intPanelLateralDer,
               focusNode: form.intPanelLateralDerFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intPanelLateralDer,
+                'Panel Lateral (Derecha)'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -328,6 +360,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Panel Fondo',
               controller: form.intPanelFondo,
               focusNode: form.intPanelFondoFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.intPanelFondo,
+                'Panel Fondo'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -343,6 +380,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Puertas (Izquierda)',
               controller: form.extPuertasIzq,
               focusNode: form.extPuertasIzqFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPuertasIzq,
+                'Puertas (Izquierda)'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -351,6 +393,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Puertas (Derecha)',
               controller: form.extPuertasDer,
               focusNode: form.extPuertasDerFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPuertasDer,
+                'Puertas (Derecha)'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -359,6 +406,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Poste',
               controller: form.extPoste,
               focusNode: form.extPosteFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPoste,
+                'Poste'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -367,6 +419,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Palanca',
               controller: form.extPalanca,
               focusNode: form.extPalancaFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPalanca,
+                'Palanca'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -375,6 +432,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Gancho de cierre',
               controller: form.extGanchoCierre,
               focusNode: form.extGanchoCierreFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extGanchoCierre,
+                'Gancho de cierre'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -383,6 +445,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Panel Izquierdo',
               controller: form.extPanelIzq,
               focusNode: form.extPanelIzqFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPanelIzq,
+                'Panel Izquierdo'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -391,6 +458,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Panel Derecho',
               controller: form.extPanelDer,
               focusNode: form.extPanelDerFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPanelDer,
+                'Panel Derecho'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -399,6 +471,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Panel Fondo',
               controller: form.extPanelFondo,
               focusNode: form.extPanelFondoFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extPanelFondo,
+                'Panel Fondo'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -407,6 +484,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Cantonera',
               controller: form.extCantonera,
               focusNode: form.extCantoneraFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extCantonera,
+                'Cantonera'
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -415,6 +497,11 @@ class DaniosReporteForm extends StatelessWidget {
               text: 'Frisa',
               controller: form.extFrisa,
               focusNode: form.extFrisaFocus,
+              readOnly: true,
+              onTap: () => seleccionarDanio(
+                form.extFrisa,
+                'Frisa'
+              ),
             ),
           ),
 

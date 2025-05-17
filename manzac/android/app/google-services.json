@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "227710247269",
+    "project_id": "manzac-1bc71",
+    "storage_bucket": "manzac-1bc71.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227710247269:android:93eea5b7ed14510d9b418c",
+        "android_client_info": {
+          "package_name": "com.mtgdevs.manzaclogistic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRT7gVbTOJ9FZqGxFkm_dJ-ODKcbmIu7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

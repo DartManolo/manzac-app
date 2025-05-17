@@ -50,6 +50,7 @@ class LoginController extends GetInjection {
       var loginForm = LoginForm(
         usuario: usuario.text.toLowerCase(),
         password: password.text,
+        firebase: localStorage!.idFirebase,
       );
       var result = await loginRepository.iniciarSesionAsync(loginForm);
       if(result == null) {
@@ -62,7 +63,7 @@ class LoginController extends GetInjection {
       }
       GetInjection.administrador = result.perfil == Literals.perfilAdministrador;
       GetInjection.perfil = result.perfil!;
-      localStorage!.token = result.token;
+      localStorage.token = result.token;
       localStorage.idUsuario = result.idSistema;
       localStorage.usuario = loginForm.usuario;
       localStorage.login = mantenerSesion;

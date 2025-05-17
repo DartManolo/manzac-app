@@ -6,6 +6,7 @@ import '../../services/api_service.dart';
 import '../../services/tool_service.dart';
 import '../../utils/literals.dart';
 import '../models/login/login_data.dart';
+import '../models/usuarios/notificacion_forbiden.dart';
 
 class UsuariosProvider {
   final ApiService _api = Get.find<ApiService>();
@@ -81,6 +82,18 @@ class UsuariosProvider {
       return result;
     } catch(e) {
       return null;
+    }
+  }
+
+  Future<bool> notificarAdminsForbidenLogoutAsync(NotificacionForbiden notificacion) async {
+    try {
+      var result = await _api.post(
+        "api/usuarios/notificarAdminsForbidenLogout",
+        notificacion
+      );
+      return result == Literals.apiTrue;
+    } catch(e) {
+      return false;
     }
   }
 }

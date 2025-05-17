@@ -7,10 +7,12 @@ class TituloContainer extends StatelessWidget {
   final double size;
   final List<double> ltrbp;
   final bool bold;
+  final TextAlign textAlign;
   const TituloContainer({
     super.key,
     this.texto = '',
     this.size = 22,
+    this.textAlign = TextAlign.start,
     this.ltrbp = const [10, 10, 10, 10,],
     this.bold = true,
   });
@@ -26,6 +28,7 @@ class TituloContainer extends StatelessWidget {
       ),
       child: Text(
         texto,
+        textAlign: textAlign,
         style: TextStyle(
           fontSize: size,
           fontWeight: bold ? FontWeight.bold : FontWeight.normal,

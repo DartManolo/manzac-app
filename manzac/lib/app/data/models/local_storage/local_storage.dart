@@ -15,6 +15,7 @@ class LocalStorage {
   bool? mayusculas;
   String? firmaOperaciones;
   String? firmaGerencia;
+  String? idFirebase;
 
   LocalStorage({
     this.version = _localStorageVersion,
@@ -28,6 +29,7 @@ class LocalStorage {
     this.mayusculas = true,
     this.firmaOperaciones = "",
     this.firmaGerencia = "",
+    this.idFirebase = "",
   });
 
   Map toJson() => {
@@ -43,6 +45,7 @@ class LocalStorage {
     'mayusculas'        : mayusculas,
     'firmaOperaciones'  : firmaOperaciones,
     'firmaGerencia'     : firmaGerencia,
+    'idFirebase'        : idFirebase,
   };
 
   Map<String, dynamic> toMap() {
@@ -59,6 +62,7 @@ class LocalStorage {
       'mayusculas'        : mayusculas,
       'firmaOperaciones'  : firmaOperaciones,
       'firmaGerencia'     : firmaGerencia,
+      'idFirebase'        : idFirebase,
     };
   }
 
@@ -74,6 +78,7 @@ class LocalStorage {
     mayusculas = json['mayusculas'] ?? false;
     firmaOperaciones = json['firmaOperaciones'] ?? "";
     firmaGerencia = json['firmaGerencia'] ?? "";
+    idFirebase = json['idFirebase'] ?? "";
   }
 
   LocalStorage.fromMap(Map<String, dynamic> json) {
@@ -87,6 +92,7 @@ class LocalStorage {
     mayusculas = json['mayusculas'] ?? true;
     firmaOperaciones = json['firmaOperaciones'] ?? "";
     firmaGerencia = json['firmaGerencia'] ?? "";
+    idFirebase = json['idFirebase'] ?? "";
   }
 
   LocalStorage fromJson(Map<String, dynamic>? json) {
@@ -102,6 +108,7 @@ class LocalStorage {
       mayusculas: json['mayusculas'] ?? true,
       firmaOperaciones: json['firmaOperaciones'] ?? "",
       firmaGerencia: json['firmaGerencia'] ?? "",
+      idFirebase: json['idFirebase'] ?? "",
     ) : LocalStorage();
   }
 
@@ -121,6 +128,7 @@ class LocalStorage {
           mayusculas: json['mayusculas'] ?? true,
           firmaOperaciones: json['firmaOperaciones'] ?? "",
           firmaGerencia: json['firmaGerencia'] ?? "",
+          idFirebase: json['idFirebase'] ?? "",
         ));
       }
       return jsonArray;

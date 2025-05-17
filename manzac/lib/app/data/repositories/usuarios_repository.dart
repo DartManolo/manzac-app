@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../models/login/login_data.dart';
+import '../models/usuarios/notificacion_forbiden.dart';
 import '../providers/usuarios_provider.dart';
 
 class UsuariosRepository {
@@ -17,10 +18,14 @@ class UsuariosRepository {
   }
 
   Future<bool> actualizarEstatusAsync(String usuario, String estatus) async {
-    return await Get.find<UsuariosProvider>().actualizarEstatusAsync(usuario,estatus);
+    return await Get.find<UsuariosProvider>().actualizarEstatusAsync(usuario, estatus);
   }
 
   Future<String?> validarUsuarioAsync(String usuario) async {
     return await Get.find<UsuariosProvider>().validarUsuarioAsync(usuario);
+  }
+
+  Future<bool> notificarAdminsForbidenLogoutAsync(NotificacionForbiden notificacion) async {
+    return await Get.find<UsuariosProvider>().notificarAdminsForbidenLogoutAsync(notificacion);
   }
 }

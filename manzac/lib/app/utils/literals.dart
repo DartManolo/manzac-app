@@ -5,6 +5,7 @@ class Literals {
   static const String contentType = "ContentType";
   static const String applicationJson = "application/json";
   static const String apiToken = "x-api-token";
+  static const String notificacionTopic = "appchop_notif";
 
   static const String perfilAdministrador = "ADMINISTRADOR";
   static const String perfilUsuario = "USUARIO";

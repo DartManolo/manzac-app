@@ -32,6 +32,7 @@ class AlphaController extends GetInjection {
       GetInjection.administrador = _localStorage!.perfil! == Literals.perfilAdministrador;
       GetInjection.perfil = _localStorage!.perfil!;
       await localStorageClassInit();
+      await firebase.init();
       return;
     } catch(e) {
       return;

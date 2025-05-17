@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:manzac_app/app/widgets/containers/card_container.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -15,14 +14,19 @@ import '../../data/models/reportes/reporte_danio.dart';
 import '../../data/models/reportes/reporte_entrada.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
 import '../../data/models/reportes/reporte_salida.dart';
+import '../../data/models/system/danios_opciones.dart';
 import '../../data/models/system/menu_popup_opciones.dart';
 import '../../routes/app_routes.dart';
 import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
 import '../../widgets/buttons/circular_buttons.dart';
+import '../../widgets/buttons/solid_button.dart';
 import '../../widgets/containers/basic_bottom_sheet_container.dart';
+import '../../widgets/containers/card_container.dart';
+import '../../widgets/containers/card_scrollable_container.dart';
 import '../../widgets/containers/titulo_container.dart';
 import '../../widgets/forms/mover_fila_form.dart';
+import '../../widgets/switchs/opcion_switch.dart';
 import '../../widgets/textformfields/danios_textformfield.dart';
 import '../../widgets/textformfields/entrada_textformfield.dart';
 import '../../widgets/textformfields/salida_textformfield.dart';
@@ -78,6 +82,8 @@ class ReporteController extends GetInjection {
     "PT~PINTADO", "H~PERFORADO",
     "CR~RAJADO", "XXX~OTRO"
   ];
+
+  List<DaniosOpciones> daniosOpciones = [];
 
   String _usuarioAlta = "";
 
@@ -310,6 +316,73 @@ class ReporteController extends GetInjection {
 
   void onChangedCheck() {
     update();
+  }
+
+  void seleccionarDanio(TextEditingController controller, String elemento) {
+    _daniosFormUnfocus();
+    _cargarListaDaniosOpciones();
+    var codigosSelected = controller.text.split(",");
+    for (var i = 0; i < codigosSelected.length; i++) {
+      codigosSelected[i] = codigosSelected[i].trim();
+    }
+    for (var i = 0; i < daniosOpciones.length; i++) {
+      daniosOpciones[i].value = codigosSelected.contains(daniosOpciones[i].codigo);
+    }
+    var context = Get.context;
+    showMaterialModalBottomSheet(
+      context: context!,
+      expand: true,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return BasicBottomSheetContainer(
+            context: context,
+            cerrar: true,
+            child: Column(
+              children: [
+                TituloContainer(
+                  textAlign: TextAlign.center,
+                  texto: 'Asignar códigos de daño\n$elemento',
+                  size: 15,
+                ),
+                Expanded(
+                  child: CardScrollableContainer(
+                    children: [
+                      Wrap(
+                        children: daniosOpciones.map((opcion) {
+                          return OpcionSwitch(
+                            text: opcion.titulo,
+                            value: opcion.value,
+                            onChanged: (v) {
+                              setState(() {
+                                daniosOpciones.where(
+                                  (d) => d.codigo == opcion.codigo
+                                ).first.value = v;
+                              });
+                            }
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+                SolidButton(
+                  texto: 'Seleccionar códigos',
+                  fondoColor: ColorList.sys[1],
+                  textoColor: ColorList.sys[3],
+                  onPressed: () {
+                    controller.text = _getDaniosCodigosSelected();
+                    tool.closeBottomSheet();
+                  },
+                  onLongPress: () { },
+                ),
+              ],
+            ),
+          );
+        }
+      ),
+    );
   }
 
   void abrirComentario() {
@@ -878,6 +951,32 @@ class ReporteController extends GetInjection {
       );
       reporteAltaLocal!.reporteDanio = reporteDanioAlta;
     }
+  }
+
+  void _cargarListaDaniosOpciones() {
+    daniosOpciones = [];
+    for (var i = 0; i < codigosDanios.length; i++) {
+      var textos = codigosDanios[i].split("~");
+      daniosOpciones.add(
+        DaniosOpciones(
+          titulo: textos[1],
+          codigo: textos[0],
+        ),
+      );
+    }
+  }
+
+  String _getDaniosCodigosSelected() {
+    var valor = "";
+    for (var i = 0; i < daniosOpciones.length; i++) {
+      if (daniosOpciones[i].value) {
+        if (valor != "") {
+          valor += ", ";
+        }
+        valor += daniosOpciones[i].codigo;
+      }
+    }
+    return valor;
   }
 
   void _scrollListenerDanios() {

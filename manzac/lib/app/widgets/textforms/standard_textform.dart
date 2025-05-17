@@ -12,7 +12,9 @@ class StandardTextform extends StatelessWidget {
   final IconData icon;
   final bool upper;
   final bool enabled;
+  final bool readOnly;
   final TextAlign textAlign;
+  final void Function()? onTap;
   final void Function(String?)? onChanged;
 
   const StandardTextform({
@@ -26,7 +28,9 @@ class StandardTextform extends StatelessWidget {
     this.icon = Icons.keyboard,
     this.upper = false,
     this.enabled = true,
+    this.readOnly = false,
     this.onChanged,
+    this.onTap,
     this.textAlign = TextAlign.start,
   });
 
@@ -45,6 +49,7 @@ class StandardTextform extends StatelessWidget {
         keyboardType: keyboardType,
         maxLength: maxLength,
         textAlign: textAlign,
+        onTap: onTap,
         decoration: InputDecoration(
           counterText: "",
           labelText: text,
@@ -61,6 +66,7 @@ class StandardTextform extends StatelessWidget {
           ? TextCapitalization.characters 
           : TextCapitalization.none,
         enabled: enabled,
+        readOnly: readOnly,
         onChanged: (value) {
           if(upper) {
             controller!.text = value.toUpperCase();

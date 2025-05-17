@@ -17,6 +17,7 @@ import '../../data/models/reportes/reporte_imagenes.dart';
 import '../../data/models/system/menu_opciones.dart';
 import '../../data/models/system/menu_popup_opciones.dart';
 import '../../data/models/system/usuarios_busqueda.dart';
+import '../../data/models/usuarios/notificacion_forbiden.dart';
 import '../../routes/app_routes.dart';
 import '../../utils/color_list.dart';
 import '../../utils/get_injection.dart';
@@ -344,10 +345,20 @@ class HomeController extends GetInjection {
   Future<void> reestablcerAplicacion() async {
     try {
       if(reportesLocal!.isNotEmpty) {
-        var verifyRepo = await ask("¡Tiene reportes pendientes!", "Si Acepta, TODOS los pendientes se perderán, ¿Desea continuar?");
+        /*var verifyRepo = await ask("¡Tiene reportes pendientes!", "Si Acepta, TODOS los pendientes se perderán, ¿Desea continuar?");
         if(!verifyRepo) {
           return;
-        }
+        }*/
+        msg("¡Tiene reportes pendientes!, es necesario subir los reportes pendientes al servidor", MsgType.warning);
+        try {
+          var notificacion = NotificacionForbiden(
+            titulo: "Atención!",
+            cuerpo: "El usuario $usuarioMenu intentó salir de la sesión con ${reportesLocal!.length} reporte(s) pendiente(s)",
+            idSistema: idUsuarioMenu,
+          );
+          var _ = await usuariosRepository.notificarAdminsForbidenLogoutAsync(notificacion);
+        } finally { }
+        return;
       }
       var verify = await ask("Salir de la sesión", "¿Desea continuar?");
       if(!verify) {
@@ -705,7 +716,6 @@ class HomeController extends GetInjection {
         MsgType.success
       );
     } catch(e) {
-      tool.debug(e);
       msg("Ocurrió un error al intentar subir ${(multiple ? "reportes pendientes" : "reporte pendiente")}", MsgType.error);
     }
   }
