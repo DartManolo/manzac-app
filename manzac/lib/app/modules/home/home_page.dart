@@ -34,33 +34,6 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
           appBar: AppBar(
             title: SizedBox.shrink(),
             backgroundColor: Color(ColorList.ui[1]),
-            /*actions: c.menuIndex == 0 ? <Widget>[
-              PopupMenuButton(
-                onSelected: (value) {},
-                itemBuilder: (BuildContext context) {
-                  return c.opcionesConsulta.map((opcion) {
-                    return PopupMenuItem(
-                      onTap: () {
-                        c.operacionPopUp(opcion.id);
-                      },
-                      labelTextStyle: WidgetStateProperty.all(
-                        TextStyle(
-                          color: Color(ColorList.sys[0]),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          opcion.icono,
-                          color: Color(ColorList.sys[0]),
-                        ),
-                        title: Text(opcion.value!,),
-                      ),
-                    );
-                  }).toList();
-                }
-              ),
-            ] : null,*/
           ),
           drawer: Drawer(
             child: Column(
@@ -252,6 +225,9 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                 verFirma: c.verFirma,
                 configFirma: c.configFirma,
                 isAdmin: c.isAdmin,
+                notificaciones: c.notificaciones,
+                almacenamiento: c.almacenamiento,
+                solicitarPermisoAjustes: c.solicitarPermisoAjustes,
               ),
             ],
           ),

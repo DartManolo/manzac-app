@@ -1,1 +1,39 @@
 flutter build appbundle --release --target-platform android-arm,android-arm64,android-x64
+
+/* ------------------ CODIGOS DESECHADOS ----------------------- */
+
+
+home_controller
+        /*var verifyRepo = await ask("¡Tiene reportes pendientes!", "Si Acepta, TODOS los pendientes se perderán, ¿Desea continuar?");
+        if(!verifyRepo) {
+          return;
+        }*/
+
+        home_page
+        /*actions: c.menuIndex == 0 ? <Widget>[
+              PopupMenuButton(
+                onSelected: (value) {},
+                itemBuilder: (BuildContext context) {
+                  return c.opcionesConsulta.map((opcion) {
+                    return PopupMenuItem(
+                      onTap: () {
+                        c.operacionPopUp(opcion.id);
+                      },
+                      labelTextStyle: WidgetStateProperty.all(
+                        TextStyle(
+                          color: Color(ColorList.sys[0]),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          opcion.icono,
+                          color: Color(ColorList.sys[0]),
+                        ),
+                        title: Text(opcion.value!,),
+                      ),
+                    );
+                  }).toList();
+                }
+              ),
+            ] : null,*/

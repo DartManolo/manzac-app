@@ -91,6 +91,8 @@
   <androidx.navigation/>
   <androidx.navigation.safeargs/>
   <androidx.navigation.safeargs.kotlin/>
+  <androidx.navigation3/>
+  <androidx.navigationevent/>
   <androidx.paging/>
   <androidx.palette/>
   <androidx.pdf/>

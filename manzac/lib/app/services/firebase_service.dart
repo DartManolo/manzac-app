@@ -7,11 +7,9 @@ import '../data/models/local_storage/local_storage.dart';
 import '../data/models/system/notificacion_data.dart';
 import '../utils/literals.dart';
 import 'storage_service.dart';
-import 'tool_service.dart';
 
 class FirebaseService {
   final StorageService _storage = Get.find<StorageService>();
-  final ToolService _tool = Get.find<ToolService>();
 
   Future<void> init() async {
     try {

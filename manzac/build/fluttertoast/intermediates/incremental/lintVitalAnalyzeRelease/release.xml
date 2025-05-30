@@ -6,7 +6,7 @@
     mergedManifest="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
     proguardFiles="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\default_proguard_files\global\proguard-android.txt-8.7.0"
     partialResultsDir="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-    desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\fbecfe94b3479b79f4cfc2149be70a0a\transformed\D8BackportedDesugaredMethods.txt">
+    desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\917193aa7db7ac16424c571c132278d7\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures
       namespacing="REQUIRED"/>
   <sourceProviders>
@@ -26,6 +26,6 @@
       applicationId="io.github.ponnamkarthik.toast.fluttertoast"
       generatedSourceFolders="C:\dev\manzac-app\manzac\build\fluttertoast\generated\ap_generated_sources\release\out"
       generatedResourceFolders="C:\dev\manzac-app\manzac\build\fluttertoast\generated\res\resValues\release"
-      desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\fbecfe94b3479b79f4cfc2149be70a0a\transformed\D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\917193aa7db7ac16424c571c132278d7\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

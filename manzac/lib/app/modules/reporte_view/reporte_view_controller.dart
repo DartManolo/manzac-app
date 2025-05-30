@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:money_formatter/money_formatter.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -1037,7 +1037,8 @@ class ReporteViewController extends GetInjection {
       return "0";
     }
     try {
-      var numeroFormatter = MoneyFormatter(amount: double.parse(texto)).output.nonSymbol;
+      var formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+      var numeroFormatter = formatter.format(double.parse(texto));
       var numero = numeroFormatter.replaceAll(",", ".").replaceAll("\$", "");
       numero = numero.substring(0, numero.length - 3);
       return numero;

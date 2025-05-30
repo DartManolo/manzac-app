@@ -8,6 +8,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../data/models/local_storage/local_storage.dart';
@@ -90,6 +91,9 @@ class HomeController extends GetInjection {
   String usuarioMenu = "";
   String perfilMenu = "";
 
+  bool notificaciones = false;
+  bool almacenamiento = false;
+
   File? fotografia;
   final ImagePicker seleccionarFoto = ImagePicker();
 
@@ -153,6 +157,7 @@ class HomeController extends GetInjection {
       usuarioMenu = localStorage.usuario!;
       perfilMenu = localStorage.perfil!;
       await recargarReportesLocal();
+      await _verificarPermisos();
     } finally {
       update();
     }
@@ -345,15 +350,11 @@ class HomeController extends GetInjection {
   Future<void> reestablcerAplicacion() async {
     try {
       if(reportesLocal!.isNotEmpty) {
-        /*var verifyRepo = await ask("¡Tiene reportes pendientes!", "Si Acepta, TODOS los pendientes se perderán, ¿Desea continuar?");
-        if(!verifyRepo) {
-          return;
-        }*/
         msg("¡Tiene reportes pendientes!, es necesario subir los reportes pendientes al servidor", MsgType.warning);
         try {
           var notificacion = NotificacionForbiden(
             titulo: "Atención!",
-            cuerpo: "El usuario $usuarioMenu intentó salir de la sesión con ${reportesLocal!.length} reporte(s) pendiente(s)",
+            cuerpo: "El usuario $nombreMenu intentó salir de la sesión con ${reportesLocal!.length} reporte(s) pendiente(s)",
             idSistema: idUsuarioMenu,
           );
           var _ = await usuariosRepository.notificarAdminsForbidenLogoutAsync(notificacion);
@@ -934,5 +935,25 @@ class HomeController extends GetInjection {
         msg("Su usuario se encuentra INACTIVO. Consulte con su administrador", MsgType.warning);
       }
     } finally { }
+  }
+
+  Future<void> _verificarPermisos() async {
+    await Permission.notification.isDenied.then((denegado) {
+      notificaciones = !denegado;
+    });
+    await Permission.storage.isDenied.then((denegado) {
+      almacenamiento = !denegado;
+    });
+  }
+
+  void solicitarPermisoAjustes(String tipo) {
+    switch(tipo) {
+      case "NOTIFICATIONS":
+        Permission.notification.request();
+      case "STORAGE":
+        Permission.storage.request();
+      default:
+      return;
+    }
   }
 }

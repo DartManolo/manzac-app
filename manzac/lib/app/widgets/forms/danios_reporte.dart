@@ -285,7 +285,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intPuertasIzq,
-                'Puertas (Izquierda)'
+                'Int: Puertas (Izquierda)'
               ),
             ),
           ),
@@ -298,7 +298,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intPuertasDer,
-                'Puertas (Derecha)'
+                'Int: Puertas (Derecha)'
               ),
             ),
           ),
@@ -311,7 +311,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intPiso,
-                'Piso'
+                'Int: Piso'
               ),
             ),
           ),
@@ -324,7 +324,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intTecho,
-                'Techo'
+                'Int: Techo'
               ),
             ),
           ),
@@ -337,7 +337,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intPanelLateralIzq,
-                'Panel Lateral (Izquierda)'
+                'Int: Panel Lateral (Izquierda)'
               ),
             ),
           ),
@@ -350,7 +350,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intPanelLateralDer,
-                'Panel Lateral (Derecha)'
+                'Int: Panel Lateral (Derecha)'
               ),
             ),
           ),
@@ -363,7 +363,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.intPanelFondo,
-                'Panel Fondo'
+                'Int: Panel Fondo'
               ),
             ),
           ),
@@ -383,7 +383,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPuertasIzq,
-                'Puertas (Izquierda)'
+                'Ext: Puertas (Izquierda)'
               ),
             ),
           ),
@@ -396,7 +396,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPuertasDer,
-                'Puertas (Derecha)'
+                'Ext: Puertas (Derecha)'
               ),
             ),
           ),
@@ -409,7 +409,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPoste,
-                'Poste'
+                'Ext: Poste'
               ),
             ),
           ),
@@ -422,7 +422,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPalanca,
-                'Palanca'
+                'Ext: Palanca'
               ),
             ),
           ),
@@ -435,7 +435,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extGanchoCierre,
-                'Gancho de cierre'
+                'Ext: Gancho de cierre'
               ),
             ),
           ),
@@ -448,7 +448,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPanelIzq,
-                'Panel Izquierdo'
+                'Ext: Panel Izquierdo'
               ),
             ),
           ),
@@ -461,7 +461,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPanelDer,
-                'Panel Derecho'
+                'Ext: Panel Derecho'
               ),
             ),
           ),
@@ -474,7 +474,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extPanelFondo,
-                'Panel Fondo'
+                'Ext: Panel Fondo'
               ),
             ),
           ),
@@ -487,7 +487,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extCantonera,
-                'Cantonera'
+                'Ext: Cantonera'
               ),
             ),
           ),
@@ -500,7 +500,7 @@ class DaniosReporteForm extends StatelessWidget {
               readOnly: true,
               onTap: () => seleccionarDanio(
                 form.extFrisa,
-                'Frisa'
+                'Ext: Frisa'
               ),
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import '../../utils/color_list.dart';
 import '../../utils/literals.dart';
+import '../buttons/card_button_container.dart';
 import '../buttons/circular_buttons.dart';
 import '../buttons/solid_button.dart';
 import '../containers/card_container.dart';
@@ -25,6 +26,9 @@ class AjustesForm extends StatelessWidget {
   final String nombreMenu;
   final String perfilMenu;
   final bool isAdmin;
+  final bool notificaciones;
+  final bool almacenamiento;
+  final void Function(String) solicitarPermisoAjustes;
   const AjustesForm({
     super.key,
     required this.scrollController,
@@ -40,6 +44,9 @@ class AjustesForm extends StatelessWidget {
     this.nombreMenu = "",
     this.perfilMenu = "",
     this.isAdmin = false,
+    this.notificaciones = false,
+    this.almacenamiento = false,
+    required this.solicitarPermisoAjustes,
   });
 
   @override
@@ -238,6 +245,56 @@ class AjustesForm extends StatelessWidget {
                     textoColor: ColorList.sys[0],
                     onPressed: obtenerFirmas,
                     onLongPress: () {},
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 15)),
+                SliverToBoxAdapter(
+                  child: TituloContainer(
+                    texto: 'Permisos de la aplicación',
+                    size: 18,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Builder(
+                    builder: (context) {
+                      if(notificaciones/* && almacenamiento*/) {
+                        return Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
+                              child: AutoSizeText(
+                                "No tiene permisos disponibles por asignar",
+                                textAlign: TextAlign.justify,
+                                maxFontSize: 12,
+                                minFontSize: 12,
+                                style: TextStyle(color: Color(ColorList.sys[0])),
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            Visibility(
+                              visible: !notificaciones,
+                              child: CardButtonContainer(
+                                texto: "Recibir notificaciones",
+                                icono: MaterialIcons.notifications,
+                                onTap: () => solicitarPermisoAjustes("NOTIFICATIONS"),
+                              ),
+                            ),
+                            /*Visibility(
+                              visible: !almacenamiento,
+                              child: CardButtonContainer(
+                                texto: "Acceso al almacenamiento",
+                                icono: MaterialIcons.storage,
+                                onTap: () => solicitarPermisoAjustes("STORAGE"),
+                              ),
+                            ),*/
+                          ],
+                        );
+                      }
+                    },
                   ),
                 ),
                 SliverToBoxAdapter(child: SizedBox(height: 15)),
