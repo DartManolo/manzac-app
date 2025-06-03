@@ -34,22 +34,26 @@ class ReportesServidorForm extends StatelessWidget {
                 var idTarja = "";
                 var fecha = "";
                 var usuario = "";
+                var contenedor = "";
                 IconData? icono;
                 if (reporte.reporteEntrada != null) {
                   idTarja = reporte.reporteEntrada!.idTarja!;
                   fecha = reporte.reporteEntrada!.fecha!;
                   usuario = reporte.reporteEntrada!.nombreUsuario!;
                   icono = MaterialCommunityIcons.truck_delivery_outline;
+                  contenedor = reporte.reporteEntrada!.contenedor!;
                 } else if (reporte.reporteSalida != null) {
                   idTarja = reporte.reporteSalida!.idTarja!;
                   fecha = reporte.reporteSalida!.fecha!;
                   usuario = reporte.reporteSalida!.nombreUsuario!;
                   icono = MaterialCommunityIcons.truck_flatbed;
+                  contenedor = reporte.reporteSalida!.contenedor!;
                 } else if (reporte.reporteDanio != null) {
                   idTarja = reporte.reporteDanio!.idTarja!;
                   fecha = reporte.reporteDanio!.fechaCreado!;
                   usuario = reporte.reporteDanio!.nombreUsuario!;
                   icono = Octicons.container;
+                  contenedor = reporte.reporteDanio!.numContenedor!;
                 }
                 return SliverToBoxAdapter(
                   child: CardContainer(
@@ -85,6 +89,7 @@ class ReportesServidorForm extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
@@ -96,6 +101,7 @@ class ReportesServidorForm extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w300,
                                         color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
@@ -108,6 +114,7 @@ class ReportesServidorForm extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
@@ -121,6 +128,34 @@ class ReportesServidorForm extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w300,
                                         color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Info. Contenedor:  ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    AutoSizeText(
+                                      contenedor,
+                                      minFontSize: 7,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
@@ -133,6 +168,7 @@ class ReportesServidorForm extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
@@ -146,6 +182,7 @@ class ReportesServidorForm extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w300,
                                         color: Color(ColorList.sys[0]),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],

@@ -194,7 +194,7 @@ class HomePage extends StatelessWidget with WidgetsBindingObserver {
                           subirReportePendiente: c.subirReportePendiente,
                         ),
                         SolidButton(
-                          ltrbm: [0, 20, 10, 0],
+                          ltrbm: [0, 10, 10, 0],
                           fondoColor: ColorList.sys[1],
                           textoColor: ColorList.sys[3],
                           icono: MaterialIcons.upload_file,

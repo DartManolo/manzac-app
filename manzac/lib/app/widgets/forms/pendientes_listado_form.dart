@@ -32,15 +32,19 @@ class PendientesListadoForm extends StatelessWidget {
           controller: scrollController,
           slivers: reportesLocal!.map((reporte) {
             var fecha = "";
+            var contenedor = "";
             IconData? icono;
             if (reporte.reporteEntrada != null) {
               fecha = reporte.reporteEntrada!.fecha!;
+              contenedor = reporte.reporteEntrada!.contenedor!;
               icono = MaterialCommunityIcons.truck_delivery_outline;
             } else if (reporte.reporteSalida != null) {
               fecha = reporte.reporteSalida!.fecha!;
+              contenedor = reporte.reporteSalida!.contenedor!;
               icono = MaterialCommunityIcons.truck_flatbed;
             } else if (reporte.reporteDanio != null) {
               fecha = reporte.reporteDanio!.fechaCreado!;
+              contenedor = reporte.reporteDanio!.numContenedor!;
               icono = Octicons.container;
             }
             return SliverToBoxAdapter(
@@ -77,6 +81,7 @@ class PendientesListadoForm extends StatelessWidget {
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     color: Color(ColorList.sys[0]),
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
@@ -88,6 +93,32 @@ class PendientesListadoForm extends StatelessWidget {
                                   style: TextStyle(
                                     fontWeight: FontWeight.w300,
                                     color: Color(ColorList.sys[0]),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Text(
+                                  'Info. Contenedor:  ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(ColorList.sys[0]),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  contenedor,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    color: Color(ColorList.sys[0]),
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
@@ -100,6 +131,7 @@ class PendientesListadoForm extends StatelessWidget {
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     color: Color(ColorList.sys[0]),
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
@@ -113,6 +145,7 @@ class PendientesListadoForm extends StatelessWidget {
                                   style: TextStyle(
                                     fontWeight: FontWeight.w300,
                                     color: Color(ColorList.sys[0]),
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
