@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:manzac_app/app/data/models/local_storage/local_storage.dart';
 
+import '../data/models/local_storage/local_storage.dart';
 import 'tool_service.dart';
 
 class StorageService {

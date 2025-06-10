@@ -16,4 +16,16 @@ class ReportesRepository {
   Future<List<ReporteImagenes>?> consultaImagenesReporteAsync(String idTarja) async {
     return await Get.find<ReportesProvider>().consultaImagenesReporteAsync(idTarja);
   }
+
+  Future<List<ReporteImagenes>?> consultaImagenesEmptyReporteAsync(String idTarja) async {
+    return await Get.find<ReportesProvider>().consultaImagenesEmptyReporteAsync(idTarja);
+  }
+  
+  Future<List<ReporteImagenes>?> consultaImagenesPaginadoReporteAsync(String idTarja, int ini, int fin) async {
+    return await Get.find<ReportesProvider>().consultaImagenesPaginadoReporteAsync(idTarja, ini, fin);
+  }
+
+  Future<int> consultaImagenesContadorReporteAsync(String idTarja) async {
+    return await Get.find<ReportesProvider>().consultaImagenesContadorReporteAsync(idTarja);
+  }
 }

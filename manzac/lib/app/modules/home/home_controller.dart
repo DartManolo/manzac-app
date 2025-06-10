@@ -68,6 +68,11 @@ class HomeController extends GetInjection {
   TextEditingController tipoReporteBusqueda = TextEditingController();
   List<BottomSheetAction> listaTiposReportes = [];
   String tipoReporteSelected = "";
+  Map<String, String> imgFolders = {
+    "ENTRADA": "media/entradas/",
+    "SALIDA": "media/salidas/",
+    "DAÑOS": "media/danios/"
+  };
 
   List<UsuariosBusqueda> usuariosReporte = [];
   TextEditingController usuariosBusqueda = TextEditingController();
@@ -208,7 +213,7 @@ class HomeController extends GetInjection {
         msg("Al parecer no cuenta con conexión a internet. Verifíquela y vuelva a intentarlo", MsgType.warning);
         return;
       }
-      var imagenes = await reportesRepository.consultaImagenesReporteAsync(idTarja);
+      var imagenes = await imagenesReporteOnDemand(idTarja);
       if(imagenes == null) {
         throw Exception();
       }
@@ -527,6 +532,52 @@ class HomeController extends GetInjection {
       }
     } catch(e) {
       msg("Ocurrió un error al guardar la configuración de la firma", MsgType.error);
+    }
+  }
+
+  Future<List<ReporteImagenes>?> imagenesReporteOnDemand(String idTarja) async {
+    try {
+      var imagenes = await reportesRepository.consultaImagenesEmptyReporteAsync(idTarja);
+      if(imagenes == null) {
+        throw Exception();
+      }
+      for (var i = 0; i < imagenes.length; i++) {
+        if(imagenes[i].base64 == "") {
+          continue;
+        }
+        var folder = imgFolders[imagenes[i].tipo];
+        var imageUrl = "${Literals.uri}$folder${imagenes[i].idImagen}.${imagenes[i].formato}";
+        var base64 = await tool.getImageBase64(imageUrl);
+        imagenes[i].base64 = base64;
+      }
+      return imagenes;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  Future<List<ReporteImagenes>?> imagenesReportePaginado(String idTarja) async {
+    try {
+      var conteo = await reportesRepository.consultaImagenesContadorReporteAsync(idTarja);
+      if(conteo < 0) {
+        throw Exception();
+      }
+      double loopDecimal = conteo / 4;
+      var loop = loopDecimal.ceil();
+      var ini = 1;
+      var fin = 4;
+      List<ReporteImagenes> imagenes = [];
+      for (var i = 0; i < loop; i++) {
+        var imagenesTemp = await reportesRepository.consultaImagenesPaginadoReporteAsync(idTarja, ini, fin);
+        for (var i = 0; i < imagenesTemp!.length; i++) {
+          imagenes.add(imagenesTemp[i]);
+        }
+        ini = ini + 4;
+        fin = fin + 4;
+      }
+      return imagenes;
+    } catch(e) {
+      return null;
     }
   }
 

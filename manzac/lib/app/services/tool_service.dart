@@ -9,6 +9,7 @@ import 'package:image/image.dart' as img;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 import '../utils/literals.dart';
 
@@ -142,6 +143,16 @@ class ToolService extends GetxController {
       ..writeAsBytesSync(img.encodeJpg(resized, quality: quality));
     return compressedFile;
   }
+
+  Future<String> getImageBase64(String imageUrl) async {
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      Uint8List bytes = response.bodyBytes;
+      return base64Encode(bytes);
+    } else {
+      throw "";
+    }
+}
 
   void closeBottomSheet() {
     var sysContext = Get.context!;
