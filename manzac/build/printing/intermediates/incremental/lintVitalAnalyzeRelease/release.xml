@@ -1,0 +1,31 @@
+<variant
+    name="release"
+    package="net.nfet.flutter.printing"
+    minSdkVersion="21"
+    targetSdkVersion="21"
+    mergedManifest="C:\dev\manzac-app\manzac\build\printing\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
+    proguardFiles="C:\dev\manzac-app\manzac\build\printing\intermediates\default_proguard_files\global\proguard-android.txt-8.7.0"
+    partialResultsDir="C:\dev\manzac-app\manzac\build\printing\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
+    desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\daea310d27237c4e52d6b3b83749b351\transformed\D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;src\release\java;src\main\kotlin;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      classOutputs="C:\dev\manzac-app\manzac\build\printing\intermediates\javac\release\compileReleaseJavaWithJavac\classes;C:\dev\manzac-app\manzac\build\printing\intermediates\compile_r_class_jar\release\generateReleaseRFile\R.jar"
+      type="MAIN"
+      applicationId="net.nfet.flutter.printing"
+      generatedSourceFolders="C:\dev\manzac-app\manzac\build\printing\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="C:\dev\manzac-app\manzac\build\printing\generated\res\resValues\release"
+      desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\daea310d27237c4e52d6b3b83749b351\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

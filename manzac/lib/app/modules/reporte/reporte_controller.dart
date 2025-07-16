@@ -151,6 +151,7 @@ class ReporteController extends GetInjection {
     if(!verify) {
       return;
     }
+    await Get.find<HomeController>().recargarReportesLocal();
     Get.back();
   }
 
@@ -218,7 +219,7 @@ class ReporteController extends GetInjection {
     }
   }
 
-  Future<void> soloGuardar() async {
+  Future<void> soloGuardar([bool salir = true]) async {
     try {
       isBusy();
       var reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
@@ -250,9 +251,11 @@ class ReporteController extends GetInjection {
       }
       await tool.wait(1);
       isBusy(false);
-      Get.back();
-      await Get.find<HomeController>().recargarReportesLocal();
-      msg("Reporte guardado correctamente", MsgType.success);
+      if(salir) {
+        Get.back();
+        await Get.find<HomeController>().recargarReportesLocal();
+        msg("Reporte guardado correctamente", MsgType.success);
+      }
     } catch(e) {
       msg("Ocurrió un error al intentar guardar el reporte", MsgType.error);
     }

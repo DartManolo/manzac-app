@@ -14,6 +14,7 @@ class MenuAppbar extends StatelessWidget implements PreferredSizeWidget {
   final List<MenuPopupOpciones> opciones;
   final void Function(String?) onTapPopup;
   final void Function(int) onTap;
+  final void Function() guardarLocal;
   final double height;
 
   const MenuAppbar({
@@ -26,6 +27,7 @@ class MenuAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.opciones = const [],
     required this.onTapPopup,
     required this.onTap,
+    required this.guardarLocal,
     this.height = 100,
   });
 
@@ -56,6 +58,13 @@ class MenuAppbar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: <Widget>[
+        InkWell(
+          onTap: guardarLocal,
+          child: Icon(
+            MaterialIcons.save,
+            color: Color(ColorList.sys[0]),
+          ),
+        ),
          PopupMenuButton(
           onSelected: (value) {},
           itemBuilder: (BuildContext context) {

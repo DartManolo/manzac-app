@@ -37,6 +37,7 @@ class ReportePage extends StatelessWidget {
               cerrar: c.cerrar,
               onTapPopup: c.operacionPopUp,
               onTap: c.seleccionarTap,
+              guardarLocal: () => c.soloGuardar(false),
             ),
             body: TabBarView(
               children: [

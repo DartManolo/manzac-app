@@ -1,0 +1,31 @@
+<variant
+    name="release"
+    package="io.github.ponnamkarthik.toast.fluttertoast"
+    minSdkVersion="19"
+    targetSdkVersion="33"
+    mergedManifest="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
+    proguardFiles="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\default_proguard_files\global\proguard-android.txt-8.7.0"
+    partialResultsDir="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
+    desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\917193aa7db7ac16424c571c132278d7\transformed\D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;src\main\kotlin;src\release\java;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      classOutputs="C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\javac\release\compileReleaseJavaWithJavac\classes;C:\dev\manzac-app\manzac\build\fluttertoast\tmp\kotlin-classes\release;C:\dev\manzac-app\manzac\build\fluttertoast\intermediates\compile_r_class_jar\release\generateReleaseRFile\R.jar"
+      type="MAIN"
+      applicationId="io.github.ponnamkarthik.toast.fluttertoast"
+      generatedSourceFolders="C:\dev\manzac-app\manzac\build\fluttertoast\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="C:\dev\manzac-app\manzac\build\fluttertoast\generated\res\resValues\release"
+      desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\917193aa7db7ac16424c571c132278d7\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>
