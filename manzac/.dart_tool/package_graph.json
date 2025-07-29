@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "manzac_app",
-      "version": "1.2.2+8",
+      "version": "1.2.3+9",
       "dependencies": [
         "adaptive_action_sheet",
         "animate_do",

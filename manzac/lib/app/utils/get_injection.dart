@@ -16,6 +16,7 @@ import '../widgets/dialogs/alerta_dialog.dart';
 import '../widgets/dialogs/loading_dialog.dart';
 import '../widgets/dialogs/modal_dialog.dart';
 import '../widgets/dialogs/pregunta_dialog.dart';
+import '../widgets/dialogs/pregunta_reporte_dialog.dart';
 import 'color_list.dart';
 
 abstract class GetInjection extends GetxController {
@@ -120,23 +121,46 @@ abstract class GetInjection extends GetxController {
       var askDialog = Get.context!;
       bool respuesta = false;
       await showDialog(
-          context: askDialog,
-          builder: (BuildContext context) {
-            context = context;
-            return PreguntaDialog(
-              mensaje: mensaje,
-              pregunta: pregunta,
-              siBoton: si,
-              noBoton: no,
-              respuesta: (resp) {
-                respuesta = resp;
-                Navigator.of(context).pop();
-              },
-            );
-          });
+        context: askDialog,
+        builder: (BuildContext context) {
+          context = context;
+          return PreguntaDialog(
+            mensaje: mensaje,
+            pregunta: pregunta,
+            siBoton: si,
+            noBoton: no,
+            respuesta: (resp) {
+              respuesta = resp;
+              Navigator.of(context).pop();
+            },
+          );
+        });
       return respuesta;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<int> askReporte(String mensaje, String pregunta) async {
+    try {
+      var askDialog = Get.context!;
+      int respuesta = -1;
+      await showDialog(
+        context: askDialog,
+        builder: (BuildContext context) {
+          context = context;
+          return PreguntaReporteDialog(
+            mensaje: mensaje,
+            pregunta: pregunta,
+            respuesta: (resp) {
+              respuesta = resp;
+              Navigator.of(context).pop();
+            },
+          );
+        });
+      return respuesta;
+    } catch (e) {
+      return -1;
     }
   }
 

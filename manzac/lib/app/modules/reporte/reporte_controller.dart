@@ -147,8 +147,11 @@ class ReporteController extends GetInjection {
   }
 
   Future<void> cerrar() async {
-    var verify = await ask("Los cambios se perderán", "¿Desea salir?");
-    if(!verify) {
+    var verify = await askReporte("Salir del reporte", "¿Que desea hacer?");
+    if(verify <= 0) {
+      return;
+    } else if(verify == 1) {
+      await soloGuardar();
       return;
     }
     await Get.find<HomeController>().recargarReportesLocal();
@@ -255,9 +258,19 @@ class ReporteController extends GetInjection {
         Get.back();
         await Get.find<HomeController>().recargarReportesLocal();
         msg("Reporte guardado correctamente", MsgType.success);
+      } else {
+        editarReporte = true;
       }
     } catch(e) {
       msg("Ocurrió un error al intentar guardar el reporte", MsgType.error);
+    } finally {
+      if(tipoReporte == "Entrada") {
+        _entradaFormUnfocus();
+      } else if(tipoReporte == "Salida") {
+        _salidaFormUnfocus();
+      } else if(tipoReporte == "Daños") {
+        _daniosFormUnfocus();
+      }
     }
   }
 
@@ -954,6 +967,7 @@ class ReporteController extends GetInjection {
       );
       reporteAltaLocal!.reporteDanio = reporteDanioAlta;
     }
+    idTarjaEditar = idTarja;
   }
 
   void _cargarListaDaniosOpciones() {
