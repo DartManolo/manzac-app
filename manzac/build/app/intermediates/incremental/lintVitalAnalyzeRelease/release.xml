@@ -1,0 +1,37 @@
+<variant
+    name="release"
+    package="com.mtgdevs.manzaclogistic"
+    minSdkVersion="24"
+    targetSdkVersion="36"
+    shrinking="true"
+    mergedManifest="C:\dev\manzac-app\manzac\build\app\intermediates\merged_manifest\release\processReleaseMainManifest\AndroidManifest.xml"
+    proguardFiles="C:\dev\manzac-app\manzac\build\app\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.7.0;C:\flutter\packages\flutter_tools\gradle\flutter_proguard_rules.pro;proguard-rules.pro;C:\dev\manzac-app\manzac\build\app\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.7.0;proguard-rules.pro"
+    partialResultsDir="C:\dev\manzac-app\manzac\build\app\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
+    desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\e5c0f46b30bee2f3590aa31c5321c150\transformed\D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;src\release\java;src\main\kotlin;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <manifestPlaceholders>
+    <placeholder
+        name="applicationName"
+        value="android.app.Application" />
+  </manifestPlaceholders>
+  <artifact
+      classOutputs="C:\dev\manzac-app\manzac\build\app\intermediates\javac\release\compileReleaseJavaWithJavac\classes;C:\dev\manzac-app\manzac\build\app\tmp\kotlin-classes\release;C:\dev\manzac-app\manzac\build\app\kotlinToolingMetadata;C:\dev\manzac-app\manzac\build\app\intermediates\compile_and_runtime_not_namespaced_r_class_jar\release\processReleaseResources\R.jar"
+      type="MAIN"
+      applicationId="com.mtgdevs.manzaclogistic"
+      generatedSourceFolders="C:\dev\manzac-app\manzac\build\app\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="C:\dev\manzac-app\manzac\build\app\generated\res\processReleaseGoogleServices;C:\dev\manzac-app\manzac\build\app\generated\res\resValues\release"
+      desugaredMethodsFiles="C:\Users\52312\.gradle\caches\8.10.2\transforms\e5c0f46b30bee2f3590aa31c5321c150\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

@@ -919,10 +919,26 @@ class HomeController extends GetInjection {
   }
 
   void _abrirVista(String ruta, [dynamic arguments]) {
+    if(!_validaOpcionReporte(ruta)) {
+      msg("No puede crear más reportes, ya que tiene demasiados reportes pendientes. Suba los pendientes al servidor para continuar.", MsgType.warning);
+      return;
+    }
     Get.toNamed(
       ruta,
       arguments: arguments,
     );
+  }
+
+  bool _validaOpcionReporte(String ruta) {
+    try {
+      if(ruta != AppRoutes.reporte) {
+        return true;
+      }
+      return reportesLocal!.length < 3;
+    } catch(e) {
+      msg("Ocurrió un error al validar los reportes pendientes", MsgType.error);
+      return false;
+    }
   }
 
   void _cargarTipoReporteBusquedaLista() {

@@ -1,2 +1,0 @@
-C:/dev/manzac-app/manzac/build/.cxx/RelWithDebInfo/2x241y21/x86_64/CMakeFiles/edit_cache.dir
-C:/dev/manzac-app/manzac/build/.cxx/RelWithDebInfo/2x241y21/x86_64/CMakeFiles/rebuild_cache.dir

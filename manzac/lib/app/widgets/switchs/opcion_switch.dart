@@ -22,7 +22,7 @@ class OpcionSwitch extends StatelessWidget {
       children: [
         Switch(
           value: value,
-          activeColor: Color(activeColor),
+          activeThumbColor: Color(activeColor),
           onChanged: onChanged,
         ),
         AutoSizeText(

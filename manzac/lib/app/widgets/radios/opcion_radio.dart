@@ -24,25 +24,27 @@ class OpcionRadio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        ListTile(
-          title: AutoSizeText(
-            titulo,
-            maxLines: maxLines,
-            minFontSize: minFontSize,
-            style: TextStyle(
-              color: Color(textoColor),
-              fontWeight: FontWeight.bold,
+    return RadioGroup(
+      groupValue: groupValue,
+      onChanged: onChanged,
+      child: Row(
+        children: <Widget>[
+          ListTile(
+            title: AutoSizeText(
+              titulo,
+              maxLines: maxLines,
+              minFontSize: minFontSize,
+              style: TextStyle(
+                color: Color(textoColor),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: Radio<int>(
+              value: value,
             ),
           ),
-          leading: Radio<int>(
-            value: value,
-            groupValue: groupValue,
-            onChanged: onChanged,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
