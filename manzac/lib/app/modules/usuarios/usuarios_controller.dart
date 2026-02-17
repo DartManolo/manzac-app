@@ -23,6 +23,7 @@ class UsuariosController extends GetInjection {
   List<LoginData>? listaUsuarios = [];
 
   String usuarioActual = "";
+  String idLocalStorage = "";
 
   bool cargando = true;
   bool conInternet = true;
@@ -35,7 +36,8 @@ class UsuariosController extends GetInjection {
 
   Future<void> _ready() async {
     try {
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      idLocalStorage = await getIdLocalStorage();
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       usuarioActual = localStorage!.usuario!;
       await tool.wait();
       conInternet = await tool.isOnline();

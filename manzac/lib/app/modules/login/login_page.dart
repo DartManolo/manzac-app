@@ -4,6 +4,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 
 import '../../utils/color_list.dart';
+import '../../utils/literals.dart';
 import '../../widgets/buttons/solid_button.dart';
 import '../../widgets/textforms/password_textform.dart';
 import '../../widgets/textforms/standard_textform.dart';
@@ -76,6 +77,21 @@ class LoginPage extends StatelessWidget with WidgetsBindingObserver {
               onLongPress: () {},
             ).fadeInRight(delay: 1.seconds,),
             Expanded(child: SizedBox()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Versión: ${Literals.version}",
+                  style: TextStyle(
+                    color: Color(0xFFAEB6BF),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 15,),
           ],
         ),
       ),

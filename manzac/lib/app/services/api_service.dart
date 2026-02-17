@@ -43,7 +43,9 @@ class ApiService {
   }
 
   Future<Dio> _api() async {
-    var localStorage = await _storage.get<LocalStorage>(LocalStorage());
+    var localStorage = await _storage.get<LocalStorage>(
+      await _tool.getSecureStorage(Literals.localStorageKey)
+    );
     var api = Dio()
     ..options.headers = {
       Literals.apiToken : localStorage!.token,

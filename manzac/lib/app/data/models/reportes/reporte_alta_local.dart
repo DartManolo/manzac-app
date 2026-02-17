@@ -1,43 +1,48 @@
 import 'dart:convert';
 
-import 'package:get/get.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
-import '../../../services/storage_service.dart';
+import '../hive_model.dart';
 import 'reporte_danio.dart';
 import 'reporte_entrada.dart';
 import 'reporte_salida.dart';
 
-class ReporteAltaLocal {
-  String? tabla = "reporte_alta_local";
+part 'reporte_alta_local.g.dart';
+
+@HiveType(typeId: 1)
+class ReporteAltaLocal extends HiveModel {
+  static const String boxName = "reporte_alta_local";
+
+  @HiveField(0)
+  @override
+  String? id;
+
+  @HiveField(1)
   String? tipo;
+  
+  @HiveField(2)
   ReporteEntrada? reporteEntrada;
+  
+  @HiveField(3)
   ReporteSalida? reporteSalida;
+  
+  @HiveField(4)
   ReporteDanio? reporteDanio;
 
   ReporteAltaLocal({
+    this.id,
     this.tipo,
     this.reporteEntrada,
     this.reporteSalida,
     this.reporteDanio,
   });
 
-  static Future<void> init() async {
-    try {
-      var storage = Get.find<StorageService>();
-      var verify = await storage.verify(ReporteAltaLocal());
-      if(!verify) {
-        var _ = await storage.put([ReporteAltaLocal()]);
-      }
-      return;
-    } finally { }
-  }
-
   Map<String, dynamic> toJson() => {
-    'tabla' : tabla,
-    'tipo' : tipo,
-    'reporteEntrada' : reporteEntrada?.toJson(),
-    'reporteSalida' : reporteSalida?.toJson(),
-    'reporteDanio' : reporteDanio?.toJson(),
+    'id'              : id,
+    'tipo'            : tipo,
+    'reporteEntrada'  : reporteEntrada?.toJson(),
+    'reporteSalida'   : reporteSalida?.toJson(),
+    'reporteDanio'    : reporteDanio?.toJson(),
   };
 
   ReporteAltaLocal fromJson(Map<String, dynamic>? json) {

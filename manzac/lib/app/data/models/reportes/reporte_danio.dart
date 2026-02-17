@@ -1,50 +1,147 @@
+import 'package:hive_ce/hive.dart';
+
+import '../hive_model.dart';
 import 'reporte_imagenes.dart';
 
-class ReporteDanio {
-  String? idTarja;
-  String? tipo;
-  String? fecha;
-  String? fechaCreado;
-  String? version;
-  String? clave;
-  String? fechaReporte;
-  String? lineaNaviera;
-  String? cliente;
-  String? numContenedor;
-  String? vacio;
-  String? lleno;
-  String? d20;
-  String? d40;
-  String? hc;
-  String? otro;
-  String? estandar;
-  String? opentop;
-  String? flatRack;
-  String? reefer;
-  String? reforzado;
-  String? numSello;
-  String? intPuertasIzq;
-  String? intPuertasDer;
-  String? intPiso;
-  String? intTecho;
-  String? intPanelLateralIzq;
-  String? intPanelLateralDer;
-  String? intPanelFondo;
-  String? extPuertasIzq;
-  String? extPuertasDer;
-  String? extPoste;
-  String? extPalanca;
-  String? extGanchoCierre;
-  String? extPanelIzq;
-  String? extPanelDer;
-  String? extPanelFondo;
-  String? extCantonera;
-  String? extFrisa;
-  String? observaciones;
-  String? usuario;
-  List<ReporteImagenes>? imagenes;
-  String? nombreUsuario;
+part 'reporte_danio.g.dart';
 
+@HiveType(typeId: 4)
+class ReporteDanio extends HiveModel {
+  static const String boxName = "reporte_danio";
+
+  @HiveField(0)
+  @override
+  String? id;
+
+  @HiveField(1)
+  String? idTarja;
+
+  @HiveField(2)
+  String? tipo;
+
+  @HiveField(3)
+  String? fecha;
+
+  @HiveField(4)
+  String? fechaCreado;
+
+  @HiveField(5)
+  String? version;
+
+  @HiveField(6)
+  String? clave;
+
+  @HiveField(7)
+  String? fechaReporte;
+
+  @HiveField(8)
+  String? lineaNaviera;
+
+  @HiveField(9)
+  String? cliente;
+
+  @HiveField(10)
+  String? numContenedor;
+
+  @HiveField(11)
+  String? vacio;
+
+  @HiveField(12)
+  String? lleno;
+
+  @HiveField(13)
+  String? d20;
+
+  @HiveField(14)
+  String? d40;
+  
+  @HiveField(15)
+  String? hc;
+  
+  @HiveField(16)
+  String? otro;
+  
+  @HiveField(17)
+  String? estandar;
+  
+  @HiveField(18)
+  String? opentop;
+  
+  @HiveField(19)
+  String? flatRack;
+  
+  @HiveField(20)
+  String? reefer;
+  
+  @HiveField(21)
+  String? reforzado;
+  
+  @HiveField(22)
+  String? numSello;
+  
+  @HiveField(23)
+  String? intPuertasIzq;
+  
+  @HiveField(24)
+  String? intPuertasDer;
+  
+  @HiveField(25)
+  String? intPiso;
+  
+  @HiveField(26)
+  String? intTecho;
+  
+  @HiveField(27)
+  String? intPanelLateralIzq;
+  
+  @HiveField(28)
+  String? intPanelLateralDer;
+  
+  @HiveField(29)
+  String? intPanelFondo;
+  
+  @HiveField(30)
+  String? extPuertasIzq;
+  
+  @HiveField(31)
+  String? extPuertasDer;
+  
+  @HiveField(32)
+  String? extPoste;
+  
+  @HiveField(33)
+  String? extPalanca;
+  
+  @HiveField(34)
+  String? extGanchoCierre;
+  
+  @HiveField(35)
+  String? extPanelIzq;
+  
+  @HiveField(36)
+  String? extPanelDer;
+  
+  @HiveField(37)
+  String? extPanelFondo;
+  
+  @HiveField(38)
+  String? extCantonera;
+  
+  @HiveField(39)
+  String? extFrisa;
+  
+  @HiveField(40)
+  String? observaciones;
+  
+  @HiveField(41)
+  String? usuario;
+
+  @HiveField(42)
+  List<ReporteImagenes>? imagenes;
+  
+  @HiveField(43)
+  String? nombreUsuario;
+  
   ReporteDanio({
     this.idTarja = "",
     this.tipo = "DAÑOS",
@@ -92,6 +189,7 @@ class ReporteDanio {
   });
 
   Map<String, dynamic> toJson () => {
+    'id'      : id,
     'idTarja' : idTarja,
     'tipo' : tipo,
     'fecha' : fecha,

@@ -25,13 +25,12 @@ class AlphaController extends GetInjection {
   Future<void> _init() async {
     try {
       await storage.init();
-      _localStorage = await storage.get<LocalStorage>(LocalStorage());
+      await _localStorageInit();
       await tool.wait();
       _page = _localStorage!.login! ? const HomePage() : const LoginPage();
       _binding = _localStorage!.login! ? HomeBinding() : LoginBinding();
       GetInjection.administrador = _localStorage!.perfil! == Literals.perfilAdministrador;
       GetInjection.perfil = _localStorage!.perfil!;
-      await localStorageClassInit();
       await firebase.init();
       return;
     } catch(e) {
@@ -62,5 +61,21 @@ class AlphaController extends GetInjection {
         Permission.storage.request();
       }
     });
+  }
+
+  Future<void> _localStorageInit() async {
+    try {
+      var localStorageTemp = await storage.getAll<LocalStorage>();
+      var idLocalStorageTemp = tool.guid();
+      if(localStorageTemp.isNotEmpty) {
+        _localStorage = localStorageTemp.first;
+        idLocalStorageTemp = _localStorage!.id!;
+      } else {
+        _localStorage = LocalStorage(id: idLocalStorageTemp,);
+        await storage.save<LocalStorage>(_localStorage!);
+      }
+      await setIdLocalStorage(idLocalStorageTemp);
+      return;
+    } catch(e) { return; }
   }
 }

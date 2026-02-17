@@ -37,3 +37,20 @@ home_controller
                 }
               ),
             ] : null,*/
+
+
+/*await storaget.init();
+
+      /*var nuevo = ReporteDanioT(idTarja: "EEEPERRO");
+      await storaget.save<ReporteDanioT>(nuevo);*/
+      
+      //await storaget.clear<ReporteDanioT>();
+      
+      var g = await storaget.getAll<ReporteDanioT>();
+      print("------------- TODOS -----------------");
+      print(jsonEncode(g));
+      print(g.length);
+
+      var h = await storaget.get<ReporteDanioT>("bfec0a10-053c-11f1-b88a-63b032294c25");
+      print("------------- SINGLE -----------------");
+      print(jsonEncode(h));*/

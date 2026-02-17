@@ -103,6 +103,9 @@ class HomeController extends GetInjection {
   final ImagePicker seleccionarFoto = ImagePicker();
 
   bool isAdmin = GetInjection.administrador;
+  String idLocalStorage = "";
+
+  final int _limiteReportesLocal = 99;
 
   @override
   Future<void> onInit() async {
@@ -124,6 +127,7 @@ class HomeController extends GetInjection {
 
   Future<void> _init() async {
     try {
+      idLocalStorage = await getIdLocalStorage();
       menuController = PageController();
       fechaBusqueda.text = tool.fecha('dd/MM/yyyy');
       menuOpciones = [
@@ -155,7 +159,7 @@ class HomeController extends GetInjection {
       tipoReporteBusqueda.text = tiposReporte.first;
       _cargarTipoReporteBusquedaLista();
       _crearFiltroUsuarios();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       mayusculas = localStorage!.mayusculas!;
       idUsuarioMenu = localStorage.idUsuario!;
       nombreMenu = localStorage.nombre!;
@@ -236,6 +240,7 @@ class HomeController extends GetInjection {
     dynamic form;
     String fechaReporte = "";
     String idTarja = "";
+    String? idReporte = reporte.id;
     List<ReporteImagenes> listaImagenes = [];
     _fillFormsReportes(reporte);
     if(reporte.tipo == "Entrada") {
@@ -256,7 +261,7 @@ class HomeController extends GetInjection {
     }
     List<List<ReporteImagenes>> reporteImagenes = crearListaImagenes(listaImagenes);
     if(visualizar) {
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       Get.toNamed(
         AppRoutes.reporteView,
         arguments: {
@@ -275,6 +280,7 @@ class HomeController extends GetInjection {
           "formEditar": form,
           "reporteImagenes": reporteImagenes,
           "idTarja": idTarja,
+          "idReporte" : idReporte,
         },
       );
     }
@@ -319,7 +325,7 @@ class HomeController extends GetInjection {
 
   Future<void> recargarReportesLocal() async {
     try {
-      reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
+      reportesLocal = await storage.getAll<ReporteAltaLocal>();
       var listaString = jsonEncode(reportesLocal);
       var listaBytes = Uint8List.fromList(utf8.encode(listaString)).lengthInBytes;
       reportesLocalSize = listaBytes / (1024 * 1024);
@@ -337,9 +343,9 @@ class HomeController extends GetInjection {
         return;
       }
       isBusy();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       localStorage!.login = false;
-      await storage.update(localStorage);
+      await storage.save<LocalStorage>(localStorage);
       isBusy(false);
       Get.offAll(
         const LoginPage(),
@@ -371,9 +377,10 @@ class HomeController extends GetInjection {
         return;
       }
       isBusy();
-      var _ = await storage.update(LocalStorage());
-      var _ = await storage.delete(ReporteAltaLocal());
-      var _ = await storage.put([ReporteAltaLocal()]);
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
+      var newLocalStorage = LocalStorage(id: localStorage!.id!, idFirebase: localStorage.idFirebase);
+      var _ = await storage.save<LocalStorage>(newLocalStorage);
+      var _ = await storage.clear<ReporteAltaLocal>();
       await tool.wait();
       isBusy(false);
       Get.offAll(
@@ -394,10 +401,10 @@ class HomeController extends GetInjection {
       if(configuracionFirmas == null) {
         throw Exception();
       }
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       localStorage!.firmaOperaciones = configuracionFirmas.firmaOperador;
       localStorage.firmaGerencia = configuracionFirmas.firmaGerencia;
-      await storage.update(localStorage);
+      await storage.save<LocalStorage>(localStorage);
       msg("Firmas actualizadas correctamente", MsgType.success);
     } catch(e) {
       msg("Ocurrió un error al intentar obtener las firmas del servidor", MsgType.error);
@@ -433,9 +440,9 @@ class HomeController extends GetInjection {
   Future<void> configMayusculas(bool mayus) async {
     try {
       isBusy();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       localStorage!.mayusculas = mayus;
-      var actualizar = await storage.update(localStorage);
+      var actualizar = await storage.save<LocalStorage>(localStorage);
       if(!actualizar) {
         throw Exception();
       }
@@ -451,7 +458,7 @@ class HomeController extends GetInjection {
   Future<void> verFirma(String firma) async {
     try {
       isBusy();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       var firmaLocal = "";
       if(firma == "OPERACIONES") {
         firmaLocal = localStorage!.firmaOperaciones!;
@@ -511,7 +518,7 @@ class HomeController extends GetInjection {
         var fotoTemp = File(fotoFirma.path);
         fotografia = await tool.imagenResize(fotoTemp, maxWidth: 160);
         var base64Foto = await tool.imagen2base64(fotografia);
-        var localStorage = await storage.get<LocalStorage>(LocalStorage());
+        var localStorage = await storage.get<LocalStorage>(idLocalStorage);
         var firmaServer = "";
         if(firma == "OPERACIONES") {
           localStorage!.firmaOperaciones = base64Foto;
@@ -524,7 +531,7 @@ class HomeController extends GetInjection {
         if(!actualizarServer) {
           throw Exception();
         }
-        var actualizar = await storage.update(localStorage);
+        var actualizar = await storage.save<LocalStorage>(localStorage!);
         if(!actualizar) {
           throw Exception();
         }
@@ -542,13 +549,12 @@ class HomeController extends GetInjection {
         throw Exception();
       }
       for (var i = 0; i < imagenes.length; i++) {
-        if(imagenes[i].base64 == "") {
+        if(imagenes[i].imagen == "") {
           continue;
         }
         var folder = imgFolders[imagenes[i].tipo];
         var imageUrl = "${Literals.uri}$folder${imagenes[i].idImagen}.${imagenes[i].formato}";
-        var base64 = await tool.getImageBase64(imageUrl);
-        imagenes[i].base64 = base64;
+        imagenes[i].imagen = imageUrl;
       }
       return imagenes;
     } catch(e) {
@@ -721,39 +727,10 @@ class HomeController extends GetInjection {
       var actualiza = false;
       if(multiple) {
         reportesLocal = [];
-        var _ = await storage.delete(ReporteAltaLocal());
-        actualiza = await storage.put([ReporteAltaLocal()]);
+        actualiza = await storage.clear<ReporteAltaLocal>();
       } else {
-        var reporte = reportes.first;
-        List<ReporteAltaLocal> reportesLocalAux = [];
-        for (var i = 0; i < reportesLocal!.length; i++) {
-          if(reportesLocal![i].tipo != reporte.tipo) {
-            reportesLocalAux.add(reportesLocal![i]);
-            continue;
-          }
-          var idTarja = "";
-          var idTarjaAlta = "";
-          if(reporte.tipo == "Entrada") {
-            idTarja = reportesLocal![i].reporteEntrada!.idTarja!;
-            idTarjaAlta = reporte.reporteEntrada!.idTarja!;
-          } else if(reporte.tipo == "Salida") {
-            idTarja = reportesLocal![i].reporteSalida!.idTarja!;
-            idTarjaAlta = reporte.reporteSalida!.idTarja!;
-          } else if(reporte.tipo == "Daños") {
-            idTarja = reportesLocal![i].reporteDanio!.idTarja!;
-            idTarjaAlta = reporte.reporteDanio!.idTarja!;
-          }
-          if(idTarja != idTarjaAlta) {
-            reportesLocalAux.add(reportesLocal![i]);
-          }
-        }
-        reportesLocal = reportesLocalAux;
-        if(reportesLocal!.isNotEmpty) {
-          actualiza = await storage.update(reportesLocal);
-        } else {
-          var _ = await storage.delete(ReporteAltaLocal());
-          actualiza = await storage.put([ReporteAltaLocal()]);
-        }
+        actualiza = await storage.delete<ReporteAltaLocal>(reportes.first.id);
+        await recargarReportesLocal();
       }
       update();
       if(!actualiza) {
@@ -934,7 +911,7 @@ class HomeController extends GetInjection {
       if(ruta != AppRoutes.reporte) {
         return true;
       }
-      return reportesLocal!.length < 3;
+      return reportesLocal!.length < _limiteReportesLocal;
     } catch(e) {
       msg("Ocurrió un error al validar los reportes pendientes", MsgType.error);
       return false;

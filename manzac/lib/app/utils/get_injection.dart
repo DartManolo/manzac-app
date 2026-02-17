@@ -3,7 +3,6 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-import '../data/models/reportes/reporte_alta_local.dart';
 import '../data/repositories/configuracion_repository.dart';
 import '../data/repositories/login_repository.dart';
 import '../data/repositories/reportes_repository.dart';
@@ -18,6 +17,7 @@ import '../widgets/dialogs/modal_dialog.dart';
 import '../widgets/dialogs/pregunta_dialog.dart';
 import '../widgets/dialogs/pregunta_reporte_dialog.dart';
 import 'color_list.dart';
+import 'literals.dart';
 
 abstract class GetInjection extends GetxController {
   final storage = Get.find<StorageService>();
@@ -32,11 +32,6 @@ abstract class GetInjection extends GetxController {
 
   static bool administrador = false;
   static String perfil = "";
-
-  Future<void> localStorageClassInit() async {
-    await ReporteAltaLocal.init();
-    return;
-  }
 
   bool _loadingOpen = false;
 
@@ -182,6 +177,12 @@ abstract class GetInjection extends GetxController {
     var altaContext = Get.context!;
     Navigator.of(altaContext).pop(true);
   }
+
+  Future<String> getIdLocalStorage()
+    => tool.getSecureStorage(Literals.localStorageKey);
+
+  Future<void> setIdLocalStorage(String id)
+    => tool.setSecureStorage(Literals.localStorageKey, id);
 }
 
 enum MsgType {

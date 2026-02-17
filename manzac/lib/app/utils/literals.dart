@@ -2,10 +2,12 @@ class Literals {
   static const String version = "1.2.4+10";
   //static const String uri = "http://189.178.184.240:81/manzac-server/";
   static const String uri = "https://manzaclogistica.com.mx/";
+  static const String localStorageKey = "local_storage";
   static const String contentType = "ContentType";
   static const String applicationJson = "application/json";
   static const String apiToken = "x-api-token";
   static const String notificacionTopic = "appchop_notif";
+  static const String rutaImagenesApp = "imgs_reportes";
 
   static const String perfilAdministrador = "ADMINISTRADOR";
   static const String perfilUsuario = "USUARIO";

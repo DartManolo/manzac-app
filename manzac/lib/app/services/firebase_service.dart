@@ -50,9 +50,13 @@ class FirebaseService {
 
   Future<void> _updateFirebaseToken(String token) async {
     try {
-      var localStorage = await _storage.get<LocalStorage>(LocalStorage());
-      localStorage!.idFirebase = token;
-      await _storage.update(localStorage);
+      var localStorageTemp = await _storage.getAll<LocalStorage>();
+      if(localStorageTemp.isEmpty) {
+        return;
+      }
+      var localStorage = localStorageTemp.first;
+      localStorage.idFirebase = token;
+      await _storage.save(localStorage);
       return;
     } finally { }
   }

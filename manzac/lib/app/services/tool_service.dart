@@ -3,7 +3,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/services.dart' show rootBundle;
@@ -14,6 +18,8 @@ import 'package:http/http.dart' as http;
 import '../utils/literals.dart';
 
 class ToolService extends GetxController {
+  final _storage = FlutterSecureStorage();
+  
   final Connectivity _conneccion = Connectivity();
 
   Future<bool> isOnline() async {
@@ -134,13 +140,18 @@ class ToolService extends GetxController {
   }
 
   Future<File> imagenResize(File imageFile, {int maxWidth = 1024, int quality = 65}) async {
-    var imageBytes = await imageFile.readAsBytes();
-    img.Image? original = img.decodeImage(imageBytes);
-
-    if (original == null) return imageFile; 
-    img.Image resized = img.copyResize(original, width: maxWidth);
-    File compressedFile = File(imageFile.path)
-      ..writeAsBytesSync(img.encodeJpg(resized, quality: quality));
+    final imageBytes = await imageFile.readAsBytes();
+    final img.Image? original = img.decodeImage(imageBytes);
+    if (original == null) return imageFile;
+    img.Image resized = original;
+    if (original.width > maxWidth) {
+      resized = img.copyResize(original, width: maxWidth);
+    }
+    final newPath = '${imageFile.parent.path}/${DateTime.now().millisecondsSinceEpoch}_${path.basename(imageFile.path)}';
+    final compressedFile = File(newPath)
+      ..writeAsBytesSync(
+        img.encodeJpg(resized, quality: quality),
+      );
     return compressedFile;
   }
 
@@ -152,7 +163,19 @@ class ToolService extends GetxController {
     } else {
       throw "";
     }
-}
+  }
+
+  Future<String> guardarImagen(File imageTemp, String subfijo) async {
+    var dir = await getApplicationDocumentsDirectory();
+    var carpeta = Directory("${dir.path}/${Literals.rutaImagenesApp}");
+    if (!await carpeta.exists()) {
+      await carpeta.create(recursive: true);
+    }
+    var nombreArchivo = "${subfijo}_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageTemp.path)}";
+    var nuevaRuta = "${carpeta.path}/$nombreArchivo";
+    var nuevaImagen = await imageTemp.copy(nuevaRuta);
+    return nuevaImagen.path;
+  }
 
   void closeBottomSheet() {
     var sysContext = Get.context!;
@@ -175,5 +198,36 @@ class ToolService extends GetxController {
      formato,
      'es_MX'
     ).format(hoy);
+  }
+
+  Future<String> getSecureStorage(String key) async {
+    try {
+      var idLocalStorage = await _storage.read(
+        key: key,
+        aOptions: AndroidOptions(
+          encryptedSharedPreferences: true,
+        ),
+        iOptions: IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock
+        ),
+      );
+      return idLocalStorage!;
+    } catch(e) {
+      return "";
+    }
+  }
+
+  Future<void> setSecureStorage(String key, String id) async {
+    await _storage.write(
+      key: key,
+      value: id,
+      aOptions: AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+      iOptions: IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock
+      ),
+    );
+    return;
   }
 }

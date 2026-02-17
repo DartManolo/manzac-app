@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -45,6 +44,7 @@ class ReporteController extends GetInjection {
   String fechaReporteAux = "";
   bool editarReporte = false;
   String idTarjaEditar = "";
+  String? idReporte;
 
   ScrollController galeriaScrollController = ScrollController();
   ScrollController formScrollController = ScrollController();
@@ -86,6 +86,7 @@ class ReporteController extends GetInjection {
   List<DaniosOpciones> daniosOpciones = [];
 
   String _usuarioAlta = "";
+  String idLocalStorage = "";
 
   @override
   void onInit() {
@@ -134,6 +135,7 @@ class ReporteController extends GetInjection {
         }
         reporteImagenes = Get.arguments['reporteImagenes'] as List<List<ReporteImagenes>>;
         idTarjaEditar = Get.arguments['idTarja'];
+        idReporte = Get.arguments['idReporte'];
       }
       _cargarOpcionesPopup();
     } finally {
@@ -142,7 +144,8 @@ class ReporteController extends GetInjection {
   }
 
   Future<void> _ready() async {
-    var localStorage = await storage.get<LocalStorage>(LocalStorage());
+    idLocalStorage = await getIdLocalStorage();
+    var localStorage = await storage.get<LocalStorage>(idLocalStorage);
     _usuarioAlta = localStorage!.idUsuario!;
   }
 
@@ -195,7 +198,7 @@ class ReporteController extends GetInjection {
 
   Future<void> generarReporte() async {
     try {
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       dynamic form;
       if(tipoReporte == "Entrada") {
         _entradaFormUnfocus();
@@ -225,30 +228,8 @@ class ReporteController extends GetInjection {
   Future<void> soloGuardar([bool salir = true]) async {
     try {
       isBusy();
-      var reportesLocal = await storage.get<List<ReporteAltaLocal>>(ReporteAltaLocal());
       _crearAltaData();
-      if(!editarReporte) {
-        reportesLocal!.add(reporteAltaLocal!);
-      } else {
-        for (var i = 0; i < reportesLocal!.length; i++) {
-          if(reportesLocal[i].tipo != tipoReporte) {
-            continue;
-          }
-          var idTarjaVerify = "";
-          if(tipoReporte == "Entrada") {
-            idTarjaVerify = reportesLocal[i].reporteEntrada!.idTarja!;
-          } else if(tipoReporte == "Salida") {
-            idTarjaVerify = reportesLocal[i].reporteSalida!.idTarja!;
-          } else if(tipoReporte == "Daños") {
-            idTarjaVerify = reportesLocal[i].reporteDanio!.idTarja!;
-          }
-          if(idTarjaVerify != idTarjaEditar) {
-            continue;
-          }
-          reportesLocal[i] = reporteAltaLocal!;
-        }
-      }
-      var guardar = await storage.update(reportesLocal);
+      var guardar = await storage.save<ReporteAltaLocal>(reporteAltaLocal!);
       if(!guardar) {
         throw Exception();
       }
@@ -259,6 +240,7 @@ class ReporteController extends GetInjection {
         await Get.find<HomeController>().recargarReportesLocal();
         msg("Reporte guardado correctamente", MsgType.success);
       } else {
+        idReporte = reporteAltaLocal!.id;
         editarReporte = true;
       }
     } catch(e) {
@@ -306,11 +288,11 @@ class ReporteController extends GetInjection {
       if (fotoCamara != null) {
         var fotoTemp = File(fotoCamara.path);
         fotografia = await tool.imagenResize(fotoTemp);
-        var base64Foto = await tool.imagen2base64(fotografia);
+        var rutaImagen = await tool.guardarImagen(fotografia!, tipoReporte.toLowerCase());
         for (var i = 0; i < reporteImagenes.length; i++) {
           for (var j = 0; j < reporteImagenes[i].length; j++) {
             if(idImagen == reporteImagenes[i][j].idImagen) {
-              reporteImagenes[i][j].base64 = base64Foto;
+              reporteImagenes[i][j].imagen = rutaImagen;
               break;
             }
           }
@@ -477,9 +459,11 @@ class ReporteController extends GetInjection {
     if(imagen == null) {
       return;
     }
-    var imageBytes = base64Decode(imagen.base64!,);
+    var imagenRuta = File(imagen.imagen!);
+    var imageBytes = await imagenRuta.readAsBytes();
     var context = Get.context;
     showMaterialModalBottomSheet(
+      // ignore: use_build_context_synchronously
       context: context!,
       expand: true,
       enableDrag: false,
@@ -635,7 +619,7 @@ class ReporteController extends GetInjection {
       for (var i = 0; i < reporteImagenes.length; i++) {
         for (var j = 0; j < reporteImagenes[i].length; j++) {
           if(reporteImagenes[i][j].idImagen == imagen!.idImagen) {
-            reporteImagenes[i][j].base64 = "";
+            reporteImagenes[i][j].imagen = "";
             break;
           }
         }
@@ -858,6 +842,7 @@ class ReporteController extends GetInjection {
   void _crearAltaData() {
     var idTarja = !editarReporte ? tool.guid() : idTarjaEditar;
     reporteAltaLocal = ReporteAltaLocal(
+      id: idReporte,
       tipo: tipoReporte,
     );
     if(tipoReporte == "Entrada") {

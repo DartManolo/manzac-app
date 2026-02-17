@@ -1,24 +1,58 @@
 import 'dart:convert';
 
-class LocalStorage {
-  static const int _localStorageVersion = 1;
+import 'package:hive_ce_flutter/adapters.dart';
 
-  String? tabla = "local_storage";
-  int? version = _localStorageVersion;
+import '../hive_model.dart';
+
+part 'local_storage.g.dart';
+
+@HiveType(typeId: 0)
+class LocalStorage extends HiveModel {
+  static const String boxName = "local_storage";
+  
+  @HiveField(0)
+  @override
+  String? id;
+
+  @HiveField(1)
+  int? version = 1;
+
+  @HiveField(2)
   bool? login;
+
+  @HiveField(3)
   String? idUsuario;
+
+  @HiveField(4)
   String? usuario;
+
+  @HiveField(5)
   String? password;
+
+  @HiveField(6)
   String? perfil;
+
+  @HiveField(7)
   String? nombre;
+
+  @HiveField(8)
   String? token;
+
+  @HiveField(9)
   bool? mayusculas;
+
+  @HiveField(10)
   String? firmaOperaciones;
+
+  @HiveField(11)
   String? firmaGerencia;
+
+  @HiveField(12)
   String? idFirebase;
 
   LocalStorage({
-    this.version = _localStorageVersion,
+    this.id,
+    this.version = 1,
     this.login = false,
     this.idUsuario = "",
     this.usuario = "",
@@ -33,7 +67,7 @@ class LocalStorage {
   });
 
   Map toJson() => {
-    'tabla'             : tabla,
+    'id'                : id,
     'version'           : version,
     'login'             : login,
     'idUsuario'         : idUsuario,
@@ -50,7 +84,7 @@ class LocalStorage {
 
   Map<String, dynamic> toMap() {
     return {
-      'tabla'             : tabla,
+      'id'                : id,
       'version'           : version,
       'login'             : login,
       'idUsuario'         : idUsuario,
@@ -68,6 +102,7 @@ class LocalStorage {
 
   LocalStorage.fromString(String jsonString) {
     var json = jsonDecode(jsonString);
+    id = json['id'] ?? false;
     login = json['login'] ?? false;
     idUsuario = json['idUsuario'] ?? "";
     usuario = json['usuario'] ?? "";
@@ -82,6 +117,7 @@ class LocalStorage {
   }
 
   LocalStorage.fromMap(Map<String, dynamic> json) {
+    id = json['id'] ?? "";
     login = json['login'] ?? false;
     idUsuario = json['idUsuario'] ?? "";
     usuario = json['usuario'] ?? "";
@@ -97,7 +133,8 @@ class LocalStorage {
 
   LocalStorage fromJson(Map<String, dynamic>? json) {
     return json != null ? LocalStorage(
-      version: json['version'] ?? _localStorageVersion,
+      id: json['id'] ?? "",
+      version: json['version'] ?? 1,
       login: json['login'] ?? false,
       idUsuario: json['idUsuario'] ?? "",
       usuario: json['usuario'] ?? "",
@@ -117,7 +154,8 @@ class LocalStorage {
       List<LocalStorage> jsonArray = [];
       for(var json in array) {
         jsonArray.add(LocalStorage(
-          version: json['version'] ?? _localStorageVersion,
+          id: json['id'] ?? "",
+          version: json['version'] ?? 1,
           login: json['login'] ?? false,
           idUsuario: json['idUsuario'] ?? "",
           usuario: json['usuario'] ?? "",

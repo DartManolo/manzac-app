@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -91,12 +91,17 @@ class GaleriaReporteForm extends StatelessWidget {
                           children: [
                             Builder(
                               builder: (context) {
-                                if (imagen.base64 != "") {
-                                  var imageBytes = base64Decode(imagen.base64!,);
+                                if (imagen.imagen != "") {
                                   return InkWell(
                                     onTap: () => configurarImagen(imagen.idImagen!,),
-                                    child: Image.memory(
-                                      imageBytes,
+                                    child: _esUrl(imagen.imagen!)
+                                    ? Image.network(
+                                      imagen.imagen!,
+                                      height: 118,
+                                      fit: BoxFit.fitWidth,
+                                    )
+                                    : Image.file(
+                                      File(imagen.imagen!),
                                       height: 118,
                                       fit: BoxFit.fitWidth,
                                     ),
@@ -130,5 +135,17 @@ class GaleriaReporteForm extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _esUrl(String? texto) {
+    if (texto == null || texto.isEmpty) {
+      return false;
+    }
+    final uri = Uri.tryParse(texto);
+    if (uri == null) {
+      return false;
+    }
+    return uri.hasScheme &&
+          (uri.scheme == 'http' || uri.scheme == 'https');
   }
 }

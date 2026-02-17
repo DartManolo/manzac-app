@@ -15,8 +15,8 @@ import '../services/tool_service.dart';
 
 class DependencyInjection {
   static void init() {
-    Get.put<ToolService>(ToolService());
-    Get.put<StorageService>(StorageService());
+    Get.put<ToolService>(ToolService(), permanent: true);
+    Get.put<StorageService>(StorageService(), permanent: true);
     Get.put<ApiService>(ApiService());
     Get.put<FirebaseService>(FirebaseService());
 

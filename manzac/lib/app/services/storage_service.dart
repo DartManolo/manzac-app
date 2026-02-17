@@ -1,150 +1,85 @@
-import 'dart:convert';
-import 'package:get/get.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive_ce_flutter/adapters.dart';
+import 'package:manzac_app/hive_registrar.g.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
+import '../data/models/hive_model.dart';
 import '../data/models/local_storage/local_storage.dart';
-import 'tool_service.dart';
+import '../data/models/reportes/reporte_alta_local.dart';
 
 class StorageService {
-  final _storage = FlutterSecureStorage();
-  final ToolService _tool = Get.find<ToolService>();
-
-  AndroidOptions _getAndroidOptions() => const AndroidOptions(
-    encryptedSharedPreferences: true,
-  );
-
-  IOSOptions _getIOSOptions() => const IOSOptions(
-    accessibility: KeychainAccessibility.first_unlock
-  );
+  final _uuid = const Uuid();
+  final Map<Type, String> _boxNames = {};
 
   Future<void> init() async {
+    final dir = await getApplicationDocumentsDirectory();
+    Hive
+    ..init(dir.path)
+    ..registerAdapters();
+    await _open();
+    return;
+  }
+
+  Future<List<T>> getAll<T>() async {
+    final box = _getBox<T>();
+    return box.values.toList();
+  }
+
+  Future<T?> get<T>(dynamic key) async {
+    final box = _getBox<T>();
+    return box.get(key);
+  }
+
+  Future<bool> save<T extends HiveModel>(T value) async {
     try {
-      var versionCode = LocalStorage().version!;
-      var localStorage = await get<LocalStorage>(LocalStorage());
-      if(localStorage!.version! != versionCode) {
-        var nuevoStorage = _nuevoLocalStorage(actual: localStorage);
-        await _storage.write(
-          key: nuevoStorage!.tabla!,
-          value: jsonEncode(nuevoStorage),
-          aOptions: _getAndroidOptions(),
-          iOptions: _getIOSOptions(),
-        );
+      if(value.id == null || value.id == "") {
+        value.id = _uuid.v1();
       }
-      return;
-    } catch(e) {
-      return;
-    }
-  }
-
-  Future<S?> get<S>(dynamic elem) async {
-    try {
-      var isArray = S.toString().contains("List<");
-      var jsonData = jsonDecode(jsonEncode(elem));
-      var tabla = jsonData['tabla'];
-      var dataStorage = await _storage.read(
-        key: tabla,
-        aOptions: _getAndroidOptions(),
-      );
-      if(dataStorage != null) {
-        return isArray
-          ? elem.fromArray(jsonDecode(dataStorage))
-          : elem.fromJson(jsonDecode(dataStorage));
-      }
-      return isArray
-        ? elem.fromArray(jsonData)
-        : elem.fromJson(jsonData);
-    } catch(e) {
-      return null;
-    }
-  }
-
-  Future<bool> put(dynamic elem) async {
-    try {
-      var jsonData = jsonDecode(jsonEncode(elem));
-      var isArray = _tool.isArray(jsonData);
-      var tabla = isArray ? jsonData[0]['tabla'] : jsonData['tabla'];
-      await _storage.write(
-        key: tabla,
-        value: jsonEncode(isArray ? [] : jsonData),
-        aOptions: _getAndroidOptions(),
-      );
+      final box = _getBox<T>();
+      await box.put(value.id , value);
       return true;
     } catch(e) {
       return false;
     }
   }
 
-  Future<bool> update(dynamic elem) async {
+  Future<void> saveAll<T>(Map<dynamic, T> values) async {
+    final box = _getBox<T>();
+    await box.putAll(values);
+  }
+
+  Future<bool> delete<T>(dynamic key) async {
     try {
-      var jsonData = jsonDecode(jsonEncode(elem));
-      var tabla = _tool.isArray(jsonData) ? jsonData[0]['tabla'] : jsonData['tabla'];
-      await _storage.delete(
-        key: tabla,
-        aOptions: _getAndroidOptions(),
-      );
-      await _storage.write(
-        key: tabla,
-        value: jsonEncode(jsonData),
-        aOptions: _getAndroidOptions(),
-      );
+      final box = _getBox<T>();
+      await box.delete(key);
       return true;
     } catch(e) {
       return false;
     }
   }
 
-  Future<bool> delete(dynamic elem) async {
+  Future<bool> clear<T>() async {
     try {
-      var jsonData = jsonDecode(jsonEncode(elem));
-      var tabla = _tool.isArray(jsonData) ? jsonData[0]['tabla'] : jsonData['tabla'];
-      await _storage.delete(
-        key: tabla,
-        aOptions: _getAndroidOptions(),
-      );
+      final box = _getBox<T>();
+      await box.clear();
       return true;
     } catch(e) {
       return false;
     }
   }
 
-  Future<bool> verify(dynamic elem) async {
-    try {
-      var jsonData = jsonDecode(jsonEncode(elem));
-      var tabla = _tool.isArray(jsonData) ? jsonData[0]['tabla'] : jsonData['tabla'];
-      var storage = await _storage.read(
-        key: tabla,
-        aOptions: _getAndroidOptions(),
-      );
-      return storage != null;
-    } catch(e) {
-      return false;
+  Box<T> _getBox<T>() {
+    final boxName = _boxNames[T];
+    if (boxName == null) {
+      throw Exception('Box no registrado para el tipo $T');
     }
+    return Hive.box<T>(boxName);
   }
 
-  Future<void> clearAll() async {
-    try {
-      await _storage.deleteAll(
-        aOptions: _getAndroidOptions(),
-      );
-    } finally { }
-  }
-
-  LocalStorage? _nuevoLocalStorage({
-    LocalStorage? actual,
-  }) {
-    try {
-      var nuevoStorage = LocalStorage();
-      Map<String, dynamic> nuevoStorageTemp = jsonDecode(jsonEncode(nuevoStorage));
-      Map<String, dynamic> actualStorageTemp = jsonDecode(jsonEncode(actual));
-      actualStorageTemp.forEach((key, value) {
-        if(nuevoStorageTemp[key] != null) {
-          nuevoStorageTemp[key] = value;
-        }
-      });
-      var storageString = jsonEncode(nuevoStorageTemp);
-      return LocalStorage.fromString(storageString);
-    } catch(e) {
-      return null;
-    }
+  Future _open() async {
+    await Hive.openBox<LocalStorage>(LocalStorage.boxName);
+    await Hive.openBox<ReporteAltaLocal>(ReporteAltaLocal.boxName);
+    _boxNames[LocalStorage] = LocalStorage.boxName;
+    _boxNames[ReporteAltaLocal] = ReporteAltaLocal.boxName;
   }
 }

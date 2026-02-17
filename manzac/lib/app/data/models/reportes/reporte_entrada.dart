@@ -1,32 +1,97 @@
+import 'package:hive_ce_flutter/adapters.dart';
+
+import '../hive_model.dart';
 import 'reporte_imagenes.dart';
 
-class ReporteEntrada {
+part 'reporte_entrada.g.dart';
+
+@HiveType(typeId: 2)
+class ReporteEntrada extends HiveModel {
+  static const String boxName = "reporte_entrada";
+
+  @HiveField(0)
+  @override
+  String? id;
+  
+  @HiveField(1)
   String? idTarja;
+
+  @HiveField(2)
   String? tipo;
+
+  @HiveField(3)
   String? fecha;
+
+  @HiveField(4)
   String? referenciaLm;
+
+  @HiveField(5)
   String? imo;
+
+  @HiveField(6)
   String? horaInicio;
+
+  @HiveField(7)
   String? horaFin;
+
+  @HiveField(8)
   String? cliente;
+
+  @HiveField(9)
   String? mercancia;
+
+  @HiveField(10)
   String? agenteAduanal;
+
+  @HiveField(11)
   String? ejecutivo;
+
+  @HiveField(12)
   String? contenedor;
+
+  @HiveField(13)
   String? pedimento;
+
+  @HiveField(14)
   String? sello;
+
+  @HiveField(15)
   String? buque;
+
+  @HiveField(16)
   String? refCliente;
+
+  @HiveField(17)
   String? bultos;
+
+  @HiveField(18)
   String? peso;
+
+  @HiveField(19)
   String? terminal;
+
+  @HiveField(20)
   String? fechaDespacho;
+
+  @HiveField(21)
   String? diasLibres;
+
+  @HiveField(22)
   String? fechaVencimiento;
+
+  @HiveField(23)
   String? movimiento;
+
+  @HiveField(25)
   String? observaciones;
+
+  @HiveField(26)
   String? usuario;
+
+  @HiveField(27)
   List<ReporteImagenes>? imagenes;
+
+  @HiveField(28)
   String? nombreUsuario;
 
   ReporteEntrada({
@@ -60,6 +125,7 @@ class ReporteEntrada {
   });
 
   Map<String, dynamic> toJson() => {
+    'id' : id,
     'idTarja' : idTarja,
     'tipo' : tipo,
     'fecha' : fecha,

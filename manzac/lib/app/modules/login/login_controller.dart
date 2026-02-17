@@ -26,6 +26,8 @@ class LoginController extends GetInjection {
   bool mantenerSesion = false;
   bool usuarioTextEnabled = true;
 
+  String idLocalStorage = "";
+
   @override
   Future<void> onInit() async {
     await _init();
@@ -33,7 +35,8 @@ class LoginController extends GetInjection {
   }
 
   Future<void> _init() async {
-    var localStorage = await storage.get<LocalStorage>(LocalStorage());
+    idLocalStorage = await getIdLocalStorage();
+    var localStorage = await storage.get<LocalStorage>(idLocalStorage);
     usuario.text = localStorage!.usuario!;
     usuarioTextEnabled = localStorage.usuario == "";
     update();
@@ -46,7 +49,7 @@ class LoginController extends GetInjection {
         return;
       }
       isBusy();
-      var localStorage = await storage.get<LocalStorage>(LocalStorage());
+      var localStorage = await storage.get<LocalStorage>(idLocalStorage);
       var loginForm = LoginForm(
         usuario: usuario.text.toLowerCase(),
         password: password.text,
@@ -69,12 +72,12 @@ class LoginController extends GetInjection {
       localStorage.login = mantenerSesion;
       localStorage.perfil = result.perfil;
       localStorage.nombre = "${result.nombres} ${result.apellidos}";
-      await storage.update(localStorage);
+      await storage.save<LocalStorage>(localStorage);
       var configuracionFirmas = await configuracionRepository.obtenerConfiguracionAsync("firmas");
       if(configuracionFirmas != null) {
         localStorage.firmaOperaciones = configuracionFirmas.firmaOperador;
         localStorage.firmaGerencia = configuracionFirmas.firmaGerencia;
-        await storage.update(localStorage);
+        await storage.save<LocalStorage>(localStorage);
       }
       isBusy(false);
       if(result.status == Literals.statusPassTemporal) {

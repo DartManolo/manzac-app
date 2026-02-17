@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:http/http.dart' as http;
 
 import '../../data/models/local_storage/local_storage.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
@@ -76,8 +78,25 @@ class ReporteViewController extends GetInjection {
 
   Future<Uint8List> _reporteEstandar(PdfPageFormat format) async {
     final pdf = pw.Document();
-    final imageBytes = await tool.loadAssetImage('assets/manzac-logo-doc2.png');
-    final image = pw.MemoryImage(imageBytes);
+    final logoBytes = await tool.loadAssetImage('assets/manzac-logo-doc2.png');
+    final image = pw.MemoryImage(logoBytes);
+    Map<String, Uint8List?> imagesBytes = {};
+    for (var i = 0; i < reporteImagenes.length; i++) {
+      for (var j = 0; j < reporteImagenes[i].length; j++) {
+        Uint8List? imageBytes;
+        if (_esUrl(reporteImagenes[i][j].imagen!)) {
+          imageBytes = await _obtenerBytesDesdeUrl(reporteImagenes[i][j].imagen!);
+        } else {
+          try {
+            final archivoImagen = File(reporteImagenes[i][j].imagen!);
+            imageBytes = archivoImagen.readAsBytesSync();
+          } catch(e) {
+            imageBytes = null;
+          }
+        }
+        imagesBytes[reporteImagenes[i][j].idImagen!] = imageBytes;
+      }
+    }
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.letter,
@@ -157,17 +176,20 @@ class ReporteViewController extends GetInjection {
                     return pw.Expanded(
                       child: pw.Builder(
                         builder: (context) {
-                          if(imagen.base64 != "") {
-                            var imageBytes = base64Decode(imagen.base64!);
-                            var image = pw.MemoryImage(imageBytes);
-                            return pw.Expanded(
-                              child: pw.Container(
-                                padding: pw.EdgeInsets.fromLTRB(3, 4, 3, 4),
-                                child: pw.Image(
-                                  image,
+                          if(imagen.imagen != "") {
+                            Uint8List? image = imagesBytes[imagen.idImagen];
+                            if (image != null) {
+                              return pw.Expanded(
+                                child: pw.Container(
+                                  padding: pw.EdgeInsets.fromLTRB(3, 4, 3, 4),
+                                  child: pw.Image(
+                                    pw.MemoryImage(image),
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              return pw.SizedBox();
+                            }
                           } else {
                             return pw.SizedBox();
                           }
@@ -204,6 +226,23 @@ class ReporteViewController extends GetInjection {
       version = "0";
     } else {
       version = tool.str2int(version) < 10 ? "0$version" : version;
+    }
+    Map<String, Uint8List?> imagesBytes = {};
+    for (var i = 0; i < reporteImagenes.length; i++) {
+      for (var j = 0; j < reporteImagenes[i].length; j++) {
+        Uint8List? imageBytes;
+        if (_esUrl(reporteImagenes[i][j].imagen!)) {
+          imageBytes = await _obtenerBytesDesdeUrl(reporteImagenes[i][j].imagen!);
+        } else {
+          try {
+            final archivoImagen = File(reporteImagenes[i][j].imagen!);
+            imageBytes = archivoImagen.readAsBytesSync();
+          } catch(e) {
+            imageBytes = null;
+          }
+        }
+        imagesBytes[reporteImagenes[i][j].idImagen!] = imageBytes;
+      }
     }
     pdf.addPage(
       pw.MultiPage(
@@ -540,17 +579,21 @@ class ReporteViewController extends GetInjection {
                     return pw.Expanded(
                       child: pw.Builder(
                         builder: (context) {
-                          if(imagen.base64 != "") {
-                            var imageBytes = base64Decode(imagen.base64!);
-                            var image = pw.MemoryImage(imageBytes);
-                            return pw.Expanded(
-                              child: pw.Container(
-                                padding: pw.EdgeInsets.fromLTRB(3, 4, 3, 4),
-                                child: pw.Image(
-                                  image,
+                          if(imagen.imagen != "") {
+                            var imageBytes = imagesBytes[imagen.idImagen];
+                            if (imageBytes != null) {
+                              var image = pw.MemoryImage(imageBytes);
+                              return pw.Expanded(
+                                child: pw.Container(
+                                  padding: pw.EdgeInsets.fromLTRB(3, 4, 3, 4),
+                                  child: pw.Image(
+                                    image,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              return pw.SizedBox();
+                            }
                           } else {
                             return pw.SizedBox();
                           }
@@ -1045,5 +1088,25 @@ class ReporteViewController extends GetInjection {
     } catch(e) {
       return "0";
     }
+  }
+
+  bool _esUrl(String? texto) {
+    if (texto == null || texto.isEmpty) {
+      return false;
+    }
+    final uri = Uri.tryParse(texto);
+    if (uri == null) {
+      return false;
+    }
+    return uri.hasScheme &&
+          (uri.scheme == 'http' || uri.scheme == 'https');
+  }
+
+  Future<Uint8List?> _obtenerBytesDesdeUrl(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    }
+    return null;
   }
 }

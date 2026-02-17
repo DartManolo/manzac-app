@@ -1,19 +1,41 @@
 import 'dart:convert';
 
-import 'package:get/get.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
-import '../../../services/tool_service.dart';
+import '../hive_model.dart';
 
-class ReporteImagenes {
-  final ToolService _tool = Get.find<ToolService>();
-  
+part 'reporte_imagenes.g.dart';
+
+@HiveType(typeId: 5)
+class ReporteImagenes extends HiveModel {
+  static const String boxName = "reporte_imagenes";
+
+  @HiveField(0)
+  @override
+  String? id;
+
+  @HiveField(1)
   String? idTarja;
+
+  @HiveField(2)
   String? idImagen;
+
+  @HiveField(3)
   String? formato;
+
+  @HiveField(4)
   int? fila;
+
+  @HiveField(5)
   int? posicion;
-  String? base64;
+
+  @HiveField(6)
+  String? imagen;
+
+  @HiveField(7)
   String? tipo;
+
+  @HiveField(8)
   String? usuario;
 
   ReporteImagenes({
@@ -22,18 +44,19 @@ class ReporteImagenes {
     this.formato = "",
     this.fila = 0,
     this.posicion = 0,
-    this.base64 = "",
+    this.imagen = "",
     this.tipo = "",
     this.usuario = "",
   });
 
   Map<String, dynamic> toJson() => {
+    'id'        : id,
     'idTarja'   : idTarja,
     'idImagen'  : idImagen,
     'formato'   : formato,
     'fila'      : fila,
     'posicion'  : posicion,
-    'base64'    : base64,
+    'imagen'    : imagen,
     'tipo'      : tipo,
     'usuario' :   usuario,
   };
@@ -45,7 +68,7 @@ class ReporteImagenes {
     formato = json['idUsuario'] ?? "";
     fila = json['usuario'] ?? 0;
     posicion = json['password'] ?? 0;
-    base64 = json['perfil'] ?? "";
+    imagen = json['imagen'] ?? "";
     tipo = json['nombre'] ?? "";
     usuario = json['usuario'] ?? "";
   }
@@ -60,7 +83,7 @@ class ReporteImagenes {
           formato: json['formato'] ?? "",
           fila: json['fila'] ?? 0,
           posicion: json['posicion'] ?? 0,
-          base64: json['base64'] ?? "",
+          imagen: json['imagen'] ?? "",
           tipo: json['tipo'] ?? "",
           usuario: json['usuario'] ?? "",
         ));
@@ -74,10 +97,14 @@ class ReporteImagenes {
     idTarja = json['idTarja'].toString();
     idImagen = json['idImagen'].toString();
     formato = json['formato'].toString();
-    fila = _tool.str2int(json['fila'].toString());
-    posicion = _tool.str2int(json['posicion'].toString());
-    base64 = json['base64'].toString();
+    fila = _str2int(json['fila'].toString());
+    posicion = _str2int(json['posicion'].toString());
+    imagen = json['imagen'].toString();
     tipo = json['tipo'].toString();
     usuario = json['usuario'].toString();
+  }
+
+  int _str2int(String cadena) {
+    return int.tryParse(cadena) ?? 0;
   }
 }
