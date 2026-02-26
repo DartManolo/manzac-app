@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 import '../data/models/local_storage/local_storage.dart';
 import '../utils/literals.dart';
@@ -17,6 +18,19 @@ class ApiService {
 
   Future<String?> get(String url) async {
     return await _call(url, null, false);
+  }
+
+  Future<http.MultipartRequest> request(String url) async {
+    var localStorage = await _storage.get<LocalStorage>(
+      await _tool.getSecureStorage(Literals.localStorageKey)
+    );
+    var request = http.MultipartRequest(
+      Literals.postMethod,
+      Uri.parse("${Literals.uri}$url"));
+    request.headers.addAll({
+      Literals.apiToken : localStorage!.token!,
+    });
+    return request;
   }
 
   Future<String?> _call(String url, dynamic data, [bool post = true]) async {

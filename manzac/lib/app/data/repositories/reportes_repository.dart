@@ -9,6 +9,14 @@ class ReportesRepository {
     return await Get.find<ReportesProvider>().altaReporteAsync(reportes);
   }
 
+  Future<bool> subirImagen(ReporteImagenes imagen) async {
+    return await Get.find<ReportesProvider>().subirImagen(imagen);
+  }
+
+  Future<bool> reestablecerReporteAsync(List<String> listIds) async {
+    return await Get.find<ReportesProvider>().reestablecerReporteAsync(listIds);
+  }
+
   Future<List<ReporteAltaLocal>?> consultaReporteAsync(String parametro) async {
     return await Get.find<ReportesProvider>().consultaReporteAsync(parametro);
   }

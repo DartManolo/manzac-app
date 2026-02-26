@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 import '../../services/api_service.dart';
 import '../../services/tool_service.dart';
@@ -17,6 +19,52 @@ class ReportesProvider {
       var result = await _api.post(
         "api/reportes/alta",
         reportes,
+      );
+      return result == Literals.apiTrue;
+    } catch(e) {
+      return false;
+    }
+  }
+
+  Future<bool> subirImagen(ReporteImagenes imagen) async {
+    try {
+      var request = await _api.request("api/reportes/subirImagen/f");
+      var archivo = File(imagen.imagen!);
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          Literals.fileImagen,
+          archivo.path,
+          filename: imagen.idImagen,
+          contentType: http.MediaType.parse("image/jpeg"),
+        ),
+      );
+      var tipo = "";
+      if (imagen.tipo! == "ENTRADA") {
+        tipo = "entradas";
+      } else if (imagen.tipo! == "SALIDA") {
+        tipo = "salidas";
+      } else if (imagen.tipo! == "DAÑOS") {
+        tipo = "danios";
+      }
+      request.fields['tipo'] = tipo;
+      request.fields['formato'] = imagen.formato!;
+      var response = await request.send();
+      var result = await http.Response.fromStream(response);
+      if (response.statusCode == 200 && result.body == "true") {
+        return true;
+      } else {
+        return false;
+      }
+    } catch(e) {
+      return false;
+    }
+  }
+
+  Future<bool> reestablecerReporteAsync(List<String> listIds) async {
+    try {
+      var result = await _api.post(
+        "api/reportes/reporteReestablecer",
+        listIds,
       );
       return result == Literals.apiTrue;
     } catch(e) {

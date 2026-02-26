@@ -19,8 +19,10 @@ import '../utils/literals.dart';
 
 class ToolService extends GetxController {
   final _storage = FlutterSecureStorage();
-  
   final Connectivity _conneccion = Connectivity();
+  final snackbarTitulo = ''.obs;
+  final snackbarMensaje = ''.obs;
+  final snackbarVisible = false.obs;
 
   Future<bool> isOnline() async {
     try {
@@ -229,5 +231,80 @@ class ToolService extends GetxController {
       ),
     );
     return;
+  }
+
+  void mostrarSnackbarProgreso(String titulo, String mensaje) {
+    snackbarTitulo.value = titulo;
+    snackbarMensaje.value = mensaje;
+    
+    if (!snackbarVisible.value) {
+      snackbarVisible.value = true;
+      Get.rawSnackbar(
+        duration: null,
+        isDismissible: false,
+        backgroundColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+        snackPosition: SnackPosition.BOTTOM,
+        messageText: Obx(() => _buildSnackContent()),
+        titleText: SizedBox.shrink(),
+      );
+    }
+  }
+
+  Widget _buildSnackContent() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.black87,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            snackbarTitulo.value,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            snackbarMensaje.value,
+            style: TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void cerrarSnackbar() {
+    snackbarVisible.value = false;
+    if (Get.isSnackbarOpen) Get.closeCurrentSnackbar();
+  }
+
+  Future<void> guardarArchivoTxt(String nombre, String contenido) async {
+    try {
+      var ruta = await getApplicationDocumentsDirectory();
+      var directorio = ruta.path;
+      var archivo = File("$directorio/$nombre.txt");
+      var _ = await archivo.writeAsString(contenido);
+      return;
+    } catch(e) {
+      return;
+    }
+  }
+
+  Future<String> leerArchivoTxt(String nombre) async {
+    try {
+      var ruta = await getApplicationDocumentsDirectory();
+      var directorio = ruta.path;
+      var archivo = File("$directorio/$nombre.txt");
+      return await archivo.readAsString();
+    } catch(e) {
+      return "";
+    }
   }
 }

@@ -1,8 +1,8 @@
 import 'package:hive_ce_flutter/adapters.dart';
-import 'package:manzac_app/hive_registrar.g.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../hive_registrar.g.dart';
 import '../data/models/hive_model.dart';
 import '../data/models/local_storage/local_storage.dart';
 import '../data/models/reportes/reporte_alta_local.dart';

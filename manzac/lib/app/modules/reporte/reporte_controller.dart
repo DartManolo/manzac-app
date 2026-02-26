@@ -268,12 +268,46 @@ class ReporteController extends GetInjection {
       if(!subirReporte) {
         throw Exception();
       }
+      var altaImagenes = await _subirImagenesServidor();
+      if(!altaImagenes) {
+        throw Exception();
+      }
+      var _ = await storage.delete<ReporteAltaLocal>(reporteAltaLocal!.id!);
       await tool.wait(1);
       isBusy(false);
       Get.back();
+      await Get.find<HomeController>().recargarReportesLocal();
       msg("Reporte guardado correctamente", MsgType.success);
     } catch(e) {
       msg("Ocurrió un error al intentar subir el reporte al servidor", MsgType.error);
+    }
+  }
+
+  Future<bool> _subirImagenesServidor() async {
+    try {
+      List<ReporteImagenes> imagenes = [];
+      if (reporteAltaLocal!.tipo == "Entrada") {
+        imagenes = reporteAltaLocal!.reporteEntrada!.imagenes!;
+      } else if (reporteAltaLocal!.tipo == "Salida") {
+        imagenes = reporteAltaLocal!.reporteSalida!.imagenes!;
+      } else if (reporteAltaLocal!.tipo == "Daños") {
+        imagenes = reporteAltaLocal!.reporteDanio!.imagenes!;
+      }
+      var omision = 0;
+      var guardados = 0;
+      for (var i = 0; i < imagenes.length; i++) {
+        if (imagenes[i].imagen == "") {
+          omision++;
+          continue;
+        }
+        var subirImagen = await reportesRepository.subirImagen(imagenes[i]);
+        if (subirImagen) {
+          guardados++;
+        }
+      }
+      return ((imagenes.length - omision) == guardados);
+    } catch(e) {
+      return false;
     }
   }
   
@@ -872,7 +906,7 @@ class ReporteController extends GetInjection {
         movimiento: entradaForm.movimiento.text,
         observaciones: entradaForm.observaciones.text,
         usuario: _usuarioAlta,
-        imagenes: _generarListaImagenesAlta(idTarja),
+        imagenes: _generarListaImagenesAlta(idTarja, tipoReporte.toUpperCase()),
       );
       reporteAltaLocal!.reporteEntrada = reporteEntradaAlta;
     } else if(tipoReporte == "Salida") {
@@ -902,7 +936,7 @@ class ReporteController extends GetInjection {
         licencia: salidaForm.licencia.text,
         observaciones: salidaForm.observaciones.text,
         usuario: _usuarioAlta,
-        imagenes: _generarListaImagenesAlta(idTarja),
+        imagenes: _generarListaImagenesAlta(idTarja, tipoReporte.toUpperCase()),
       );
       reporteAltaLocal!.reporteSalida = reporteSalidaAlta;
     } else if(tipoReporte == "Daños") {
@@ -948,7 +982,7 @@ class ReporteController extends GetInjection {
         extFrisa: daniosForm.extFrisa.text,
         observaciones: daniosForm.observaciones.text,
         usuario: _usuarioAlta,
-        imagenes: _generarListaImagenesAlta(idTarja),
+        imagenes: _generarListaImagenesAlta(idTarja, tipoReporte.toUpperCase()),
       );
       reporteAltaLocal!.reporteDanio = reporteDanioAlta;
     }
@@ -998,7 +1032,7 @@ class ReporteController extends GetInjection {
     } finally { }
   }
 
-  List<ReporteImagenes> _generarListaImagenesAlta(String idTarja) {
+  List<ReporteImagenes> _generarListaImagenesAlta(String idTarja, String tipo) {
     List<ReporteImagenes> listaAlta = [];
     for (var i = 0; i < reporteImagenes.length; i++) {
       for (var j = 0; j < reporteImagenes[i].length; j++) {
@@ -1006,6 +1040,7 @@ class ReporteController extends GetInjection {
         imagenReporte.idTarja = idTarja;
         imagenReporte.formato = "jpg";
         imagenReporte.usuario = _usuarioAlta;
+        imagenReporte.tipo = tipo;
         listaAlta.add(imagenReporte);
       }
     }

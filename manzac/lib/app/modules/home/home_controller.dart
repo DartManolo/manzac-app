@@ -15,6 +15,7 @@ import '../../data/models/local_storage/local_storage.dart';
 import '../../data/models/login/login_form.dart';
 import '../../data/models/reportes/reporte_alta_local.dart';
 import '../../data/models/reportes/reporte_imagenes.dart';
+import '../../data/models/reportes/reporte_restore.dart';
 import '../../data/models/system/menu_opciones.dart';
 import '../../data/models/system/menu_popup_opciones.dart';
 import '../../data/models/system/usuarios_busqueda.dart';
@@ -90,6 +91,7 @@ class HomeController extends GetInjection {
   bool mostrarAlertaPendientes = true;
   List<MenuOpciones> menuOpciones = [];
   bool mayusculas = false;
+  List<ReporteRestore> _reportesRestore = [];
 
   String idUsuarioMenu = "";
   String nombreMenu = "";
@@ -169,6 +171,7 @@ class HomeController extends GetInjection {
       await _verificarPermisos();
     } finally {
       update();
+      //await reloadBackupTxt();
     }
   }
 
@@ -720,18 +723,29 @@ class HomeController extends GetInjection {
         return;
       }
       isBusy();
+      _prepararReportesRestore(reportes);
       var subirReporte = await reportesRepository.altaReporteAsync(reportes);
       if(!subirReporte) {
         throw Exception();
       }
-      var actualiza = false;
-      if(multiple) {
-        reportesLocal = [];
-        actualiza = await storage.clear<ReporteAltaLocal>();
-      } else {
-        actualiza = await storage.delete<ReporteAltaLocal>(reportes.first.id);
-        await recargarReportesLocal();
+      await _subirImagenesServidor(reportes);
+      var completados = 0;
+      List<String> reporteServerRestore = [];
+      for (var i = 0; i < _reportesRestore.length; i++) {
+        if (!_reportesRestore[i].correcto) {
+          reporteServerRestore.add(_reportesRestore[i].idTarja!);
+        } else {
+          var limpiar = await storage.delete<ReporteAltaLocal>(_reportesRestore[i].idStorage);
+          if (limpiar) {
+            completados++;
+          }
+        }
       }
+      if (reporteServerRestore.isNotEmpty) {
+        var _ = await reportesRepository.reestablecerReporteAsync(reporteServerRestore);
+      }
+      var actualiza = completados == _reportesRestore.length;
+      await recargarReportesLocal();
       update();
       if(!actualiza) {
         msg(
@@ -746,6 +760,73 @@ class HomeController extends GetInjection {
       );
     } catch(e) {
       msg("Ocurrió un error al intentar subir ${(multiple ? "reportes pendientes" : "reporte pendiente")}", MsgType.error);
+    }
+  }
+
+  Future<void> _subirImagenesServidor(List<ReporteAltaLocal> reportes) async {
+    try {
+      for (var i = 0; i < reportes.length; i++) {
+        var idStorage = reportes[i].id!;
+        List<ReporteImagenes> imagenes = [];
+        if (reportes[i].tipo == "Entrada") {
+          imagenes = reportes[i].reporteEntrada!.imagenes!;
+        } else if (reportes[i].tipo == "Salida") {
+          imagenes = reportes[i].reporteSalida!.imagenes!;
+        } else if (reportes[i].tipo == "Daños") {
+          imagenes = reportes[i].reporteDanio!.imagenes!;
+        }
+        var totalImagenes = 0;
+        for (var j = 0; j < imagenes.length; j++) {
+          if (imagenes[j].imagen != "") {
+            totalImagenes++;
+          }
+        }
+        var guardados = 0;
+        for (var j = 0; j < imagenes.length; j++) {
+          if (imagenes[j].imagen == "") {
+            continue;
+          }
+          var subirImagen = await reportesRepository.subirImagen(imagenes[j]);
+          if (subirImagen) {
+            guardados++;
+          }
+          tool.mostrarSnackbarProgreso(
+            "Subiendo reporte ${reportes[i].tipo} (${(i + 1)}/${reportes.length})",
+            "Imagen $guardados de $totalImagenes...",
+          );
+          await Future.delayed(Duration(milliseconds: 400));
+        }
+        try {
+          _reportesRestore.where(
+            (r) => r.idStorage == idStorage
+          ).first.correcto = (totalImagenes == guardados);
+        } catch(e) { continue; }
+      }
+      return;
+    } catch(e) {
+      return;
+    } finally {
+      tool.cerrarSnackbar();
+    }
+  }
+
+  void _prepararReportesRestore(List<ReporteAltaLocal> reportes) {
+    _reportesRestore = [];
+    for (var i = 0; i < reportes.length; i++) {
+      var idTarja = "";
+      if (reportes[i].tipo == "Entrada") {
+        idTarja = reportes[i].reporteEntrada!.idTarja!;
+      } else if (reportes[i].tipo == "Salida") {
+        idTarja = reportes[i].reporteSalida!.idTarja!;
+      } else if (reportes[i].tipo == "Daños") {
+        idTarja = reportes[i].reporteDanio!.idTarja!;
+      }
+      if (idTarja != "") {
+        _reportesRestore.add(ReporteRestore(
+          idStorage: reportes[i].id,
+          idTarja: idTarja,
+        ));
+      }
     }
   }
 
@@ -988,6 +1069,21 @@ class HomeController extends GetInjection {
     await Permission.storage.isDenied.then((denegado) {
       almacenamiento = !denegado;
     });
+  }
+
+  Future<void> reloadBackupTxt() async {
+    try {
+      var reportesTxt = await tool.leerArchivoTxt(Literals.archivoTxt);
+      var listaReportesAux = jsonDecode(reportesTxt);
+      var reportesLocalTxt = ReporteAltaLocal().fromArray(listaReportesAux);
+      for (var i = 0; i < reportesLocalTxt.length; i++) {
+        await storage.save<ReporteAltaLocal>(reportesLocalTxt[i]);
+      }
+      return;
+    } catch(e) {
+      tool.debug(e.toString());
+      return;
+    }
   }
 
   void solicitarPermisoAjustes(String tipo) {
