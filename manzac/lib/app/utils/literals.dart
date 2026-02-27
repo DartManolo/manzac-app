@@ -1,7 +1,7 @@
 class Literals {
-  static const String version = "1.2.4+10";
-  static const String uri = "http://187.144.237.14:82/manzac-server/";
-  //static const String uri = "https://manzaclogistica.com.mx/";
+  static const String version = "1.5.0+11";
+  //static const String uri = "http://187.144.237.14:82/manzac-server/";
+  static const String uri = "https://manzaclogistica.com.mx/";
   static const String localStorageKey = "local_storage";
   static const String contentType = "ContentType";
   static const String applicationJson = "application/json";
